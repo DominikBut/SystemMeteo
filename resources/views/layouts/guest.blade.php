@@ -12,9 +12,11 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
+        @stack('css')
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <!-- Styles -->
+        @stack('scripts')
         @livewireStyles
     </head>
     <body class="font-sans antialiased">
@@ -41,5 +43,6 @@
         @stack('modals')
 
         @livewireScripts
+         @stack('scripts2')
     </body>
 </html>

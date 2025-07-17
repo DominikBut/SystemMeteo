@@ -15,7 +15,7 @@ class generalMap extends Controller
             if (!Cache::has('DaneStacji')) {
                 $response = Http::get('https://danepubliczne.imgw.pl/api/data/meteo/');
                 if ($response->successful()) {
-                    Cache::put('DaneStacji', json_decode($response), now()->addMinutes(10));
+                    Cache::put('DaneStacji', json_decode($response->body()), now()->addMinutes(10));
                     $dane = Cache::get('DaneStacji');
                     return view('general_map', [
                         'data' => $dane,
