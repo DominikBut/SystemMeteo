@@ -24,33 +24,45 @@
             crossorigin=""></script>
     @endPushOnce
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class=" max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-lime-100 overflow-hidden shadow-xl sm:rounded-lg">
+                <div id="layerToggles" class="p-4">
+                    <button class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(tempLayerGroup, this)">Temperatura</button>
+                    <button style="opacity: 0.5;" class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(humidityLayerGroup, this)">Wilgotność</button>
+                    <button style="opacity: 0.5;" class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(windLayerGroup, this)">Wiatr</button>
+                    <button style="opacity: 0.5;" class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(rainLayerGroup, this)">Opady</button>
+                </div>
                 {{ $status }}
                 <div id="map" class=" min-h-[48rem]"></div>
                 @if (!empty($data))
                         {{-- {{ dd($data) }} --}}
-                        <div class="text-xs">
-                            <table>
-                                <tr>
-                                    <th>Nazwa</th>
-                                    <th>lon</th>
-                                    <th>lat</th>
-                                    <th>data</th>
-                                    <th>tmp</th>
-                                    <th>wiatr</th>
-                                    <th>wilg</th>
+                        <div class="text-xs text-center">
+                            <table class="border-separate border-spacing-2 border border-black">
+                                <tr >
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">Nazwa</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">kod</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">data</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">tmp</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">wilg</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">wiatr srednia</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">wiatr max</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">wiatr poryw 10min</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">opad 10min</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2">opad data</th>
                                 </tr>
 
                             @foreach ( $data as $stacja )
-                                <tr>
+                                <tr >
                                 <td> {{ $stacja->nazwa_stacji }} </td>
-                                <td> {{ $stacja->lon }} </td>
-                                <td> {{ $stacja->lat }} </td>
+                                <td> {{ $stacja->kod_stacji }} </td>
                                 <td> {{ $stacja->temperatura_gruntu_data }} </td>
                                 <td> {{ $stacja->temperatura_gruntu }} </td>
-                                <td> {{ $stacja->wiatr_srednia_predkosc }} </td>
                                 <td> {{ $stacja->wilgotnosc_wzgledna }} </td>
+                                <td> {{ $stacja->wiatr_srednia_predkosc }} </td>
+                                <td> {{ $stacja->wiatr_predkosc_maksymalna }} </td>
+                                <td> {{ $stacja->wiatr_poryw_10min }} </td>
+                                <td> {{ $stacja->opad_10min }} </td>
+                                <td> {{ $stacja->opad_10min_data }} </td>
                                 </tr>
                             @endforeach
 
@@ -65,6 +77,26 @@
     </script>
     @pushOnce('scripts2')
         <script>
+
+
+
+           function toggleLayer(activeLayer, activeBtn) {
+                // Define all layers and buttons
+                const layers = [tempLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup];
+                const buttons = document.querySelectorAll('#layerToggles button');
+
+                // Remove all layers from the map
+                layers.forEach(layer => map.removeLayer(layer));
+
+                // Reset button styles
+                buttons.forEach(btn => btn.style.opacity = 0.5);
+
+                // If the clicked layer is not already on the map, add it
+                if (!map.hasLayer(activeLayer)) {
+                    map.addLayer(activeLayer);
+                    activeBtn.style.opacity = 1;
+                }
+            }
             // // Define custom icons
             // const redIcon = L.icon({
             //     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
@@ -81,12 +113,21 @@
             //     popupAnchor: [1, -34],
             //     shadowSize: [41, 41]
             // });
+
+            //setup
             var map = L.map('map').setView([52.25, 19.25], 7);
-            //wymagany copyright
+            //credits
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
+
+
+            const tempLayerGroup = L.layerGroup(); // create the group
+            const humidityLayerGroup = L.layerGroup();
+            const windLayerGroup = L.layerGroup();
+            const rainLayerGroup = L.layerGroup();
+
 
             function getTemperatureColor(temp) {
                 // // Normalize temperature between -20 and 40 (adjust to your real range)
@@ -125,52 +166,229 @@
 
                 return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
             }
+
+            function getHumidityColor(humidity) {
+                const dry = 0;      // 0% humidity
+                const optimalLow = 40;
+                const optimalHigh = 60;
+                const wet = 100;
+
+                let hue;
+
+                if (humidity <= dry) {
+                    hue = 0; // Red
+                } else if (humidity >= wet) {
+                    hue = 240; // Blue
+                } else if (humidity <= optimalLow) {
+                    // Red → Green
+                    const ratio = (humidity - dry) / (optimalLow - dry); // 0 to 1
+                    hue = 0 + ratio * (120 - 0); // From red (0) to green (120)
+                } else if (humidity <= optimalHigh) {
+                    hue = 120; // Keep green in optimal zone
+                } else {
+                    // Green → Blue
+                    const ratio = (humidity - optimalHigh) / (wet - optimalHigh); // 0 to 1
+                    hue = 120 + ratio * (240 - 120); // From green (120) to blue (240)
+                }
+
+                const saturation = 80;
+                const lightness = 45;
+
+                return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            }
+
+            function getWindColor(speed) {
+                const maxSpeed = 15;
+                const clamped = Math.min(speed, maxSpeed);
+                const percent = clamped / maxSpeed;
+
+                // light gray start at rgb(200,200,200) to black (0,0,0)
+                const grayValue = Math.round(170 - (170 * percent)); // 200 → 0
+
+                return `rgb(${grayValue},${grayValue},${grayValue})`;
+            }
+
+           function getRainColor(rain) {
+                const maxRain = 5; // adjust max rain amount as needed
+                const clamped = Math.min(rain, maxRain);
+                const percent = clamped / maxRain;
+
+                // Light start: almost white/light gray
+                // We'll interpolate lightness from ~95% (very light) down to ~40% (rich blue)
+                // Hue for blue is ~210
+
+                const hue = 210;
+                const saturation = 90; // rich blue
+                const lightness = 100 - (55 * percent); // from 95% to 40%
+
+                return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            }
+            function convertToLocalDate(dateStr) {
+                if (!dateStr) return null;
+
+                // Fix format: replace " " with "T" and mark as UTC with "Z"
+                const isoStr = dateStr.replace(" ", "T") + "Z";
+
+                const utcDate = new Date(isoStr);
+                if (isNaN(utcDate.getTime())) return null;
+
+                // Return local date and time (with seconds)
+                return utcDate.toLocaleString('pl-PL', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour12: false
+                });
+            }
+
+            // Use only recent data
+            const date = convertToLocalDate(new Date().toISOString().slice(0, 10));
             // Loop through Laravel data passed to JS
             stacjeData.forEach(stacja => {
-                if (stacja.lat && stacja.lon) {
-                    const hasTemp = stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu !== '' && stacja.temperatura_gruntu_data;
-                    const tempDateStr = stacja.temperatura_gruntu_data;
-                     // Skip if temp date is missing or invalid
-                    if (!tempDateStr || isNaN(new Date(tempDateStr))) return;
+            if (!stacja.lat || !stacja.lon) return;
 
-                    if (!hasTemp) return; // Skip if no temperature
+                const lat = parseFloat(stacja.lat);
+                const lon = parseFloat(stacja.lon);
 
-                    // Get only the date part (YYYY-MM-DD)
-                    const tempDate = new Date(tempDateStr).toISOString().slice(0, 10);
-                    const today = new Date().toISOString().slice(0, 10);
 
-                    // Skip if the temp data is before today
-                     if (tempDate < today) return;
+                const tempDateStr = stacja.temperatura_gruntu_data;
+                const humDateStr = stacja.wilgotnosc_wzgledna_data;
+                const windDateStr = stacja.wiatr_srednia_predkosc_data;
+                const rainDateStr = stacja.opad_10min_data;
 
+                const tempDate = convertToLocalDate(tempDateStr);
+                const humDate = convertToLocalDate(humDateStr);
+                const windDate = convertToLocalDate(windDateStr);
+                const rainDate = convertToLocalDate(rainDateStr);
+
+                // === Temperature ===
+                if (stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu && tempDate && tempDate.slice(0, 10) == date.slice(0, 10)) {
                     const temp = parseFloat(stacja.temperatura_gruntu);
-                    const tempText = `${temp.toFixed(1)}°C`;
-                    const bgColor = getTemperatureColor(temp);
-
-                    const tempIcon = L.divIcon({
+                    const color = getTemperatureColor(temp);
+                    const icon = L.divIcon({
                         className: 'custom-temp-icon',
-                        html: `<div class="marker-label" style="background-color:${bgColor}">${tempText}</div>`,
-                        iconSize: [50, 20],
+                        html: `<div class="marker-label" style="background-color:${color}">${temp.toFixed(1)} °C</div>`,
+                        iconSize: [55, 20],
                     });
 
-                    const marker = L.marker(
-                        [parseFloat(stacja.lat), parseFloat(stacja.lon)],
-                        { icon: tempIcon }
-                    ).addTo(map);
-
-                    marker.bindPopup(`
+                    const marker = L.marker([lat, lon], { icon }).bindPopup(`
                         <strong>${stacja.nazwa_stacji}</strong><br>
-                        Data: ${stacja.temperatura_gruntu_data ?? 'brak'}<br>
-                        Temp: ${tempText}<br>
-                        Wiatr: ${stacja.wiatr_srednia_predkosc ?? 'brak'} m/s<br>
-                        Wilgotność: ${stacja.wilgotnosc_wzgledna ?? 'brak'}%
+                        Temp: ${temp.toFixed(1)}°C <br>
+                        Data: ${tempDate ?? 'brak'}<br>
                     `);
+                    tempLayerGroup.addLayer(marker);
                 }
+                // === Humidity ===
+                if (stacja.wilgotnosc_wzgledna !== null && stacja.wilgotnosc_wzgledna && humDate && humDate.slice(0, 10) == date.slice(0, 10)) {
+                    const hum = parseFloat(stacja.wilgotnosc_wzgledna);
+                    const color = getHumidityColor(hum);
+                    const icon = L.divIcon({
+                        className: 'custom-temp-icon',
+                        html: `<div class="marker-label" style="background-color:${color}">${hum.toFixed(0)} %</div>`,
+                        iconSize: [55, 20],
+                    });
+
+                    const marker = L.marker([lat, lon], { icon }).bindPopup(`
+                        <strong>${stacja.nazwa_stacji}</strong><br>
+                        Wilgotność: ${hum.toFixed(0)}% <br>
+                         Data: ${humDate ?? 'brak'}<br>
+                    `);
+                    humidityLayerGroup.addLayer(marker);
+                }
+
+                // === Wind ===
+                if (stacja.wiatr_srednia_predkosc !== null && stacja.wiatr_srednia_predkosc && stacja.wiatr_srednia_predkosc != 0 && windDate && windDate.slice(0, 10) == date.slice(0, 10)) {
+                    const wind = parseFloat(stacja.wiatr_srednia_predkosc);
+                    const color = getWindColor(wind);
+                    const icon = L.divIcon({
+                        className: 'custom-temp-icon',
+                        html: `<div class="marker-label" style="background-color:${color}">${wind.toFixed(1)} m/s</div>`,
+                        iconSize: [55, 20],
+                    });
+
+                    const marker = L.marker([lat, lon], { icon }).bindPopup(`
+                        <strong>${stacja.nazwa_stacji}</strong><br>
+                        Wiatr: ${wind.toFixed(1)} m/s <br>
+                        Data: ${windDate ?? 'brak'}<br>
+                    `);
+                    windLayerGroup.addLayer(marker);
+                }
+
+                // === Rainfall ===
+                if (stacja.opad_10min !== null && stacja.opad_10min && stacja.opad_10min != 0 && rainDate && rainDate.slice(0, 10) == date.slice(0, 10)) {
+                    const rain = parseFloat(stacja.opad_10min);
+                    const color = getRainColor(rain);
+                    const icon = L.divIcon({
+                        className: 'custom-temp-icon',
+                        html: `<div class="marker-label" style="border-color: blue; color: blue; background-color:${color}">${rain.toFixed(1)} mm</div>`,
+                        iconSize: [55, 20],
+                    });
+
+                    const marker = L.marker([lat, lon], { icon }).bindPopup(`
+                        <strong>${stacja.nazwa_stacji}</strong><br>
+                        Opad: ${rain.toFixed(1)} mm / 10min <br>
+                        Data: ${rainDate ?? 'brak'}<br>
+                    `);
+                    rainLayerGroup.addLayer(marker);
+                }
+
+
+                tempLayerGroup.addTo(map); // show by default
+
+
+                // if (stacja.lat && stacja.lon) {
+                //     const hasTemp = stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu && stacja.temperatura_gruntu_data;
+                //     const tempDateStr = stacja.temperatura_gruntu_data;
+                //      // Skip if temp date is missing or invalid
+                //     if (!tempDateStr || isNaN(new Date(tempDateStr))) return;
+
+                //     if (!hasTemp) return; // Skip if no temperature
+
+                //     // Get only the date part (YYYY-MM-DD)
+                //     const tempDate = new Date(tempDateStr).toISOString().slice(0, 10);
+                //     const today = new Date().toISOString().slice(0, 10);
+
+                //     // Skip if the temp data is before today
+                //      if (tempDate < today) return;
+
+                //     const temp = parseFloat(stacja.temperatura_gruntu);
+                //     const tempText = `${temp.toFixed(1)}°C`;
+                //     const bgColor = getTemperatureColor(temp);
+
+                //     const tempIcon = L.divIcon({
+                //         className: 'custom-temp-icon',
+                //         html: `<div class="marker-label" style="background-color:${bgColor}">${tempText}</div>`,
+                //         iconSize: [50, 20],
+                //     });
+
+                //     const marker = L.marker(
+                //         [parseFloat(stacja.lat), parseFloat(stacja.lon)],
+                //         { icon: tempIcon }
+                //     );
+
+                //     marker.bindPopup(`
+                //         <strong>${stacja.nazwa_stacji}</strong><br>
+                //         Data: ${stacja.temperatura_gruntu_data ?? 'brak'}<br>
+                //         Temp: ${tempText}<br>
+                //         Wiatr: ${stacja.wiatr_srednia_predkosc ?? 'brak'} m/s<br>
+                //         Wilgotność: ${stacja.wilgotnosc_wzgledna ?? 'brak'}%
+                //     `);
+                //     tempLayerGroup.addLayer(marker); // add to group
+                // }
             });
+
+            // tempLayerGroup.addTo(map);
+            // humidityLayerGroup.addTo(map);
+            // windLayerGroup.addTo(map);
+            // rainLayerGroup.addTo(map);
             // stacjeData.forEach(stacja => {
             //     if (stacja.lat && stacja.lon) {
             //         const hasTemp = stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu !== '';
 
-            //         if (!hasTemp) return; // ⛔ Skip stations with no temperature
+            //         if (!hasTemp) return; //  Skip stations with no temperature
 
             //         const marker = L.marker(
             //             [parseFloat(stacja.lat), parseFloat(stacja.lon)],
@@ -185,22 +403,24 @@
             //         `);
             //     }
             // });
-            var marker_click = null; // initialize
 
-            function onMapClick(e) {
-                if (marker_click) {
-                    map.removeLayer(marker_click); // remove previous marker
-                }
+            // //klikalny marker
+            // var marker_click = null; // initialize
 
-                marker_click = L.marker(e.latlng).addTo(map);
-                marker_click.bindPopup(
-                    "<b>You clicked the map at</b> " +
-                    e.latlng.lat.toFixed(5) + " " +
-                    e.latlng.lng.toFixed(5)
-                ).openPopup();
-            }
+            // function onMapClick(e) {
+            //     if (marker_click) {
+            //         map.removeLayer(marker_click); // remove previous marker
+            //     }
+            //     var data = new Date().toISOString().slice(0, 10);
+            //     marker_click = L.marker(e.latlng).addTo(map);
+            //     marker_click.bindPopup(
+            //         `<b>You clicked the map at</b><br>
+            //             ${e.latlng.lat.toFixed(5)} ${e.latlng.lat.toFixed(5)}<br>
+            //             Data: ${data ?? 'brak'}<br>
+            //         `).openPopup();
+            // }
+            // map.on('click', onMapClick);
 
-            map.on('click', onMapClick);
         </script>
     @endPushOnce
 
