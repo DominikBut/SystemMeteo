@@ -1,4 +1,5 @@
 <x-guest-layout>
+
     @pushOnce('css')
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
             integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -35,17 +36,30 @@
                     <button style="opacity: 0.5;" class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(humidityLayerGroup, this, 'humidity')">Wilgotność</button>
                     <button style="opacity: 0.5;" class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(windLayerGroup, this,'wind')">Wiatr</button>
                     <button style="opacity: 0.5;" class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(rainLayerGroup, this, 'rain')">Opady</button>
+                    <button style="opacity: 0.5;" class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-gray-300 hover:bg-slate-300"
+                        onclick="toggleLayer(allStationsLayerGroup, this, 'all')">
+                        Pokaż wszystkie stacje
+                    </button>
                 </div>
                 {{ $status .': '. $AskedAt . ' (nowe dane co 10 min (najswiezsze z 20min przed))'}}
                 <div class="flex flex-row p-2">
 
                     <div id="stationListWrapper" class="w-1/5  border-r border-gray-300 p-2 bg-white text-sm">
-                        <input
+                        <div class="flex items-center gap-2 mb-2">
+                            <input
                                 type="text"
                                 id="stationSearch"
                                 placeholder="Szukaj stacji..."
-                                class="w-full p-2 border border-gray-400 mb-2 rounded"
+                                class="flex-1 p-2 border border-gray-400 rounded"
                             />
+
+                            <button
+                                id="clearStationSearch"
+                                class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded"
+                            >
+                                X
+                            </button>
+                        </div>
                             <div id="stationList" class="h-[48rem] overflow-y-auto">
                                 @foreach (collect($data)->sortBy('nazwa_stacji') as $stacja)
                                     @if ($stacja->lat && $stacja->lon)
@@ -109,13 +123,18 @@
                             temp: {},
                             humidity: {},
                             wind: {},
-                            rain: {}
+                            rain: {},
+                            all: {}
                         };
             let currentLayerType = 'temp'; // default visible
+
+            const allStationsLayerGroup = L.layerGroup();
             const tempLayerGroup = L.layerGroup(); // create the group
             const humidityLayerGroup = L.layerGroup();
             const windLayerGroup = L.layerGroup();
             const rainLayerGroup = L.layerGroup();
+
+
             document.querySelectorAll('#stationList div[data-kod]').forEach(item => {
                     item.addEventListener('click', () => {
                         const kod = item.getAttribute('data-kod');
@@ -132,7 +151,7 @@
 
            function toggleLayer(activeLayer, activeBtn, typeName) {
                 // Define all layers and buttons
-                const layers = [tempLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup];
+                const layers = [tempLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup, allStationsLayerGroup];
                 const buttons = document.querySelectorAll('#layerToggles button');
 
                 // Remove all layers from the map
@@ -299,7 +318,7 @@
                 month: '2-digit',
                 day: '2-digit'
             });
-            console.log(date);
+            console.log("Dzisiejsza data: " + date);
 
             // Loop through Laravel data passed to JS
             stacjeData.forEach(stacja => {
@@ -307,7 +326,21 @@
 
                 const lat = parseFloat(stacja.lat);
                 const lon = parseFloat(stacja.lon);
-
+                const markerc = L.circleMarker([lat, lon], {
+                    radius: 6,
+                    color: '#666',
+                    fillColor: '#999',
+                    fillOpacity: 0.8,
+                    weight: 1
+                }).bindPopup(`<strong>${stacja.nazwa_stacji}</strong><br>Kod: ${stacja.kod_stacji}`);
+                allStationsLayerGroup.addLayer(markerc);
+                stationMarkers.all[stacja.kod_stacji] = markerc;
+                markerc.on('mouseover', function () {
+                    this.setStyle({ radius: 8, color: '#333' });
+                });
+                markerc.on('mouseout', function () {
+                    this.setStyle({ radius: 6, color: '#666' });
+                });
 
                 let tempDateStr = stacja.temperatura_gruntu_data;
                 let humDateStr = stacja.wilgotnosc_wzgledna_data;
@@ -364,7 +397,7 @@
                     const icon = L.divIcon({
                         className: 'custom-temp-icon',
                         html: `<div class="marker-label" style="background-color:${color}">${wind.toFixed(1)} m/s</div>`,
-                        iconSize: [55, 20],
+                        iconSize: [65, 20],
                     });
 
                     const marker = L.marker([lat, lon], { icon }).bindPopup(`
@@ -504,6 +537,13 @@
 
                     item.style.display = matches ? 'block' : 'none';
                 });
+            });
+            document.getElementById('clearStationSearch').addEventListener('click', function () {
+                const searchInput = document.getElementById('stationSearch');
+                const items = document.querySelectorAll('#stationList .station-list-item');
+
+                searchInput.value = '';
+                searchInput.dispatchEvent(new Event('input'));
             });
 
         </script>
