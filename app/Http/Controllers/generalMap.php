@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -17,9 +19,12 @@ class generalMap extends Controller
                 if ($response->successful()) {
                     Cache::put('DaneStacji', json_decode($response->body()), now()->addMinutes(10));
                     $dane = Cache::get('DaneStacji');
+                    $askTime = Carbon::now()->format('Y-m-d H:i:s');
+                    Cache::put('AskTime', $askTime);
                     return view('general_map', [
                         'data' => $dane,
-                        'status' => 'zapisano'
+                        'status' => 'zapisano',
+                        'AskedAt' => $askTime,
                     ]);
                 } else {
                     // Handle the error
@@ -27,9 +32,11 @@ class generalMap extends Controller
                 }
             } else {
                 $dane = Cache::get('DaneStacji');
+                $askTime = Cache::get('AskTime');
                 return view('general_map', [
                     'data' => $dane,
-                    'status' => 'odczytano'
+                    'status' => 'odczytano z api',
+                    'AskedAt' => $askTime,
                 ]);
             }
         } catch (\Throwable $th) {
