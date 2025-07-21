@@ -16,6 +16,7 @@
         miesieczne -> tylko stare lata od 2024 ->reszta samemu wyliczyc <br>
         hydro -> useless <br>
         synop -> strasznie duzo o chmurasz lodzie itp <br>
+        zrobic wg gpt test na schedzule run i pobierac regularnie dane z api do json pliku  z data dzis-dokladac kolejno a jak wybije 00 do sorta wg stacji i zapis z data z tego dnia.
         @if ($info)
             <div class="text-red-600">{{ $info }}</div>
         @endif

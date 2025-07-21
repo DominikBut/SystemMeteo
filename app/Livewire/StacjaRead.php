@@ -23,19 +23,23 @@ class StacjaRead extends Component
     {
         $this->stationData = [];
         $this->error = null;
+        $this->info = null;
         $delimiter = ',';
+
         $fileName = sprintf('%04d_%02d_k.zip', $this->year, $this->month);
-        $remoteUrl = "https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/dobowe/klimat/{$this->year}/{$fileName}";
-        $localZipPath = storage_path("imgw/zips/") . $fileName;
         $csvFileName = sprintf('k_d_%02d_%04d.csv', $this->month, $this->year);
-        $extractedCsvPath = storage_path("imgw/csv/") . $csvFileName;
+
+        $relativeFolder = "imgw/archived/dobowe/{$this->year}";
+        $relativeZipPath = "{$relativeFolder}/{$fileName}";
+        $relativeCsvPath = "{$relativeFolder}/{$csvFileName}";
 
         // Step 1: Download ZIP if not exists
-        if (!file_exists($localZipPath)) {
+
+        if (!Storage::exists($relativeCsvPath) && !Storage::exists($relativeZipPath)) {
             try {
-                $response = Http::timeout(30)->get($remoteUrl);
+                $response = Http::timeout(30)->get("https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/dobowe/klimat/{$this->year}/{$fileName}");
                 if ($response->ok()) {
-                    file_put_contents($localZipPath, $response->body());
+                    Storage::put($relativeZipPath, $response->body());
                     $this->info = "Pobrano.";
                 } else {
                     $this->error = "Nie udało się pobrać pliku ZIP.";
@@ -49,12 +53,17 @@ class StacjaRead extends Component
             $this->info = "Istnieje zip.";
         }
 
-        // Step 2: Extract CSV
-        if (!file_exists($extractedCsvPath)) {
+        // Step 2: Extract CSV if not already extracted
+        if (!Storage::exists($relativeCsvPath)) {
+            $zipPath = Storage::path($relativeZipPath);
+            $extractPath = Storage::path($relativeFolder);
+
             $zip = new ZipArchive();
-            if ($zip->open($localZipPath) === true) {
-                $zip->extractTo(storage_path('imgw/csv/'));
+            if ($zip->open($zipPath) === true) {
+                $zip->extractTo($extractPath);
                 $zip->close();
+                Storage::delete($relativeZipPath); // delete ZIP after extraction
+                Storage::delete($relativeFolder . '/' . sprintf('k_d_t_%02d_%04d.csv', $this->month, $this->year)); //delete some additional .csv that comes from before 2024.05 months
                 $this->info = "Rozpakowano.";
             } else {
                 $this->error = "Nie można rozpakować pliku ZIP.";
@@ -64,32 +73,33 @@ class StacjaRead extends Component
             $this->info = "Istnieje plik.";
         }
 
-        // Step 3: Read CSV and find matching row
+        // Step 3: Read CSV and find matching rows
         try {
+            $csvPath = Storage::path($relativeCsvPath);
             $line_of_text = [];
-            $file_handle = fopen($extractedCsvPath, 'r');
+            $file_handle = fopen($csvPath, 'r');
+
             while ($csvRow = fgetcsv($file_handle, null, $delimiter)) {
                 if (empty($csvRow) || count($csvRow) < 5) continue;
+
                 $csvRow = array_map(function ($value) {
-                    $value = trim($value); // remove leading/trailing spaces
-                    $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value); // fix encoding
+                    $value = trim($value);
+                    $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
                     return $value;
                 }, $csvRow);
+
                 $stationId = (int) $csvRow[0];
                 $year = (int) $csvRow[2];
                 $month = (int) $csvRow[3];
-                // $day = (int) $csvRow[4];
 
                 if ($stationId === (int) $this->stationId) {
                     $line_of_text[] = $csvRow;
-                    // break;
                 }
             }
 
+            fclose($file_handle);
             $this->stationData = $line_of_text;
 
-            fclose($file_handle);
-            // dd($this->stationData);
             if (empty($this->stationData)) {
                 $this->error = "Nie znaleziono danych dla podanej stacji i daty.";
             }
