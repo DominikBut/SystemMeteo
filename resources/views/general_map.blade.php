@@ -312,13 +312,14 @@
                 });
             }
 
-            // Use only recent data
-            const date = new Date().toLocaleDateString('pl-PL', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
-            console.log("Dzisiejsza data: " + date);
+            function isRecentEnough(utcString, maxAgeMinutes = 120) {
+                if (!utcString) return false;
+                const utcDate = new Date(utcString.replace(" ", "T") + "Z"); // zapewnia UTC
+                const now = new Date(); // lokalny czas
+                const diffMinutes = (now - utcDate) / (1000 * 60);
+                return diffMinutes >= 0 && diffMinutes <= maxAgeMinutes;
+            }
+
 
             // Loop through Laravel data passed to JS
             stacjeData.forEach(stacja => {
@@ -342,19 +343,9 @@
                     this.setStyle({ radius: 6, color: '#666' });
                 });
 
-                let tempDateStr = stacja.temperatura_gruntu_data;
-                let humDateStr = stacja.wilgotnosc_wzgledna_data;
-                let windDateStr = stacja.wiatr_srednia_predkosc_data;
-                let rainDateStr = stacja.opad_10min_data;
-
-                let tempDate = convertToLocalDate(tempDateStr);
-                let humDate = convertToLocalDate(humDateStr);
-                let windDate = convertToLocalDate(windDateStr);
-                let rainDate = convertToLocalDate(rainDateStr);
-
 
                 // === Temperature ===
-                if (stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu && tempDate && tempDate.slice(0, 10) == date.slice(0, 10)) {
+                if (stacja.temperatura_gruntu !== null && isRecentEnough(stacja.temperatura_gruntu_data)) {
                     const temp = parseFloat(stacja.temperatura_gruntu);
                     const color = getTemperatureColor(temp);
                     const icon = L.divIcon({
@@ -362,7 +353,7 @@
                         html: `<div class="marker-label" style="background-color:${color}">${temp.toFixed(1)} °C</div>`,
                         iconSize: [55, 20],
                     });
-
+                    let tempDate = convertToLocalDate(stacja.temperatura_gruntu_data);
                     const marker = L.marker([lat, lon], { icon }).bindPopup(`
                         <strong>${stacja.nazwa_stacji}</strong><br>
                         Temperatura: ${temp.toFixed(1)}°C <br>
@@ -372,7 +363,7 @@
                     stationMarkers.temp[stacja.kod_stacji] = marker; // save reference
                 }
                 // === Humidity ===
-                if (stacja.wilgotnosc_wzgledna !== null && stacja.wilgotnosc_wzgledna && humDate && humDate.slice(0, 10) == date.slice(0, 10)) {
+                if (stacja.wilgotnosc_wzgledna !== null && isRecentEnough(stacja.wilgotnosc_wzgledna_data)) {
                     const hum = parseFloat(stacja.wilgotnosc_wzgledna);
                     const color = getHumidityColor(hum);
                     const icon = L.divIcon({
@@ -380,7 +371,7 @@
                         html: `<div class="marker-label" style="background-color:${color}">${hum.toFixed(0)} %</div>`,
                         iconSize: [55, 20],
                     });
-
+                    let humDate = convertToLocalDate(stacja.wilgotnosc_wzgledna_data);
                     const marker = L.marker([lat, lon], { icon }).bindPopup(`
                         <strong>${stacja.nazwa_stacji}</strong><br>
                         Wilgotność: ${hum.toFixed(0)}% <br>
@@ -391,7 +382,7 @@
                 }
 
                 // === Wind ===
-                if (stacja.wiatr_srednia_predkosc !== null && stacja.wiatr_srednia_predkosc && stacja.wiatr_srednia_predkosc != 0 && windDate && windDate.slice(0, 10) == date.slice(0, 10)) {
+                if (stacja.wiatr_srednia_predkosc !== null && isRecentEnough(stacja.wiatr_srednia_predkosc_data) && stacja.wiatr_srednia_predkosc != 0) {
                     const wind = parseFloat(stacja.wiatr_srednia_predkosc);
                     const color = getWindColor(wind);
                     const icon = L.divIcon({
@@ -399,7 +390,7 @@
                         html: `<div class="marker-label" style="background-color:${color}">${wind.toFixed(1)} m/s</div>`,
                         iconSize: [65, 20],
                     });
-
+                    let windDate = convertToLocalDate(stacja.wiatr_srednia_predkosc_data);
                     const marker = L.marker([lat, lon], { icon }).bindPopup(`
                         <strong>${stacja.nazwa_stacji}</strong><br>
                         Wiatr: ${wind.toFixed(1)} m/s <br>
@@ -410,7 +401,7 @@
                 }
 
                 // === Rainfall ===
-                if (stacja.opad_10min !== null && stacja.opad_10min && stacja.opad_10min != 0 && rainDate && rainDate.slice(0, 10) == date.slice(0, 10)) { //
+                if (stacja.opad_10min !== null && isRecentEnough(stacja.wiatr_srednia_predkosc_data) && stacja.opad_10min != 0) {
                     const rain = parseFloat(stacja.opad_10min);
                     const color = getRainColor(rain);
                     const icon = L.divIcon({
@@ -418,7 +409,7 @@
                         html: `<div class="marker-label" style="border-color: lightblue; border-width: 1px; opacity: 0.8; color: blue; background-color:${color}">${rain.toFixed(1)} mm</div>`,
                         iconSize: [55, 20],
                     });
-
+                    let rainDate = convertToLocalDate(stacja.opad_10min_data);
                     const marker = L.marker([lat, lon], { icon }).bindPopup(`
                         <strong>${stacja.nazwa_stacji}</strong><br>
                         Opad: ${rain.toFixed(1)} mm / 10min <br>

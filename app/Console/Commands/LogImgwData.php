@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -53,9 +54,19 @@ class LogImgwData extends Command
             }
 
             // Build year/month path
-            $year = now()->format('Y');
-            $month = now()->format('m');
-            $date = now()->format('Y-m-d');
+            $timestamps = array_filter(array_column($data, 'temperatura_gruntu_data'));
+
+            if (empty($timestamps)) {
+                Log::channel('imgw')->warning('No temperatura_gruntu_data found in data; falling back to now().');
+                $date = now()->format('Y-m-d');
+            } else {
+                $latestUTC = max($timestamps);
+                $latestUTC2 = Carbon::parse($latestUTC, 'UTC')->setTimezone('Europe/Warsaw');
+                $date = $latestUTC2->format('Y-m-d');
+            }
+
+            $year = substr($date, 0, 4);
+            $month = substr($date, 5, 2);
 
             $folderPath = "imgw/api-data/{$year}/{$month}";
             $filename = "{$folderPath}/{$date}.json";
@@ -85,8 +96,8 @@ class LogImgwData extends Command
             // Cache new data
             Cache::put('imgw_last_data', $currentJson, now()->addHours(12));
 
-            Log::channel('imgw')->info("Appended raw data to {$filename} at " . now()->format('H:i:s'));
-            $this->info("Appended raw data to {$filename} at " . now()->format('H:i:s'));
+            Log::channel('imgw')->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
+            $this->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
         } catch (\Exception $e) {
             Log::channel('imgw')->error('Exception: ' . $e->getMessage());
             $this->error('Exception: ' . $e->getMessage());

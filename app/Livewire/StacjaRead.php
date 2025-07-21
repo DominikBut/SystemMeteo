@@ -4,20 +4,25 @@ namespace App\Livewire;
 
 use ZipArchive;
 use Livewire\Component;
+use Livewire\Attributes\Url;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class StacjaRead extends Component
 {
-
+    #[Url(except: '', keep: true, as: 'id')]
     public $stationId = 249190560;
+    #[Url(except: '', keep: true)]
     public $year = 2025;
+    #[Url(except: '', keep: true)]
     public $month = 4;
     // public $day;
 
     public $stationData = [];
     public $error = null;
     public $info = null;
+
 
     public function loadData()
     {
@@ -110,6 +115,7 @@ class StacjaRead extends Component
 
     public function render()
     {
+        $this->loadData();
         return view('livewire.stacja-read');
     }
 }
