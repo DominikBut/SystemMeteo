@@ -17,6 +17,9 @@
         hydro -> useless <br>
         synop -> strasznie duzo o chmurasz lodzie itp <br>
         zrobic wg gpt test na schedzule run i pobierac regularnie dane z api do json pliku  z data dzis-dokladac kolejno a jak wybije 00 do sorta wg stacji i zapis z data z tego dnia.
+        <br>jak nie znajdzie data w plikach w katalogu archive i w serverze to sprawdza czy jest w api-data przerobiona wersja ale za to jest dopisek ze nie oficjalne -> moze dac checka w w komendzie co robi download zeby jak sie miesiac zmienia czy rok to robilo tez zestawienie miesieczne i roczne z pozostalych
+        <br>last 7 days full time
+        <br>reszta do terminowych co 6 h temp 6 12 18 i z tego dobowe?
         @if ($info)
             <div class="text-red-600">{{ $info }}</div>
         @endif

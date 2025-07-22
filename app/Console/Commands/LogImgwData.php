@@ -32,8 +32,9 @@ class LogImgwData extends Command
 
     public function handle()
     {
+        ini_set('memory_limit', '512M');
         try {
-            $response = Http::timeout(10)->get('https://danepubliczne.imgw.pl/api/data/meteo/');
+            $response = Http::timeout(30)->get('https://danepubliczne.imgw.pl/api/data/meteo/');
 
             if (!$response->successful()) {
                 Log::channel('imgw')->error('Failed to fetch IMGW data: HTTP error');
@@ -94,7 +95,7 @@ class LogImgwData extends Command
             Storage::put($filename, json_encode($existing, JSON_UNESCAPED_UNICODE));
 
             // Cache new data
-            Cache::put('imgw_last_data', $currentJson, now()->addHours(12));
+            Cache::put('imgw_last_data', $currentJson, now()->addHours(2));
 
             Log::channel('imgw')->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
             $this->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
