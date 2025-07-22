@@ -16,10 +16,17 @@
         miesieczne -> tylko stare lata od 2024 ->reszta samemu wyliczyc <br>
         hydro -> useless <br>
         synop -> strasznie duzo o chmurasz lodzie itp <br>
-        zrobic wg gpt test na schedzule run i pobierac regularnie dane z api do json pliku  z data dzis-dokladac kolejno a jak wybije 00 do sorta wg stacji i zapis z data z tego dnia.
         <br>jak nie znajdzie data w plikach w katalogu archive i w serverze to sprawdza czy jest w api-data przerobiona wersja ale za to jest dopisek ze nie oficjalne -> moze dac checka w w komendzie co robi download zeby jak sie miesiac zmienia czy rok to robilo tez zestawienie miesieczne i roczne z pozostalych
         <br>last 7 days full time
-        <br>reszta do terminowych co 6 h temp 6 12 18 i z tego dobowe?
+        <br>reszta do terminowych co 6 h temp 6 12 18 i z tego dobowez dobowych miesieczne??
+        <br>mojew dane:
+        <br>dla last 7 days mam full 24h co 30min (api-data)
+        <br>miesiac caly -> terminowe 3 wartosci na dzien 6,12,18 (collected/terminowe)
+        <br>jezeli chodzi o wystwielanie to zrobic warunek ze najpierw szuka w archive czy jest plik potem dowload czy jest  jezeli nie to wyswietl z collected i zrobic 2 zmienne zeby latwiej to zrozoznic przy wyswietlaniu)
+        <br>fo wyswietlania last 24h z api-data i last 7 days
+        <br>last 7 24h tez na biezoco min amx
+        <br>jak wyswietlam terminowe to max min na dzien liczone na biezaca (wybor dnia z miesiaca lub caly miesiac z 3 kreskamik z godzinami)
+        <br>
         @if ($info)
             <div class="text-red-600">{{ $info }}</div>
         @endif
