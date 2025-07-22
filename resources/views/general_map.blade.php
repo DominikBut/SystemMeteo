@@ -28,8 +28,8 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
     @endPushOnce
-    <div class="py-12">
-        <div class=" max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="p-6">{{--  py-12 max-w-7xl mx-auto sm:px-6 lg:px-8--}}
+        <div class=" ">
             <div class="bg-lime-100 overflow-hidden shadow-xl sm:rounded-lg">
                 <div id="layerToggles" class="p-4">
                     <button class="p-2 text-center mx-2 outline-4 rounded-lg outline-cyan-500 bg-cyan-300 hover:bg-slate-300" onclick="toggleLayer(tempLayerGroup, this, 'temp')">Temperatura</button>
@@ -42,38 +42,43 @@
                     </button>
                 </div>
                 {{ $status .': '. $AskedAt . ' (nowe dane co 10 min (najswiezsze z 20min przed))'}}
-                <div class="flex flex-row p-2">
+                <div class="flex flex-row p-2 bg-white">
 
-                    <div id="stationListWrapper" class="w-1/5  border-r border-gray-300 p-2 bg-white text-sm">
+                    <div id="stationListWrapper" class="w-1/6  border-r border-gray-300 p-2 bg-white text-sm">
                         <div class="flex items-center gap-2 mb-2">
-                            <input
-                                type="text"
-                                id="stationSearch"
-                                placeholder="Szukaj stacji..."
-                                class="flex-1 p-2 border border-gray-400 rounded"
-                            />
 
-                            <button
+                            <div  class="relative my-4 flex w-full max-w-xs flex-col gap-1 text-slate-700 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="absolute left-2 top-7 size-5 -translate-y-1/2 text-slate-700/50 " aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                                </svg>
+                                <input id="stationSearch"  type="search" placeholder="Szukaj stacji..." class="w-full border border-slate-300 rounded-xl bg-white px-2 py-1.5 pl-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-75 " name="search" aria-label="Search" placeholder="Search"/>
+                            </div>
+                            {{-- <button
                                 id="clearStationSearch"
                                 class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded"
                             >
                                 X
-                            </button>
+                            </button> --}}
                         </div>
-                            <div id="stationList" class="h-[48rem] overflow-y-auto">
+                            <h4>to laguje ładowanie</h4>
+                            <div id="stationList" class="h-[40rem] overflow-y-auto">
                                 @foreach (collect($data)->sortBy('nazwa_stacji') as $stacja)
-                                    @if ($stacja->lat && $stacja->lon)
                                         <div
                                             class="station-list-item cursor-pointer hover:bg-gray-200 px-2 py-1 border-b"
-                                            data-kod="{{ $stacja->kod_stacji }}"
+                                            data-kod="{{ $stacja->kod_stacji }}" onclick="focusStation('{{ $stacja->kod_stacji }}')"
                                         >
                                             {{ $stacja->nazwa_stacji }}
                                         </div>
-                                    @endif
                                 @endforeach
                             </div>
                     </div>
-                    <div id="map" class="w-4/5 min-h-[48rem]"></div>
+                    <div class="relative w-5/6 min-h-[48rem]">
+                        <!-- Placeholder (skeleton loader) -->
+                        <div class="absolute top-0 left-0 w-full h-full z-10 animate-pulse bg-gray-300"></div>
+
+                        <!-- Map (initially hidden or placed underneath) -->
+                        <div id="map" class="absolute top-0 left-0 w-full h-full z-20"></div>
+                    </div>
                 </div>
                 @if (!empty($data))
                         {{-- {{ dd($data) }} --}}
@@ -113,12 +118,9 @@
             </div>
         </div>
     </div>
-    <script>
-        const stacjeData = @json($data);
-    </script>
-    @pushOnce('scripts2')
-        <script>
 
+        <script>
+            const stacjeData = @json($data);
             const stationMarkers = {
                             temp: {},
                             humidity: {},
@@ -135,19 +137,13 @@
             const rainLayerGroup = L.layerGroup();
 
 
-            document.querySelectorAll('#stationList div[data-kod]').forEach(item => {
-                    item.addEventListener('click', () => {
-                        const kod = item.getAttribute('data-kod');
-                        const marker = stationMarkers[currentLayerType]?.[kod];
-
-                        if (marker) {
-                            map.setView(marker.getLatLng(), 12);
-                            marker.openPopup();
-                        } else {
-                            console.log("Brak danych dla tej stacji w wybranej warstwie.");
-                        }
-                    });
-            });
+            function focusStation(kod) {
+                const marker = stationMarkers[currentLayerType]?.[kod];
+                if (marker) {
+                    map.setView(marker.getLatLng(), 12);
+                    marker.openPopup();
+                }
+            }
 
            function toggleLayer(activeLayer, activeBtn, typeName) {
                 // Define all layers and buttons
@@ -323,19 +319,21 @@
 
             // Loop through Laravel data passed to JS
             stacjeData.forEach(stacja => {
-            if (!stacja.lat || !stacja.lon) return;
 
                 const lat = parseFloat(stacja.lat);
                 const lon = parseFloat(stacja.lon);
+
                 const markerc = L.circleMarker([lat, lon], {
                     radius: 6,
                     color: '#666',
-                    fillColor: '#999',
+                    fillColor: 'cyan',
                     fillOpacity: 0.8,
                     weight: 1
                 }).bindPopup(`<strong>${stacja.nazwa_stacji}</strong><br>Kod: ${stacja.kod_stacji}`);
+
                 allStationsLayerGroup.addLayer(markerc);
                 stationMarkers.all[stacja.kod_stacji] = markerc;
+
                 markerc.on('mouseover', function () {
                     this.setStyle({ radius: 8, color: '#333' });
                 });
@@ -350,7 +348,7 @@
                     const color = getTemperatureColor(temp);
                     const icon = L.divIcon({
                         className: 'custom-temp-icon',
-                        html: `<div class="marker-label" style="background-color:${color}">${temp.toFixed(1)} °C</div>`,
+                        html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${temp.toFixed(1)} °C</div>`,
                         iconSize: [55, 20],
                     });
                     let tempDate = convertToLocalDate(stacja.temperatura_gruntu_data);
@@ -368,7 +366,7 @@
                     const color = getHumidityColor(hum);
                     const icon = L.divIcon({
                         className: 'custom-temp-icon',
-                        html: `<div class="marker-label" style="background-color:${color}">${hum.toFixed(0)} %</div>`,
+                        html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${hum.toFixed(0)} %</div>`,
                         iconSize: [55, 20],
                     });
                     let humDate = convertToLocalDate(stacja.wilgotnosc_wzgledna_data);
@@ -387,8 +385,8 @@
                     const color = getWindColor(wind);
                     const icon = L.divIcon({
                         className: 'custom-temp-icon',
-                        html: `<div class="marker-label" style="background-color:${color}">${wind.toFixed(1)} m/s</div>`,
-                        iconSize: [65, 20],
+                        html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${wind.toFixed(1)} km/h</div>`,
+                        iconSize: [70, 20],
                     });
                     let windDate = convertToLocalDate(stacja.wiatr_srednia_predkosc_data);
                     const marker = L.marker([lat, lon], { icon }).bindPopup(`
@@ -421,7 +419,7 @@
 
 
                 tempLayerGroup.addTo(map); // show by default
-                updateStationListAvailability();
+
 
                 // if (stacja.lat && stacja.lon) {
                 //     const hasTemp = stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu && stacja.temperatura_gruntu_data;
@@ -518,6 +516,7 @@
                     }
                 });
             }
+
             document.getElementById('stationSearch').addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
                 const items = document.querySelectorAll('#stationList .station-list-item');
@@ -529,16 +528,17 @@
                     item.style.display = matches ? 'block' : 'none';
                 });
             });
-            document.getElementById('clearStationSearch').addEventListener('click', function () {
-                const searchInput = document.getElementById('stationSearch');
-                const items = document.querySelectorAll('#stationList .station-list-item');
+            updateStationListAvailability();
+            // document.getElementById('clearStationSearch').addEventListener('click', function () {
+            //     const searchInput = document.getElementById('stationSearch');
+            //     const items = document.querySelectorAll('#stationList .station-list-item');
 
-                searchInput.value = '';
-                searchInput.dispatchEvent(new Event('input'));
-            });
+            //     searchInput.value = '';
+            //     searchInput.dispatchEvent(new Event('input'));
+            // });
 
         </script>
-    @endPushOnce
+
 
      {{-- +"kod_stacji": "352220385"
     +"nazwa_stacji": "SIEDLCE"
