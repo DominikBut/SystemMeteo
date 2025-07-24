@@ -10,7 +10,7 @@
         <button wire:click="loadData" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             Pokaż dane
         </button>
-        odczyt z listy stacji z serwera pliku wybor z searchem z listy -> wybor -> zapytanie do api na podstawie id + odczyt z csv <br>
+        // TODO odczyt z listy stacji z serwera pliku wybor z searchem z listy -> wybor -> zapytanie do api na podstawie id + odczyt z csv <br>
         terminowe-> 3 na dzien rozne godziny 6 12 18 bez min max tylko srednie <br>
         dobowe -> 1 na dzien plus min max temp bez wiatru <br>
         miesieczne -> tylko stare lata od 2024 ->reszta samemu wyliczyc <br>
