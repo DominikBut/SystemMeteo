@@ -129,10 +129,10 @@ class LogImgwData extends Command
                         return strcmp($a['kod_stacji'], $b['kod_stacji']);
                     });
                     $summaryFile = "imgw/collected/terminowe/{$prevYear}/{$prevMonth}/{$prevDate}.json";
-                    Storage::put($summaryFile, json_encode($summary, JSON_UNESCAPED_UNICODE)); //| JSON_PRETTY_PRINT
+                    Storage::put($summaryFile, json_encode($summary, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)); //| JSON_PRETTY_PRINT
                     $summary = null;
-                    $this->info("Collected summary saved to {$summaryFile}");
-                    Log::channel('imgw')->info("Collected summary saved to {$summaryFile}");
+                    $this->info("Saved terminowe summary to {$summaryFile}");
+                    Log::channel('imgw')->info("Saved terminowe summary to {$summaryFile}");
                 } else {
                     Log::channel('imgw')->warning("Previous day files not found.");
                 }
@@ -155,10 +155,9 @@ class LogImgwData extends Command
                             return $filtered
                                 ->filter(
                                     fn($r) =>
-                                    !empty($r[$field]) &&
-                                        !empty($r[$dataField]) &&
-                                        Str::startsWith($r[$dataField], $prevDate) &&
-                                        is_numeric($r[$field])
+                                    isset($r[$field], $r[$dataField]) &&
+                                        is_numeric($r[$field]) &&
+                                        Str::startsWith($r[$dataField], $prevDate)
                                 )
                                 ->pluck($field)
                                 ->map(fn($v) => $isNumeric ? floatval($v) : $v);
@@ -179,24 +178,24 @@ class LogImgwData extends Command
                             'lat' => (string) ($base['lat'] ?? ''),
                             'data' => (string) $prevDate,
 
-                            'max_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ? (string) round($gruntu->max(), 1) : null,
-                            'min_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ? (string) round($gruntu->min(), 1) : null,
-                            'mean_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ? (string) round($gruntu->avg(), 1) : null,
+                            'max_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ? round($gruntu->max(), 1) : null,
+                            'min_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ? round($gruntu->min(), 1) : null,
+                            'mean_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ?  round($gruntu->avg(), 1) : null,
 
-                            'mean_wiatr_kierunek' => $kierunek->isNotEmpty() ? (string) round($kierunek->avg(), 1) : null,
-                            'mean_wiatr_srednia_predkosc' => $srednia->isNotEmpty() ? (string) round($srednia->avg(), 1) : null,
-                            'max_wiatr_predkosc_maksymalna' => $maks->isNotEmpty() ? (string) round($maks->max(), 1) : null,
-                            'max_wiatr_poryw_10min' => $poryw->isNotEmpty() ? (string) round($poryw->max(), 1) : null,
+                            'mean_wiatr_kierunek' => $kierunek->isNotEmpty() ? round($kierunek->avg(), 1) : null,
+                            'mean_wiatr_srednia_predkosc' => $srednia->isNotEmpty() ?  round($srednia->avg(), 1) : null,
+                            'max_wiatr_predkosc_maksymalna' => $maks->isNotEmpty() ?  round($maks->max(), 1) : null,
+                            'max_wiatr_poryw_10min' => $poryw->isNotEmpty() ? round($poryw->max(), 1) : null,
 
-                            'mean_wilgotnosc_wzgledna' => $wilgotnosc->isNotEmpty() ? (string) round($wilgotnosc->avg(), 1) : null,
-                            'min_wilgotnosc_wzgledna' => $wilgotnosc->isNotEmpty() ? (string) round($wilgotnosc->min(), 1) : null,
-                            'max_wilgotnosc_wzgledna' => $wilgotnosc->isNotEmpty() ? (string) round($wilgotnosc->max(), 1) : null,
+                            'mean_wilgotnosc_wzgledna' => $wilgotnosc->isNotEmpty() ? round($wilgotnosc->avg(), 1) : null,
+                            'min_wilgotnosc_wzgledna' => $wilgotnosc->isNotEmpty() ? round($wilgotnosc->min(), 1) : null,
+                            'max_wilgotnosc_wzgledna' => $wilgotnosc->isNotEmpty() ? round($wilgotnosc->max(), 1) : null,
 
-                            'sum_opad_10min' => $opad->isNotEmpty() ? (string) round($opad->sum(), 1) : null,
+                            'sum_opad_10min' => $opad->isNotEmpty() ?  $opad->sum() : null,
                         ];
                     }
                     $grouped = null;
-                    // Load previous if exists and replace/merge
+                    // Load previous if exists and merge
                     $existing = Storage::exists($dailySummaryPath)
                         ? json_decode(Storage::get($dailySummaryPath), true)
                         : [];
@@ -208,11 +207,107 @@ class LogImgwData extends Command
                         return strcmp($a['kod_stacji'], $b['kod_stacji']);
                     });
                     Storage::put($dailySummaryPath, json_encode($merged, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)); //
-                    Log::channel('imgw')->info("Saved daily summary to {$dailySummaryPath}");
+                    Log::channel('imgw')->info("Updated dobowe summary to {$dailySummaryPath}");
                     $merged = null;
+
+                    $monthlySummaryPath = "imgw/collected/miesieczne/{$prevYear}.json";
+                    if (Storage::exists($dailySummaryPath)) {
+                        // Place this after your daily summary block inside `handle()`
+
+                        $summaryData = json_decode(Storage::get($dailySummaryPath), true);
+
+                        $grouped = collect($summaryData)->groupBy('kod_stacji');
+                        $summaryData = null;
+                        $monthlySummary = [];
+
+                        foreach ($grouped as $kod => $records) {
+                            $base = collect($records)->first();
+
+                            $fieldStats = fn($values) => [
+                                'min' => $values->isNotEmpty() ? round($values->min(), 1) : null,
+                                'max' => $values->isNotEmpty() ? round($values->max(), 1) : null,
+                                'mean' => $values->isNotEmpty() ? round($values->avg(), 1) : null,
+                                'sum' => $values->isNotEmpty() ? round($values->sum(), 1) : null,
+                            ];
+
+                            // Directly collect values without filtering
+                            $pluck = fn($key) => collect($records)->pluck($key)->filter(fn($v) => is_numeric($v))->map(fn($v) => (float) $v);
+
+                            // Example usage
+                            $gruntu_max  = $fieldStats($pluck('max_temp_gruntu_dobowa'));
+                            $gruntu_min  = $fieldStats($pluck('min_temp_gruntu_dobowa'));
+                            $gruntu_mean = $fieldStats($pluck('mean_temp_gruntu_dobowa'));
+
+                            $kierunek = $fieldStats($pluck('mean_wiatr_kierunek'));
+                            $srednia  = $fieldStats($pluck('mean_wiatr_srednia_predkosc'));
+                            $maks     = $fieldStats($pluck('max_wiatr_predkosc_maksymalna'));
+                            $poryw    = $fieldStats($pluck('max_wiatr_poryw_10min'));
+
+                            $wilg_min  = $fieldStats($pluck('min_wilgotnosc_wzgledna'));
+                            $wilg_max  = $fieldStats($pluck('max_wilgotnosc_wzgledna'));
+                            $wilg_mean = $fieldStats($pluck('mean_wilgotnosc_wzgledna'));
+
+                            $opad = $fieldStats($pluck('sum_opad_10min'));
+
+                            $monthlySummary[] = [
+                                'kod_stacji' => (string) ($base['kod_stacji'] ?? ''),
+                                'nazwa_stacji' => (string) ($base['nazwa_stacji'] ?? ''),
+                                'lon' => (string) ($base['lon'] ?? ''),
+                                'lat' => (string) ($base['lat'] ?? ''),
+                                'data' => "{$prevYear}-{$prevMonth}",
+
+                                'max_max_temp_gruntu_mies' => $gruntu_max['max'] !== null ?  $gruntu_max['max'] : null,
+                                'mean_max_temp_gruntu_mies' => $gruntu_max['mean'] !== null ? $gruntu_max['mean'] : null,
+                                'min_min_temp_gruntu_mies' => $gruntu_min['min'] !== null ?  $gruntu_min['min'] : null,
+                                'mean_min_temp_gruntu_mies' => $gruntu_min['mean'] !== null ?  $gruntu_min['mean'] : null,
+                                'mean_mean_temp_gruntu_mies' => $gruntu_mean['mean'] !== null ?  $gruntu_mean['mean'] : null,
+
+                                'mean_mean_wiatr_kierunek' => $kierunek['mean'] !== null ? $kierunek['mean'] : null,
+                                'mean_mean_wiatr_srednia_predkosc' => $srednia['mean'] !== null ?  $srednia['mean'] : null,
+                                'max_max_wiatr_predkosc_maksymalna' => $maks['max'] !== null ?  $maks['max'] : null,
+                                'max_max_wiatr_poryw_10min' => $poryw['max'] !== null ? $poryw['max'] : null,
+
+                                'min_min_wilgotnosc_wzgledna' => $wilg_min['min'] !== null ?  $wilg_min['min'] : null,
+                                'mean_min_wilgotnosc_wzgledna' => $wilg_min['mean'] !== null ?  $wilg_min['mean'] : null,
+                                'max_max_wilgotnosc_wzgledna' => $wilg_max['max'] !== null ?  $wilg_max['max'] : null,
+                                'mean_max_wilgotnosc_wzgledna' => $wilg_max['mean'] !== null ?  $wilg_max['mean'] : null,
+                                'mean_mean_wilgotnosc_wzgledna' => $wilg_mean['mean'] !== null ?  $wilg_mean['mean'] : null,
+
+                                'max_sum_opad_10min' => $opad['max'] !== null ?  $opad['max'] : null,
+                                'sum_sum_opad_10min' => $opad['sum'] !== null ?  $opad['sum'] : null,
+                            ];
+                        }
+                        $grouped = null;
+                        // Load previous if exists and merge
+                        $existing = Storage::exists($monthlySummaryPath)
+                            ? json_decode(Storage::get($monthlySummaryPath), true)
+                            : [];
+
+                        // Index existing data by "kod_stacji-data"
+                        $indexed = collect($existing)
+                            ->keyBy(fn($item) => $item['kod_stacji'] . '-' . $item['data'])
+                            ->toArray();
+
+                        // Replace or add new summaries
+                        foreach ($monthlySummary as $record) {
+                            $key = $record['kod_stacji'] . '-' . $record['data'];
+                            $indexed[$key] = $record;
+                        }
+                        // Re-index by values and sort
+                        $merged = array_values($indexed);
+                        $indexed = null;
+                        usort($merged, fn($a, $b) => strcmp($a['kod_stacji'], $b['kod_stacji']));
+                        $existing = null;
+                        $monthlySummary = null;
+                        // Sort and save
+                        usort($merged, function ($a, $b) {
+                            return strcmp($a['kod_stacji'], $b['kod_stacji']);
+                        });
+                        Storage::put($monthlySummaryPath, json_encode($merged, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+                        Log::channel('imgw')->info("Updated miesieczne summary to {$monthlySummaryPath}");
+                        $merged = null;
+                    }
                 }
-
-
                 // Cleanup old files (>7 days)
                 $sevenDaysAgo = Carbon::now()->subDays(7)->startOfDay();
 
