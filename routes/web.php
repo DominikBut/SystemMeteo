@@ -13,9 +13,13 @@ Route::get(
     [generalMap::class, 'showMap']
 )->name('map');
 
-Route::get('/stacja', function () {
-    return view('stacja_history');
-})->name('stacja');
+Route::get('/station/recent', function () {
+    return view('stacja_recent');
+})->name('stacja_recent');
+
+Route::get('/station/archive', function () {
+    return view('stacja_archive');
+})->name('stacja_archive');
 
 Route::middleware([
     'auth:sanctum',
