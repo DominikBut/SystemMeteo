@@ -6,19 +6,21 @@ use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class StacjaRecent extends Component
 {
-    #[Url(except: '', as: 'id')]
-    public $stationId = '';
+    #[Url(except: null, as: 'id')]
+    #[Validate('numeric', message: 'Zły format id!')]
+    public $stationId;
 
-    #[Url(except: '')]
+    #[Url(except: null)]
     public $year;
 
-    #[Url(except: '')]
+    #[Url(except: null)]
     public $month;
 
     public $stations = [];
@@ -31,6 +33,7 @@ class StacjaRecent extends Component
     public function mount()
     {
         $this->stations = $this->getStationsProperty();
+        $this->validate();
     }
 
     public function getStationsProperty(): array
@@ -71,9 +74,21 @@ class StacjaRecent extends Component
             return $stations;
         });
     }
-
+    public function reseterrors()
+    {
+        $this->resetErrorBag();
+    }
+    public function getData()
+    {
+        if ($this->validate()) {
+            $this->year = 3333;
+        } else {
+            $this->reset();
+        }
+    }
     public function render()
     {
+
         return view('livewire.stacja-recent');
     }
 }
