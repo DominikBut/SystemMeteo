@@ -7,6 +7,16 @@
                 <option value="{{ $id }}">{{ $name }}</option>
             @endforeach
         </select> --}}
+        {{-- <div>
+                            30-minutowa agregacja danych
+                            <select wire:model="dateOption"
+                                    :disabled="!selectedId || !stations[selectedId] || !query"
+                                    :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''">
+                                <option value="today">Dzisiaj</option>
+                                <option value="yesterday">Wczoraj</option>
+                                <option value="7days">7 dni</option>
+                            </select>
+                        </div> --}}
         <div class="flex flex-row space-x-4 align-content-center">
 
             <div x-data="stationSelect({
@@ -48,48 +58,111 @@
                             ❌ Nieprawidłowa stacja (ID: {{ $stationId }}) – brak wśród oficjalnych stacji IMGW.
                         </p>
                         <div>
-                            <select wire:model="dateOption"
-                                    :disabled="!selectedId || !stations[selectedId] || !query"
-                                    :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''">
-                                <option value="today">Dzisiaj</option>
-                                <option value="yesterday">Wczoraj</option>
-                                <option value="7days">7 dni</option>
-                            </select>
-                        </div>
-                        <div class="flex gap-2">
-                            <button
-                                wire:click="$set('dateOption', 'today')"
-                                class="btn {{ $dateOption === 'today' ? '' : 'opacity-50' }} mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                            >
-                                Dzisiaj
-                            </button>
+                            <div x-data="{ selectedTab: '30min' }" class="w-full">
+                                <div  class="flex gap-2 overflow-x-auto border-b border-slate-30 bg-stone-50" role="tablist" >
+                                    <button x-on:click="selectedTab = '30min'; $wire.set('aggregation', '30min'); $wire.loadData()"
+                                    x-bind:tabindex="selectedTab === '30min' ? '0' : '-1'"
+                                    x-bind:class="selectedTab === '30min' ? 'font-bold text-blue-700 border-b-2 border-blue-700 ' : 'text-slate-700 font-medium  hover:border-b-2 hover:border-b-slate-800 hover:text-black'"
+                                    class="h-min px-4 py-2 text-sm" type="button" role="tab"  >
+                                    30min</button>
+                                    <button x-on:click="selectedTab = 'terminowe'; $wire.set('aggregation', 'terminowe'); $wire.loadData()"
+                                    x-bind:tabindex="selectedTab === 'terminowe' ? '0' : '-1'"
+                                    x-bind:class="selectedTab === 'terminowe' ? 'font-bold text-blue-700 border-b-2 border-blue-700 ' : 'text-slate-700 font-medium  hover:border-b-2 hover:border-b-slate-800 hover:text-black'"
+                                    class="h-min px-4 py-2 text-sm" type="button" role="tab"  >
+                                    terminowe</button>
+                                    <button x-on:click="selectedTab = 'dobowe'; $wire.set('aggregation', 'dobowe'); $wire.loadData()"
+                                    x-bind:class="selectedTab === 'dobowe' ? 'font-bold text-blue-700 border-b-2 border-blue-700 ' : 'text-slate-700 font-medium  hover:border-b-2 hover:border-b-slate-800 hover:text-black'"
+                                    class="h-min px-4 py-2 text-sm" type="button" role="tab"  >
+                                    dobowe</button>
+                                    <button x-on:click="selectedTab = 'miesieczne'; $wire.set('aggregation', 'miesieczne'); $wire.loadData()"
+                                    x-bind:tabindex="selectedTab === 'miesieczne' ? '0' : '-1'"
+                                    x-bind:class="selectedTab === 'miesieczne' ? 'font-bold text-blue-700 border-b-2 border-blue-700 ' : 'text-slate-700 font-medium  hover:border-b-2 hover:border-b-slate-800 hover:text-black'"
+                                    class="h-min px-4 py-2 text-sm" type="button" role="tab"  >
+                                    miesieczne</button>
+                                </div>
+                                <div class="px-2 py-4 bg-gray-50">
+                                    <div x-cloak x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min">
+                                        <b><a href="#" class="underline">30min</a></b> tab is selected
+                                        <div class="flex gap-2">
+                                            <button wire:click="$set('dateOption', 'today'); $wire.loadData()"
+                                                class="btn {{ $dateOption === 'today' ? '' : 'opacity-50' }} mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                                Dzisiaj
+                                            </button>
 
-                            <button
-                                wire:click="$set('dateOption', 'yesterday')"
-                                class="btn {{ $dateOption === 'yesterday' ? '' : 'opacity-50' }} mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                            >
-                                Wczoraj
-                            </button>
+                                            <button wire:click="$set('dateOption', 'yesterday'); $wire.loadData()"
+                                                class="btn {{ $dateOption === 'yesterday' ? '' : 'opacity-50' }} mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                                Wczoraj
+                                            </button>
 
-                            <button
-                                wire:click="$set('dateOption', '7days')"
-                                class="btn {{ $dateOption === '7days' ? '' : 'opacity-50' }} mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                            >
-                                7 dni
-                            </button>
+                                            <button wire:click="$set('dateOption', '7days'); $wire.loadData()"
+                                                class="btn {{ $dateOption === '7days' ? '' : 'opacity-50' }} mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                                7 dni
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div x-cloak x-show="selectedTab === 'terminowe'"  role="tabpanel" aria-label="terminowe">
+                                        <b><a href="#" class="underline">terminowe</a></b> tab is selected
+
+                                             @if ($aggregation === 'terminowe')
+                                                <div class="flex gap-2 mt-4">
+                                                     <input type="number" wire:model="terminoweYear" placeholder="Rok"  class="input" />
+                                                    <input type="number" wire:model="terminoweMonth" placeholder="Miesiąc"  class="input" />
+                                                    <div x-data="{
+                                                        day1: $wire.entangle('terminoweDay1'),
+                                                        day2: $wire.entangle('terminoweDay2'),
+                                                        updateDays() {
+                                                            const d1 = parseInt(this.day1);
+                                                            const d2 = parseInt(this.day2);
+                                                            if (d1 > d2) {
+                                                                this.day2 = String(d1).padStart(2, '0'); // auto-adjust
+                                                            }
+                                                        }
+                                                    }">
+                                                        <div class="flex items-center gap-2">
+                                                            <label>Od dnia:</label>
+                                                            <input type="number" min="1" max="31"
+                                                                x-model="day1"
+                                                                x-on:change="updateDays()"
+                                                                class="border px-2 py-1"
+                                                            >
+
+                                                            <label>Do dnia:</label>
+                                                            <input type="number" min="1" max="31"
+                                                                x-model="day2"
+                                                                x-on:change="updateDays()"
+                                                                class="border px-2 py-1"
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    wire:click="loadData"
+                                                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                                    :disabled="!selectedId || !stations[selectedId] || !query"
+                                                    :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
+                                                    :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
+                                                >
+                                                    Odśwież dane
+                                                </button>
+                                            @endif
+
+                                    </div>
+                                    <div x-cloak x-show="selectedTab === 'dobowe'"  role="tabpanel" aria-label="dobowe">
+                                        <b><a href="#" class="underline">dobowe</a></b> tab is selected
+                                    </div>
+                                    <div x-cloak x-show="selectedTab === 'miesieczne'" role="tabpanel" aria-label="miesieczne">
+                                        <b><a href="#" class="underline">miesieczne</a></b> tab is selected
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                 {{-- <button
-                    wire:click="loadData"
-                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    :disabled="!selectedId || !stations[selectedId] || !query"
-                    :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
-                    :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                >
-                    Pokaż dane
-                </button> --}}
+
+
+
+
 
             </div>
-            <p wire:loading class="w-1/3 flex content-center">Oficjalne stacje IMGW: </p>
+            <p x-cloak wire:loading class="w-1/3 flex content-center">Oficjalne stacje IMGW: </p>
 
         </div>
         {{-- {{ dd($stations) }} --}}
@@ -103,13 +176,7 @@
         @if ($info)
             <p class="text-red-500">{{ $info }}</p>
         @endif
-        {{-- <div class="grid grid-cols-4 gap-2">
-            <input type="text" wire:model="stationId" placeholder="Kod stacji" class="border p-2 rounded" />
-            <input type="number"  placeholder="Rok"  class="border p-2 rounded" />
-            <input type="number"  placeholder="Miesiąc"  class="border p-2 rounded" />
-             <input type="number" wire:model="day" placeholder="Dzień" class="border p-2 rounded" />
-        </div>
-         --}}
+
         <div>
 
             <h3>Dane pogodowe dla stacji: {{ $stationId }}
@@ -138,7 +205,7 @@
                         <p>Brak danych do odczytu</p>
                     @else
                     <b>Jeżeli nie znaleziono stacji o podanym id wyszukano stację o tej samej nazwiwie <br>(niektore stacje mogą posiadać nowe id nie będące na liście wyboru stacji nie wiadomo czemu)</b>
-                    <br>  Odczytano dane dla: {{ $this->weatherData[1]['kod_stacji'].' '. $this->weatherData[1]['nazwa_stacji'] }}
+                    <br>  Odczytano dane dla: {{ $this->weatherData[0]['kod_stacji'].' '. $this->weatherData[0]['nazwa_stacji'] }}
                     <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-slate-300 max-h-screen">
                         <table class="w-full text-left text-sm ">
                             <thead class="border-b border-slate-300 bg-slate-100 text-sm text-black ">
@@ -161,7 +228,6 @@
                                     <th class="p-4">wiatr_poryw_10min</th>
                                     <th class="p-4">wiatr_poryw_10min_data</th>
                                     <th class="p-4">opad_10min</th>
-                                    <th class="p-4">opad_10min_data</th>
                                     <th class="p-4 cursor-pointer" wire:click="setSort('opad_10min_data')">
                                         opad_10min_data
                                         @if($sortBy === 'opad_10min_data')

@@ -17,6 +17,12 @@ class StacjaRecent extends Component
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
 
+    public $stations = [];
+    protected $stationListPath = 'imgw/wykaz_stacji.csv';
+    protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
+    protected $refreshDays = 7;
+
+    public $weatherData = [];
     // #[Url(except: null)]
     // public $year;
 
@@ -26,34 +32,35 @@ class StacjaRecent extends Component
     #[Validate('string|in:temperatura_gruntu_data,opad_10min_data', message: 'Zły format zmiennej!')]
     public string $sortBy = 'temperatura_gruntu_data';
 
-
     #[Validate('string|in:asc,desc', message: 'Zły format sortowania!')]
     public string $sortDirection = 'desc'; // or 'desc'
-    public bool  $stop = false;
-    public $stations = [];
+
+    public bool $stop = false;
+
     public $error = null;
     public $info;
-    protected $stationListPath = 'imgw/wykaz_stacji.csv';
-    protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
-    protected $refreshDays = 7;
 
+    #[Validate('string|in:today,yesterday,7days', message: 'Zły format wyboru!')]
     public string $dateOption = 'today'; // 'dzis', 'wczoraj', '7 dni'
-    public $weatherData = [];
+    public string $aggregation = '30min'; // Default mode
+
+    public string $terminoweYear;
+    public string $terminoweMonth;
+    public string $terminoweDay1;
+    public string $terminoweDay2;
 
     public function mount()
     {
+        $date = Carbon::today()->subDays(1);
+        $this->terminoweYear = $date->format('Y');
+        $this->terminoweMonth = $date->format('m');
+        $this->terminoweDay1 = $date->format('d');
+        $this->terminoweDay2 = $this->terminoweDay1;
         $this->stations = $this->getStationsProperty();
         $this->validate();
         $this->loadData();
     }
-    public function updatedDateOption()
-    {
-        if ($this->stationId && isset($this->stations[$this->stationId])) {
-            $this->loadData();
-        } else {
-            $this->weatherData = [];
-        }
-    }
+
     public function setSort(string $column)
     {
         if ($this->sortBy === $column) {
@@ -76,32 +83,127 @@ class StacjaRecent extends Component
 
         return $data->values()->all();
     }
-
     public function loadData()
     {
         $this->weatherData = [];
-
-        if ($this->dateOption === 'today') {
-            $date = Carbon::today();
-            $this->weatherData = $this->loadDataForDate($date);
-        } elseif ($this->dateOption === 'yesterday') {
-            $date = Carbon::yesterday();
-            $this->weatherData = $this->loadDataForDate($date);
-        } elseif ($this->dateOption === '7days') {
-            $endDate = Carbon::today();
-            $startDate = $endDate->copy()->subDays(6);
-            $allData = [];
-            for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-                $dayData = $this->loadDataForDate($date);
-                if (!empty($dayData)) {
-                    $allData = array_merge($allData, $dayData);
+        switch ($this->aggregation) {
+            case '30min':
+                $this->load30MinData();
+                break;
+            case 'terminowe':
+                $this->loadTerminoweData();
+                break;
+            case 'dobowe':
+                $this->loadDoboweData();
+                break;
+            case 'miesieczne':
+                $this->loadMiesieczneData();
+                break;
+            default:
+                $this->load30MinData();
+                break;
+        }
+    }
+    public function load30MinData()
+    {
+        switch ($this->dateOption) {
+            case 'today':
+                $date = Carbon::today();
+                $this->weatherData = $this->loadDataForDate($date);
+                break;
+            case 'yesterday':
+                $date = Carbon::yesterday();
+                $this->weatherData = $this->loadDataForDate($date);
+                break;
+            case '7days':
+                $endDate = Carbon::today();
+                $startDate = $endDate->copy()->subDays(6);
+                $allData = [];
+                for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+                    $dayData = $this->loadDataForDate($date);
+                    if (!empty($dayData)) {
+                        $allData = array_merge($allData, $dayData);
+                    }
                 }
+                $this->weatherData = $allData;
+                break;
+            default:
+                $date = Carbon::today();
+                $this->weatherData = $this->loadDataForDate($date);
+                break;
+        }
+    }
+    public function loadTerminoweData()
+    {
+        if ($this->validate()) {
+            if (!$this->stop) {
+
+
+                $year = $this->terminoweYear;
+                $month = $this->terminoweMonth;
+                $day1 = $this->terminoweDay1;
+                $day2 = $this->terminoweDay2;
+                $this->weatherData = [];
+                $combinedData = [];
+                for ($day = $day1; $day <= $day2; $day++) {
+                    $dayStr = str_pad($day, 2, '0', STR_PAD_LEFT);
+
+                    $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$dayStr}.json";
+
+                    if (!Storage::exists($filePath)) {
+                        continue;
+                    }
+
+                    $json = Storage::get($filePath);
+                    $data = json_decode($json, true);
+                    if (!$data) {
+                        continue;
+                    }
+                    $json = null;
+                    // Filter by stationId
+                    $filtered = array_filter($data, function ($record) {
+                        return isset($record['kod_stacji']) && $record['kod_stacji'] == $this->stationId;
+                    });
+
+                    if (count($filtered) === 0) {
+                        // Fallback to name
+                        $stationName = $this->stations[$this->stationId] ?? null;
+                        if ($stationName) {
+                            $filtered = array_filter($data, function ($record) use ($stationName) {
+                                return isset($record['nazwa_stacji']) &&
+                                    strcasecmp(trim($record['nazwa_stacji']), trim($stationName)) === 0;
+                            });
+                        }
+                    }
+                    $data = null;
+                    $combinedData = array_merge($combinedData, array_values($filtered));
+                    $filtered = null;
+                }
+
+                $this->weatherData = $combinedData;
+                $combinedData = null;
             }
-            $this->weatherData = $allData;
+        } else {
+            $date = Carbon::today();
+            $this->terminoweYear = $date->format('Y');
+            $this->terminoweMonth = $date->format('m');
+            $this->terminoweDay1 = $date->format('d');
+            $this->terminoweDay2 = $this->terminoweDay1;
+            $this->sortBy = 'desc';
+            $this->sortDirection = 'temperatura_gruntu_data';
         }
     }
 
-    public function loadDataForDate(Carbon $date)
+    public function loadDoboweData()
+    {
+        // Placeholder
+    }
+
+    public function loadMiesieczneData()
+    {
+        // Placeholder
+    }
+    public function loadDataForDate(?Carbon $date)
     {
         if ($this->validate()) {
             if ($this->stop == false) {
@@ -111,9 +213,11 @@ class StacjaRecent extends Component
                 $year = $date->format('Y');
                 $month = $date->format('m');
                 $day = $date->format('d');
-                $this->info = $date;
+
                 $filePath = "imgw/api-data/{$year}/{$month}/{$year}-{$month}-{$day}.json";
+
                 $this->info = $filePath . "" . $this->stationId;
+
                 if (!Storage::exists($filePath)) {
                     return [];
                 }
@@ -140,7 +244,6 @@ class StacjaRecent extends Component
                         });
                     }
                 }
-
                 $data = null;
                 return array_values($filtered); // reindex
             }
@@ -196,3 +299,11 @@ class StacjaRecent extends Component
         return view('livewire.stacja-recent');
     }
 }
+    // public function updatedDateOption()
+    // {
+    //     if ($this->stationId && isset($this->stations[$this->stationId])) {
+    //         $this->loadData();
+    //     } else {
+    //         $this->weatherData = [];
+    //     }
+    // }
