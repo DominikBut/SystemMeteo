@@ -44,18 +44,15 @@ class StacjaRecent extends Component
     public string $dateOption = 'today'; // 'dzis', 'wczoraj', '7 dni'
     public string $aggregation = '30min'; // Default mode
 
-    public string $terminoweYear;
-    public string $terminoweMonth;
-    public string $terminoweDay1;
-    public string $terminoweDay2;
+    public  $terminoweStartDate;
+    public  $terminoweEndDate;
 
     public function mount()
     {
-        $date = Carbon::today()->subDays(1);
-        $this->terminoweYear = $date->format('Y');
-        $this->terminoweMonth = $date->format('m');
-        $this->terminoweDay1 = $date->format('d');
-        $this->terminoweDay2 = $this->terminoweDay1;
+        $date = Carbon::yesterday();
+        $this->terminoweEndDate = $date->format('Y-m-d');
+        $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
+
         $this->stations = $this->getStationsProperty();
         $this->validate();
         $this->loadData();
@@ -137,18 +134,19 @@ class StacjaRecent extends Component
     {
         if ($this->validate()) {
             if (!$this->stop) {
+                $startDate = Carbon::parse($this->terminoweStartDate);
+                $endDate = Carbon::parse($this->terminoweEndDate);
+                $year = $startDate->format('Y');
+                $month = $startDate->format('m');
+                $day1 = $startDate->format('d');
+                $day2 = $endDate->format('d');
 
-
-                $year = $this->terminoweYear;
-                $month = $this->terminoweMonth;
-                $day1 = $this->terminoweDay1;
-                $day2 = $this->terminoweDay2;
                 $this->weatherData = [];
                 $combinedData = [];
                 for ($day = $day1; $day <= $day2; $day++) {
                     $dayStr = str_pad($day, 2, '0', STR_PAD_LEFT);
-
-                    $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$dayStr}.json";
+                    $monthStr = str_pad($month, 2, '0', STR_PAD_LEFT);
+                    $filePath = "imgw/collected/terminowe/{$year}/{$monthStr}/{$year}-{$monthStr}-{$dayStr}.json";
 
                     if (!Storage::exists($filePath)) {
                         continue;
@@ -184,11 +182,9 @@ class StacjaRecent extends Component
                 $combinedData = null;
             }
         } else {
-            $date = Carbon::today();
-            $this->terminoweYear = $date->format('Y');
-            $this->terminoweMonth = $date->format('m');
-            $this->terminoweDay1 = $date->format('d');
-            $this->terminoweDay2 = $this->terminoweDay1;
+            $date = Carbon::yesterday();
+            $this->terminoweStartDate = $date->format('Y-m-d');
+            $this->terminoweEndDate = $this->terminoweStartDate;
             $this->sortBy = 'desc';
             $this->sortDirection = 'temperatura_gruntu_data';
         }

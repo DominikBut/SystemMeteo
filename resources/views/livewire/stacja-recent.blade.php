@@ -103,37 +103,86 @@
                                     <div x-cloak x-show="selectedTab === 'terminowe'"  role="tabpanel" aria-label="terminowe">
                                         <b><a href="#" class="underline">terminowe</a></b> tab is selected
 
-                                             @if ($aggregation === 'terminowe')
-                                                <div class="flex gap-2 mt-4">
-                                                     <input type="number" wire:model="terminoweYear" placeholder="Rok"  class="input" />
-                                                    <input type="number" wire:model="terminoweMonth" placeholder="Miesiąc"  class="input" />
-                                                    <div x-data="{
-                                                        day1: $wire.entangle('terminoweDay1'),
-                                                        day2: $wire.entangle('terminoweDay2'),
-                                                        updateDays() {
-                                                            const d1 = parseInt(this.day1);
-                                                            const d2 = parseInt(this.day2);
-                                                            if (d1 > d2) {
-                                                                this.day2 = String(d1).padStart(2, '0'); // auto-adjust
-                                                            }
-                                                        }
-                                                    }">
-                                                        <div class="flex items-center gap-2">
-                                                            <label>Od dnia:</label>
-                                                            <input type="number" min="1" max="31"
-                                                                x-model="day1"
-                                                                x-on:change="updateDays()"
-                                                                class="border px-2 py-1"
-                                                            >
 
-                                                            <label>Do dnia:</label>
-                                                            <input type="number" min="1" max="31"
-                                                                x-model="day2"
-                                                                x-on:change="updateDays()"
-                                                                class="border px-2 py-1"
-                                                            >
+                                                <div class="flex gap-2 mt-4">
+
+                                                     {{-- minDate below set to earliest data that i have --}}
+                                                     <div x-data="{
+                                                            start: $wire.entangle('terminoweStartDate'),
+                                                            end: $wire.entangle('terminoweEndDate'),
+                                                            endMax: '',
+                                                            endMin: '',
+                                                            minDate: '2025-07-24',
+                                                            maxDate: '',
+
+                                                            validateRange() {
+                                                                const today = new Date();
+                                                                const yesterday = new Date(today);
+                                                                yesterday.setDate(today.getDate() - 1);
+                                                                const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+                                                                // Set global max date to yesterday
+                                                                this.maxDate = yesterdayStr;
+
+                                                                // Clamp start date
+                                                                if (this.start < this.minDate) this.start = this.minDate;
+                                                                if (this.start > this.maxDate) this.start = this.maxDate;
+
+                                                                // Set endMin to be at least the start date
+                                                                this.endMin = this.start;
+
+                                                                // Clamp end to start if invalid
+                                                                if (this.start > this.end) this.end = this.start;
+
+                                                                // Enforce same year & month
+                                                                const s = new Date(this.start);
+                                                                const e = new Date(this.end);
+
+                                                                if (s.getFullYear() !== e.getFullYear() || s.getMonth() !== e.getMonth()) {
+                                                                    this.end = this.start;
+                                                                }
+
+                                                                // Calculate last valid end date: end of month or yesterday if same month
+                                                                const lastDayOfMonth = new Date(s.getFullYear(), s.getMonth() + 1, 0);
+                                                                let effectiveEnd = lastDayOfMonth;
+
+                                                                if (
+                                                                    s.getFullYear() === today.getFullYear() &&
+                                                                    s.getMonth() === today.getMonth()
+                                                                ) {
+                                                                    // Clamp to yesterday only if it's current month
+                                                                    effectiveEnd = yesterday < lastDayOfMonth ? yesterday : lastDayOfMonth;
+                                                                }
+
+                                                                this.endMax = effectiveEnd.getFullYear() + '-' +String(effectiveEnd.getMonth() + 1).padStart(2, '0') + '-' + String(effectiveEnd.getDate()).padStart(2, '0')
+
+                                                                // Clamp end value
+                                                                if (this.end < this.endMin) this.end = this.endMin;
+                                                                if (this.end > this.endMax) this.end = this.endMax;
+                                                            }
+                                                        }"
+                                                        x-init="validateRange()">
+                                                        <div class="flex items-center gap-4">
+                                                            <div class="flex flex-col">
+                                                                <label for="start" class="text-sm font-medium text-gray-700">Start date:</label>
+                                                                <input type="date" id="start"
+                                                                    x-model="start" x-on:change="validateRange()"
+                                                                    :min="minDate"
+                                                                    :max="maxDate"
+                                                                    class="border px-2 py-1 rounded" />
+                                                            </div>
+
+                                                            <div class="flex flex-col">
+                                                                <label for="end" class="text-sm font-medium text-gray-700">End date:</label>
+                                                                <input type="date" id="end"
+                                                                    x-model="end" x-on:change="validateRange()"
+                                                                    :min="endMin"
+                                                                    :max="endMax"
+                                                                    class="border px-2 py-1 rounded" />
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                                 <button
                                                     wire:click="loadData"
@@ -142,9 +191,9 @@
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
                                                 >
-                                                    Odśwież dane
+                                                    Załaduj dane
                                                 </button>
-                                            @endif
+
 
                                     </div>
                                     <div x-cloak x-show="selectedTab === 'dobowe'"  role="tabpanel" aria-label="dobowe">
@@ -206,6 +255,11 @@
                     @else
                     <b>Jeżeli nie znaleziono stacji o podanym id wyszukano stację o tej samej nazwiwie <br>(niektore stacje mogą posiadać nowe id nie będące na liście wyboru stacji nie wiadomo czemu)</b>
                     <br>  Odczytano dane dla: {{ $this->weatherData[0]['kod_stacji'].' '. $this->weatherData[0]['nazwa_stacji'] }}
+                    @if ($aggregation === 'terminowe')
+                             z okresu od {{ $this->terminoweStartDate }} do {{ $this->terminoweEndDate }}
+                    @else
+
+                    @endif
                     <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-slate-300 max-h-screen">
                         <table class="w-full text-left text-sm ">
                             <thead class="border-b border-slate-300 bg-slate-100 text-sm text-black ">
