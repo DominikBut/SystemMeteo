@@ -16,8 +16,8 @@ class StacjaRecent extends Component
     #[Url(except: null, as: 'id')]
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
-
     public $stations = [];
+
     protected $stationListPath = 'imgw/wykaz_stacji.csv';
     protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
     protected $refreshDays = 7;
@@ -44,15 +44,18 @@ class StacjaRecent extends Component
     public string $dateOption = 'today'; // 'dzis', 'wczoraj', '7 dni'
     public string $aggregation = '30min'; // Default mode
 
-    public  $terminoweStartDate;
-    public  $terminoweEndDate;
+    public $terminoweStartDate;
+    public $terminoweEndDate;
+    public $doboweDate;
+    public $miesieczneDate;
 
     public function mount()
     {
         $date = Carbon::yesterday();
         $this->terminoweEndDate = $date->format('Y-m-d');
         $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
-
+        $this->doboweDate = $date->format('Y-m');
+        $this->miesieczneDate = $date->format('Y');
         $this->stations = $this->getStationsProperty();
         $this->validate();
         $this->loadData();
@@ -91,10 +94,12 @@ class StacjaRecent extends Component
                 $this->loadTerminoweData();
                 break;
             case 'dobowe':
-                $this->loadDoboweData();
+                $date = Carbon::parse($this->doboweDate . '-01');
+                $this->weatherData = $this->loadDataForDate($date);
                 break;
             case 'miesieczne':
-                $this->loadMiesieczneData();
+                $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
+                $this->weatherData = $this->loadDataForDate($date);
                 break;
             default:
                 $this->load30MinData();
@@ -144,9 +149,8 @@ class StacjaRecent extends Component
                 $this->weatherData = [];
                 $combinedData = [];
                 for ($day = $day1; $day <= $day2; $day++) {
-                    $dayStr = str_pad($day, 2, '0', STR_PAD_LEFT);
-                    $monthStr = str_pad($month, 2, '0', STR_PAD_LEFT);
-                    $filePath = "imgw/collected/terminowe/{$year}/{$monthStr}/{$year}-{$monthStr}-{$dayStr}.json";
+
+                    $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$day}.json";
 
                     if (!Storage::exists($filePath)) {
                         continue;
@@ -183,34 +187,45 @@ class StacjaRecent extends Component
             }
         } else {
             $date = Carbon::yesterday();
-            $this->terminoweStartDate = $date->format('Y-m-d');
-            $this->terminoweEndDate = $this->terminoweStartDate;
+            $this->terminoweEndDate = $date->format('Y-m-d');
+            $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
+            $this->doboweDate = $date->format('Y-m');
+            $this->miesieczneDate = $date->format('Y');
             $this->sortBy = 'desc';
             $this->sortDirection = 'temperatura_gruntu_data';
         }
     }
 
-    public function loadDoboweData()
-    {
-        // Placeholder
-    }
-
-    public function loadMiesieczneData()
-    {
-        // Placeholder
-    }
-    public function loadDataForDate(?Carbon $date)
+    public function loadDataForDate(Carbon $date)
     {
         if ($this->validate()) {
             if ($this->stop == false) {
-
-                // Build filepath, e.g.: imgw/collected/terminowe/2025/07/27.json
                 $filtered = null;
-                $year = $date->format('Y');
-                $month = $date->format('m');
-                $day = $date->format('d');
 
-                $filePath = "imgw/api-data/{$year}/{$month}/{$year}-{$month}-{$day}.json";
+                switch ($this->aggregation) {
+                    case '30min':
+                        $year = $date->format('Y');
+                        $month = $date->format('m');
+                        $day = $date->format('d');
+                        $filePath = "imgw/api-data/{$year}/{$month}/{$year}-{$month}-{$day}.json";
+                        break;
+                    case 'dobowe':
+                        $year = $date->format('Y');
+                        $month = $date->format('m');
+                        $filePath = "imgw/collected/dobowe/{$year}/{$year}-{$month}.json";
+                        break;
+                    case 'miesieczne':
+                        $year = $date->format('Y');
+                        $filePath = "imgw/collected/miesieczne/{$year}.json";
+                        break;
+                    default:
+                        $year = $date->format('Y');
+                        $month = $date->format('m');
+                        $day = $date->format('d');
+                        $filePath = "imgw/api-data/{$year}/{$month}/{$year}-{$month}-{$day}.json";
+                        break;
+                }
+                // Build filepath, e.g.: imgw/collected/terminowe/2025/07/27.json
 
                 $this->info = $filePath . "" . $this->stationId;
 
@@ -244,6 +259,11 @@ class StacjaRecent extends Component
                 return array_values($filtered); // reindex
             }
         } else {
+            $date = Carbon::yesterday();
+            $this->terminoweEndDate = $date->format('Y-m-d');
+            $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
+            $this->doboweDate = $date->format('Y-m');
+            $this->miesieczneDate = $date->format('Y');
             $this->sortBy = 'desc';
             $this->sortDirection = 'temperatura_gruntu_data';
         }
@@ -295,11 +315,3 @@ class StacjaRecent extends Component
         return view('livewire.stacja-recent');
     }
 }
-    // public function updatedDateOption()
-    // {
-    //     if ($this->stationId && isset($this->stations[$this->stationId])) {
-    //         $this->loadData();
-    //     } else {
-    //         $this->weatherData = [];
-    //     }
-    // }
