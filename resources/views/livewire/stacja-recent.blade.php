@@ -11,6 +11,7 @@
                     })"
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
                     <div class="flex flex-col justify-between p-4">
+                         @if (!empty($stations))
                         <div>
                             <p class="p-1 font-bold">Wyszukaj stację z {{ count($stations) }} oficjalnych stacji IMGW (refresh 7 dni):</p>
                             <input
@@ -55,12 +56,14 @@
 
 
                         </div>
-
+                        @else
+                            <h1><b>Błąd połączenia z API spróbuj ponownie za godzinę, aby móc przeglądać dane (również innych stacji)!</b></h1>
+                        @endif
                         <div class="">
                             <div x-data="{ selectedTab: '30min' }" class="w-full border-b border-slate-30 bg-stone-50 min-h-56 p-4 flex flex-col justify-between">
                                 <div>
                                     <p><b>Wybierz typ agregacji danych:</b></p>
-                                    <div  x-cloak class="flex gap-2 overflow-x-auto border-b-2 border-blue-300" role="tablist" >
+                                    <div  x-cloak class="mt-2 flex gap-2 overflow-x-auto  bg-gray-200" role="tablist" >
                                         <button x-on:click="selectedTab = '30min'; $wire.set('aggregation', '30min'); $wire.loadData()"
                                         x-bind:tabindex="selectedTab === '30min' ? '0' : '-1'"
                                         x-bind:class="selectedTab === '30min' ? 'font-bold text-blue-700 border-b-2 border-blue-700 ' : 'text-slate-700 font-medium  hover:border-b-2 hover:border-b-slate-800 hover:text-black'"
@@ -83,7 +86,7 @@
                                     </div>
                                 </div>
 
-                                <div class="px-2 py-4 bg-gray-50 ">
+                                <div class="px-2 py-3 bg-gray-50 ">
                                     <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min" x-cloak>
                                         <b>Wybierz okres odczytu danych:</b>
                                         <div x-cloak class="flex gap-2">
@@ -118,7 +121,7 @@
                                                 <div class="flex gap-2 mt-2">
 
                                                      {{-- minDate below set to earliest data that i have --}}
-                                                     <div x-data="{
+                                                     <div class="flex flex-col md:flex-row gap-2" x-data="{
                                                             start: $wire.entangle('terminoweStartDate'),
                                                             end: $wire.entangle('terminoweEndDate'),
                                                             endMax: '',
@@ -200,7 +203,7 @@
                                                         </div>
                                                         <button
                                                     wire:click="loadData"
-                                                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                                    class="mt-5 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -379,6 +382,7 @@
                         @endif
                     </div>
             </div>
+
         </div
 
         @if ($info)

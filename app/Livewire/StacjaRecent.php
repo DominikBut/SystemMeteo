@@ -20,16 +20,10 @@ class StacjaRecent extends Component
     public $stationData = [];
     public string $askTime;
 
-    protected $stationListPath = 'imgw/wykaz_stacji.csv';
-    protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
-    protected $refreshDays = 7;
+    // protected $stationListPath = 'imgw/wykaz_stacji.csv';
+    // protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
 
     public $weatherData = [];
-    // #[Url(except: null)]
-    // public $year;
-
-    // #[Url(except: null)]
-    // public $month;
 
     #[Validate('string|in:temperatura_gruntu_data,opad_10min_data', message: 'Zły format zmiennej!')]
     public string $sortBy = 'temperatura_gruntu_data';
@@ -107,7 +101,7 @@ class StacjaRecent extends Component
             }
         } catch (\Throwable $th) {
             $this->stationData = [];
-            $this->error = 'Nie udało się pobrać danych z API. ' . $th->getMessage();
+            $this->error = 'Nie udało się pobrać danych z API. ';
         }
     }
 
@@ -126,24 +120,26 @@ class StacjaRecent extends Component
     public function loadData()
     {
         $this->weatherData = [];
-        switch ($this->aggregation) {
-            case '30min':
-                $this->load30MinData();
-                break;
-            case 'terminowe':
-                $this->loadTerminoweData();
-                break;
-            case 'dobowe':
-                $date = Carbon::parse($this->doboweDate . '-01');
-                $this->weatherData = $this->loadDataForDate($date);
-                break;
-            case 'miesieczne':
-                $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
-                $this->weatherData = $this->loadDataForDate($date);
-                break;
-            default:
-                $this->load30MinData();
-                break;
+        if ($this->stations) {
+            switch ($this->aggregation) {
+                case '30min':
+                    $this->load30MinData();
+                    break;
+                case 'terminowe':
+                    $this->loadTerminoweData();
+                    break;
+                case 'dobowe':
+                    $date = Carbon::parse($this->doboweDate . '-01');
+                    $this->weatherData = $this->loadDataForDate($date);
+                    break;
+                case 'miesieczne':
+                    $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
+                    $this->weatherData = $this->loadDataForDate($date);
+                    break;
+                default:
+                    $this->load30MinData();
+                    break;
+            }
         }
     }
     public function load30MinData()
@@ -312,41 +308,67 @@ class StacjaRecent extends Component
 
     public function getStationsProperty(): array
     {
-        return Cache::remember('station_list', now()->addDays(7), function () {
+        return $this->stations = Cache::remember('station_list', now()->addHour(1), function () {
             // Step 1: Download latest CSV file
             try {
-                $response = Http::timeout(30)->connectTimeout(30)->retry(3, 100)->get($this->stationListUrl);
+                $response = Http::timeout(30)->connectTimeout(30)->retry(3, 100)->get('https://danepubliczne.imgw.pl/api/data/meteo/');
+
                 if (!$response->successful()) {
                     throw new \Exception('Nie udało się pobrać wykazu stacji.');
                 }
+                $data = $response->json();
+                $stations = [];
+                foreach ($data as $entry) {
+                    $id = trim($entry['kod_stacji'] ?? '');
+                    $name = trim($entry['nazwa_stacji'] ?? '');
 
-                // Convert to UTF-8'Windows-1250', 'UTF-8//IGNORE'
-                $utf8Content = iconv('Windows-1250', 'UTF-8//IGNORE', $response->body());
-                Storage::put($this->stationListPath, $utf8Content);
+                    if ($id && $name) {
+                        $stations[$id] = $name;
+                    }
+                }
+                return $stations;
+                //$latestUTC = $timestamps ? max($timestamps) : now()->toISOString();
+
             } catch (\Exception $e) {
                 $this->error = 'Błąd pobierania listy stacji: ' . $e->getMessage();
-
-                // Fallback: try using existing file if any
-                if (!Storage::exists($this->stationListPath)) {
-                    return []; // No fallback possible
-                }
+                return [];
             }
-
-            // Step 2: Read the file (whether downloaded or fallback)
-            $lines = explode("\n", Storage::get($this->stationListPath));
-            $stations = [];
-
-            foreach ($lines as $line) {
-                if (trim($line) === '') continue;
-
-                [$id, $name] = str_getcsv($line);
-                if ($id && $name) {
-                    $stations[trim($id)] = trim($name);
-                }
-            }
-
-            return $stations;
         });
+        // return Cache::remember('station_list', now()->addDays(7), function () {
+        //     // Step 1: Download latest CSV file
+        //     try {
+        //         $response = Http::timeout(30)->connectTimeout(30)->retry(3, 100)->get($this->stationListUrl);
+        //         if (!$response->successful()) {
+        //             throw new \Exception('Nie udało się pobrać wykazu stacji.');
+        //         }
+
+        //         // Convert to UTF-8'Windows-1250', 'UTF-8//IGNORE'
+        //         $utf8Content = iconv('Windows-1250', 'UTF-8//IGNORE', $response->body());
+        //         Storage::put($this->stationListPath, $utf8Content);
+        //     } catch (\Exception $e) {
+        //         $this->error = 'Błąd pobierania listy stacji: ' . $e->getMessage();
+
+        //         // Fallback: try using existing file if any
+        //         if (!Storage::exists($this->stationListPath)) {
+        //             return []; // No fallback possible
+        //         }
+        //     }
+
+        //     // Step 2: Read the file (whether downloaded or fallback)
+        //     $lines = explode("\n", Storage::get($this->stationListPath));
+        //     $stations = [];
+
+        //     foreach ($lines as $line) {
+        //         if (trim($line) === '') continue;
+
+        //         [$id, $name] = str_getcsv($line);
+        //         if ($id && $name) {
+        //             $stations[trim($id)] = trim($name);
+        //         }
+        //     }
+
+        //     return $stations;
+        // });
     }
 
     public function render()

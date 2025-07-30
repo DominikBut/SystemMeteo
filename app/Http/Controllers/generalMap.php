@@ -42,7 +42,7 @@ class generalMap extends Controller
         } catch (\Throwable $th) {
             return view(
                 'Error',
-                ['data' => $th,]
+                ['data' => $th->getMessage()]
             );
         }
     }
