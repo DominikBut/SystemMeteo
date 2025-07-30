@@ -17,6 +17,8 @@ class StacjaRecent extends Component
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
     public $stations = [];
+    public $stationData = [];
+    public string $askTime;
 
     protected $stationListPath = 'imgw/wykaz_stacji.csv';
     protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
@@ -58,6 +60,7 @@ class StacjaRecent extends Component
         $this->miesieczneDate = $date->format('Y');
         $this->stations = $this->getStationsProperty();
         $this->validate();
+        $this->getStationData();
         $this->loadData();
     }
 
@@ -68,6 +71,43 @@ class StacjaRecent extends Component
         } else {
             $this->sortBy = $column;
             $this->sortDirection = 'asc';
+        }
+    }
+    public function updatedStationId()
+    {
+        if ($this->validate()) {
+            $this->getStationData();
+        } else {
+            $date = Carbon::yesterday();
+            $this->terminoweEndDate = $date->format('Y-m-d');
+            $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
+            $this->doboweDate = $date->format('Y-m');
+            $this->miesieczneDate = $date->format('Y');
+            $this->sortBy = 'desc';
+            $this->sortDirection = 'temperatura_gruntu_data';
+            $this->stationData = [];
+        }
+    }
+    public function getStationData()
+    {
+        try {
+            if (!Cache::has('DaneStacji' . $this->stationId)) {
+                $response = Http::timeout(5)->connectTimeout(5)->retry(3, 100)->get("https://danepubliczne.imgw.pl/api/data/meteo/id/{$this->stationId}");
+                if ($response->successful()) {
+                    $this->stationData =  (array) json_decode($response->body())[0];
+                    Cache::put('DaneStacji' . $this->stationId, $this->stationData, now()->addMinutes(5));
+                    $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
+                    Cache::put('AskTime' . $this->stationId, $this->askTime);
+                } else {
+                    $this->stationData = [];
+                }
+            } else {
+                $this->stationData = Cache::get('DaneStacji' . $this->stationId);
+                $this->askTime = Cache::get('AskTime' . $this->stationId);
+            }
+        } catch (\Throwable $th) {
+            $this->stationData = [];
+            $this->error = 'Nie udało się pobrać danych z API. ' . $th->getMessage();
         }
     }
 
