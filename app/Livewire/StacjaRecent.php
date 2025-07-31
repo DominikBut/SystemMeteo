@@ -124,20 +124,25 @@ class StacjaRecent extends Component
             switch ($this->aggregation) {
                 case '30min':
                     $this->load30MinData();
+                    $this->dispatch('weatherDataUpdated', $this->weatherData);
                     break;
                 case 'terminowe':
                     $this->loadTerminoweData();
+                    $this->dispatch('weatherDataUpdated', $this->weatherData);
                     break;
                 case 'dobowe':
                     $date = Carbon::parse($this->doboweDate . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
+                    $this->dispatch('weatherDataUpdated', $this->weatherData);
                     break;
                 case 'miesieczne':
                     $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
+                    $this->dispatch('weatherDataUpdated', $this->weatherData);
                     break;
                 default:
                     $this->load30MinData();
+                    $this->dispatch('weatherDataUpdated', $this->weatherData);
                     break;
             }
         }
@@ -308,7 +313,7 @@ class StacjaRecent extends Component
 
     public function getStationsProperty(): array
     {
-        return $this->stations = Cache::remember('station_list', now()->addHour(1), function () {
+        return $this->stations = Cache::remember('station_list_api', now()->addHour(1), function () {
             // Step 1: Download latest CSV file
             try {
                 $response = Http::timeout(30)->connectTimeout(30)->retry(3, 100)->get('https://danepubliczne.imgw.pl/api/data/meteo/');

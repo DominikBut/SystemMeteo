@@ -1,5 +1,5 @@
 <div>
-     @php
+    @php
          use Carbon\Carbon;
     @endphp
     <div class="p-4 space-y-4 w-full">
@@ -13,11 +13,11 @@
                     <div class="flex flex-col justify-between p-4">
                          @if (!empty($stations))
                         <div>
-                            <p class="p-1 font-bold">Wyszukaj stację z {{ count($stations) }} oficjalnych stacji IMGW (refresh 7 dni):</p>
+                            <p class="p-1 font-bold text-gray-600">Wyszukaj stację z {{ count($stations) }} oficjalnych stacji IMGW (refresh 7 dni):</p>
+                            <div class="relative w-full">
                             <input
                                 type="search"
-
-                                class="border p-2 w-full"
+                                class="rounded border-2 border-gray-200 p-2 w-full"
                                 :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')"
                                 @input="query = $event.target.value"
                                 {{-- to wyzej powoduje ze jak wpisuje to szuka a jak dostaje z url to nie szuka auto jak jest zle dodatkowy czek 2 kroki zamiast 1 --}}
@@ -26,7 +26,7 @@
                                 placeholder="Wpisz ID lub nazwę stacji..."
                             >
 
-                            <ul x-cloak x-show="open" class="border mt-1 bg-white max-h-60 overflow-y-auto shadow z-10 absolute w-[32rem]">
+                            <ul x-cloak x-show="open" class="border mt-1 bg-white max-h-60 overflow-y-auto shadow z-10 absolute w-full">
                                 <template x-for="[id, name] in filtered()" :key="id">
                                     <li
                                         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
@@ -39,19 +39,21 @@
                                     Dostępnych opcji: <span x-text="filtered().length"></span>
                                 </li>
                             </ul>
+                            </div>
+
                             <div class="flex flex-row">
                                 <div>
-                                    <p x-cloak class="my-2 text-sm w-auto" x-show="selectedId && stations[selectedId]">
+                                    <p x-cloak class="my-2 text-sm w-auto ms-2 font-bold text-lime-600" x-show="selectedId && stations[selectedId]">
                                         Wybrana stacja ID: <span x-text="`${selectedId} – ${stations[selectedId]}`"></span>
                                     </p>
-                                    <p x-cloak x-show="selectedId && !stations[selectedId]" class="text-sm text-red-500 my-2 w-auto">
+                                    <p x-cloak x-show="selectedId && !stations[selectedId]" class="text-sm font-bold text-red-500 my-2 w-auto">
                                         ❌ Nieprawidłowa stacja (ID: {{ $stationId }}) – brak wśród oficjalnych stacji IMGW.
                                     </p>
-                                    <p  x-show="!selectedId && !stations[selectedId]" class="text-sm text-lime-500 my-2 w-auto">
-                                        Wybierz stacje!.
+                                    <p  x-show="!selectedId && !stations[selectedId]" class="text-sm font-bold text-lime-600 my-2 w-auto">
+                                        Wybierz najpierw stację!.
                                     </p>
                                 </div>
-                                 <p  x-cloak wire:loading class=""> ..... </p>
+
                             </div>
 
 
@@ -59,16 +61,16 @@
                         @else
                             <h1><b>Błąd połączenia z API spróbuj ponownie za godzinę, aby móc przeglądać dane (również innych stacji)!</b></h1>
                         @endif
-                        <div class="">
-                            <div x-data="{ selectedTab: '30min' }" class="w-full border-b border-slate-30 bg-stone-50 min-h-56 p-4 flex flex-col justify-between">
-                                <div>
+                        <div class="w-full">
+                            <div x-data="{ selectedTab: '30min' }" class="w-full bg-stone-50 min-h-56 p-4 flex flex-col justify-between rounded border-2 border-gray-200">
+                                <div class="w-full">
                                     <p><b>Wybierz typ agregacji danych:</b></p>
-                                    <div  x-cloak class="mt-2 flex gap-2 overflow-x-auto  bg-gray-200" role="tablist" >
+                                    <div x-cloak class="mt-2 flex overflow-x-auto bg-gray-200 md:w-fit rounded" role="tablist" >
                                         <button x-on:click="selectedTab = '30min'; $wire.set('aggregation', '30min'); $wire.loadData()"
                                         x-bind:tabindex="selectedTab === '30min' ? '0' : '-1'"
                                         x-bind:class="selectedTab === '30min' ? 'font-bold text-blue-700 border-b-2 border-blue-700 ' : 'text-slate-700 font-medium  hover:border-b-2 hover:border-b-slate-800 hover:text-black'"
                                         class="h-min px-4 py-2 text-sm" type="button" role="tab"  >
-                                        30-minuotwa</button>
+                                        30-minutowa</button>
                                         <button x-on:click="selectedTab = 'terminowe'; $wire.set('aggregation', 'terminowe'); $wire.loadData()"
                                         x-bind:tabindex="selectedTab === 'terminowe' ? '0' : '-1'"
                                         x-bind:class="selectedTab === 'terminowe' ? 'font-bold text-blue-700 border-b-2 border-blue-700 ' : 'text-slate-700 font-medium  hover:border-b-2 hover:border-b-slate-800 hover:text-black'"
@@ -88,13 +90,13 @@
 
                                 <div class="px-2 py-3 bg-gray-50 ">
                                     <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min" x-cloak>
-                                        <b>Wybierz okres odczytu danych:</b>
+                                        <p>Wybierz okres odczytu danych:</p>
                                         <div x-cloak class="flex gap-2">
                                             <button wire:click="$set('dateOption', 'today'); $wire.loadData()"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                                                class="btn {{ $dateOption === 'today' ? '' : 'opacity-50' }} mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                                class="btn {{ $dateOption === 'today' ? '' : 'opacity-50' }} border border-gray-300 mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
                                                 Dzisiaj
                                             </button>
 
@@ -102,7 +104,7 @@
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                                                class="btn {{ $dateOption === 'yesterday' ? '' : 'opacity-50' }} mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                                class="btn {{ $dateOption === 'yesterday' ? '' : 'opacity-50' }} border border-gray-300 mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
                                                 Wczoraj
                                             </button>
 
@@ -110,15 +112,15 @@
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                                                class="btn {{ $dateOption === '7days' ? '' : 'opacity-50' }} mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
-                                                7 dni
+                                                class="btn {{ $dateOption === '7days' ? '' : 'opacity-50' }} border border-gray-300 mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                                7 ostatnich dni
                                             </button>
                                         </div>
                                     </div>
                                     <div x-cloak x-show="selectedTab === 'terminowe'"  role="tabpanel" aria-label="terminowe">
 
-                                        <b>Wybierz zakres dni z tego samego miesiąca:</b>
-                                                <div class="flex gap-2 mt-2">
+                                        <p>Wybierz zakres dni odczytu danych:</p>
+                                                <div class="flex gap-2">
 
                                                      {{-- minDate below set to earliest data that i have --}}
                                                      <div class="flex flex-col md:flex-row gap-2" x-data="{
@@ -178,7 +180,7 @@
                                                         x-init="validateRange()">
                                                         <div class="flex items-center gap-4">
                                                             <div class="flex flex-col">
-                                                                <label for="start" class="text-sm font-medium text-gray-700">Start date:</label>
+                                                                <label for="start" class="text-sm font-medium text-gray-700">Data początkowa:</label>
                                                                 <input type="date" id="start"
                                                                     x-model="start" x-on:change="validateRange()"
                                                                     :min="minDate"
@@ -186,11 +188,11 @@
                                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                                                                    class="border px-2 py-1 rounded" />
+                                                                    class="border border-gray-300 px-2 py-1 rounded" />
                                                             </div>
 
                                                             <div class="flex flex-col">
-                                                                <label for="end" class="text-sm font-medium text-gray-700">End date:</label>
+                                                                <label for="end" class="text-sm font-medium text-gray-700">Dzień Końcowy:</label>
                                                                 <input type="date" id="end"
                                                                     x-model="end" x-on:change="validateRange()"
                                                                     :min="endMin"
@@ -198,18 +200,18 @@
                                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                                                                    class="border px-2 py-1 rounded" />
+                                                                    class="border border-gray-300 px-2 py-1 rounded" />
                                                             </div>
                                                         </div>
                                                         <button
-                                                    wire:click="loadData"
-                                                    class="mt-5 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                                                    :disabled="!selectedId || !stations[selectedId] || !query"
-                                                    :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
-                                                    :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                                                >
-                                                    Załaduj dane
-                                                </button>
+                                                            wire:click="loadData"
+                                                            class="mt-5 bg-blue-500 text-white px-4 py-2 border border-gray-300 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                                            :disabled="!selectedId || !stations[selectedId] || !query"
+                                                            :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
+                                                            :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
+                                                        >
+                                                            Odśwież dane
+                                                        </button>
                                                     </div>
 
                                                 </div>
@@ -218,8 +220,8 @@
 
 
                                     <div x-cloak x-show="selectedTab === 'dobowe'"  role="tabpanel" aria-label="dobowe">
-                                        <b>Wybierz miesiąc:</b>
-                                                    <div class="flex gap-2 mt-2">
+                                        <p>Wybierz miesiąc odczytu danych:</p>
+                                                    <div class="flex gap-2">
                                                         <div x-data="{
                                                             start: $wire.entangle('doboweDate'),
                                                             maxDate: '',
@@ -235,7 +237,7 @@
                                                         x-init="validateRange()">
                                                             <div class="flex items-center gap-4">
                                                                 <div class="flex flex-col">
-                                                                    <label for="start" class="text-sm font-medium text-gray-700">Date for data:</label>
+                                                                    <label for="start" class="text-sm font-medium text-gray-700">Miesiąc z roku:</label>
                                                                     <input type="month" id="start"
                                                                         x-model="start" x-on:change="validateRange(); $wire.loadData()"
                                                                         min="2025-07"
@@ -243,7 +245,7 @@
                                                                         :disabled="!selectedId || !stations[selectedId] || !query"
                                                                         :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                                         :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
-                                                                        class="border px-2 py-1 rounded" />
+                                                                        class="border border-gray-300 px-2 py-1 rounded" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -252,8 +254,8 @@
                                     </div>
 
                                     <div x-cloak x-show="selectedTab === 'miesieczne'" role="tabpanel" aria-label="miesieczne">
-                                        <b>Wybierz rok:</b>
-                                        <div class="flex gap-2 mt-2">
+                                        <p>Wybierz rok odczytu danych:</p>
+                                        <div class="flex gap-2">
                                             <div
                                                 x-data="{
                                                     start: $wire.entangle('miesieczneDate'),
@@ -275,7 +277,7 @@
                                             >
                                                 <div class="flex items-center gap-4">
                                                     <div class="flex flex-col">
-                                                        <label for="year" class="text-sm font-medium text-gray-700">Wybierz rok:</label>
+                                                        <label for="year" class="text-sm font-medium text-gray-700">Rok:</label>
                                                         <select
                                                             id="year"
                                                             :disabled="!selectedId || !stations[selectedId] || !query"
@@ -283,7 +285,7 @@
                                                             :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
                                                             x-model="start"
                                                             x-on:change="$wire.loadData()"
-                                                            class="border px-2 py-1 rounded">
+                                                            class="border border-gray-300 px-2 py-1 rounded w-24">
                                                             <template x-for="year in years" :key="year">
                                                                 <option :value="year" x-text="year"></option>
                                                             </template>
@@ -300,14 +302,12 @@
                         </div>
                     </div>
                     <div class="p-4 flex flex-col justify-end">
-                        <div wire:loading class=" p-4 bg-gray-100 border rounded text-sm min-h-72 text-center">
-                            <p>Ładowanie...</p>
-                        </div>
+
                         @if (!empty($stationData))
 
-                            <div wire:loading.remove class=" p-4 bg-gray-100 border rounded text-sm min-h-72">
+                            <div  class=" p-4 bg-gray-100 border rounded text-sm min-h-72">
                                 <p class="font-semibold mb-2">
-                                    📡 Dane meteo dla stacji ID {{ $stationId }} ({{ $stationData['nazwa_stacji'] ?? '-' }})
+                                    📡 Dane meteo dla stacji ID {{ $stationData['kod_stacji'] }} ({{ $stationData['nazwa_stacji'] ?? '-' }})
                                 </p>
 
                                 <p class="text-xs text-gray-500 mb-2">
@@ -362,7 +362,7 @@
                             </div>
 
                         @elseif(!empty($error))
-                            <div wire:loading.remove class=" p-4 bg-gray-100 border rounded text-sm min-h-72 text-center">
+                            <div  class=" p-4 bg-gray-100 border rounded text-sm min-h-72 text-center">
                                 <div class="text-sm text-red-600">❌ W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
                                 <div class="text-gray-600 text-sm mt-2">
                                 ⏳ Wybierz inną stację lub spróbuj innej o podobnej nazwie.
@@ -374,7 +374,7 @@
                             </div>
 
                         @else
-                            <div wire:loading.remove class=" p-4 bg-gray-100 border rounded text-sm min-h-72 text-center">
+                            <div class=" p-4 bg-gray-100 border rounded text-sm min-h-72 text-center">
                                 <div class="text-lime-600 text-sm mt-2">
                                 ⏳ Oczekiwanie na wybór stacji.
                                 </div>
@@ -383,30 +383,42 @@
                     </div>
             </div>
 
-        </div
-
-        @if ($info)
-            <p class="text-red-500">{{ $info }}</p>
-        @endif
-
-        <div>
-
-            <h3>Dane pogodowe dla stacji: {{ $stationId }}
-                </h3>      {{-- "kod_stacji": "249190190",
-        "nazwa_stacji": "MAKÓW PODHALAŃSKI",
-        "lon": "19.688056",
-        "lat": "49.725833", --}}
-
         </div>
-        <div class="w-full bg-slate-50">
+
+        <div class=" bg-slate-50 m-4 p-4 rounded border-2 border-gray-200">
+
+            @if ($stationId)
+                <h1 class="text-xl pb-2 font-bold">Wyszukano dane meteorologiczne dla stacji: {{ $stationId.' - '.$stations[$stationId] }}</h1>
+            @else
+                <h1 class="text-xl pb-2 font-bold text-slate-50"> Brak wybranej stacji</h1>
+            @endif
 
             @if(empty($this->weatherData))
-                        <p>Brak danych do odczytu</p>
-                    @else
+                <div class="relative w-full h-[24rem] flex justify-center p-4 bg-gray-200  border-2 rounded">
+                        <div class="absolute left-0 top-0 w-full h-full flex flex-col justify-center text-center animate-pulse border-gray-600">
+                            @if ($stationId)
+                                <p class="text-xl font-bold">Brak aktualnych danych z tego okresu dla stacji {{ $stationId.' - '.$stations[$stationId] }}</p>
+                            @else
+                                 <p class="text-xl font-bold">Oczekiwanie na wybór stacji...</p>
+                            @endif
+                        </div>
+                </div>
+            @else
+            <div class="relative w-full h-[24rem] flex justify-center p-4  border-2 rounded border-gray-400">
+                <div wire:loading class="absolute top-0 left-0 w-full h-full z-10 animate-pulse bg-gray-200 border-2 rounded">
+                    <div class="w-full h-full flex flex-col justify-center text-center">
+                        <p class="text-xl font-bold">Ładowanie...</p>
+                    </div>
+                </div>
+                <canvas id="weatherChart" wire:loading.remove  class=" w-full h-full"></canvas>
+            </div>
+
                     <b>Jeżeli id się różnią nie znaleziono stacji o podanym id a wyszukano stację o tej samej nazwie <br>(niektore stacje mogą posiadać nowe id nie będące na liście wyboru stacji nie wiadomo czemu)</b>
                     <br>  Odczytano dane dla: {{ $this->weatherData[0]['kod_stacji'].' '. $this->weatherData[0]['nazwa_stacji'] }}
-                        @switch($this->aggregation)
+
+                    @switch($this->aggregation)
                             @case('30min')
+
                                     <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-slate-300 max-h-screen">
                                         <table class="w-full text-left text-sm ">
                                             <thead class="border-b border-slate-300 bg-slate-100 text-sm text-black ">
@@ -645,52 +657,79 @@
 
                         @endswitch
 
-                    @endif
+            @endif
 
         </div>
     </div>
-    @pushOnce('scripts2')
-                <script>
-                function stationSelect({ initialId, stations }) {
-                    return {
-                        open: false,
-                        query: '',
-                        selectedId: initialId,
-                        stations,
-                        filtered() {
-                            const q = this.query.toLowerCase();
-                            return Object.entries(this.stations).filter(([id, name]) =>
-                                id.includes(q) || name.toLowerCase().includes(q)
-                            );
-                        },
-                        select(id) {
-                            this.selectedId = id;
-                            this.query = this.stations[id] ? `${this.stations[id]}` : id;
-                            this.open = false;
-                             this.$wire.set('stationId', id).then(() => {
-                                if (this.stations[id]) {
-                                    this.$wire.call('loadData');
-                                    this.$wire.set('dateOption', 'today');
-                                } else {
-                                    this.$wire.set('weatherData', []); // Clear data if ID is invalid
-                                    this.$wire.set('dateOption', 'today');
-                                }
-                            });
-                            this.$wire.set('stop', false);
 
-                            console.log(id);
-                        },
-                        init() {
-                            // Populate input with name if stationId is passed in URL
-                            if (this.selectedId && this.stations[this.selectedId]) {
-                                this.query = this.stations[this.selectedId];
-                            }else{
-                                this.$wire.set('stop', true);
-                            }
+    <script>
+    document.addEventListener('livewire:init', () => {
 
-                        }
-                    };
+         var chartInstance = null;
+        if (chartInstance) {
+                chartInstance.destroy(); // Clear existing chart
+            }
+        function renderChart(weatherData) {
+            if (chartInstance) {
+                chartInstance.destroy(); // Clear existing chart
+            }
+            const labels = weatherData.map(item => item.temperatura_gruntu_data ?? item.data);
+            const temperatures = weatherData.map(item => parseFloat(item.temperatura_gruntu ?? item.mean_temp_gruntu_dobowa ?? item.mean_mean_temp_gruntu_mies) || null);
+
+            const ctx = document.getElementById('weatherChart');
+            if (!ctx) {
+                    console.error('Brak canvasu!');
+                    return;
+            }
+
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatura gruntu (°C)',
+                        data: temperatures,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.3,
+                        spanGaps: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Czas' }},
+                        y: { title: { display: true, text: 'Temperatura (°C)' }}
+                    }
+
                 }
-                </script>
-    @endpushOnce
+            });
+            console.log('Odświeżono wykres');
+
+        }
+
+
+
+
+        Livewire.on('weatherDataUpdated', (newData) => {
+            Alpine.nextTick(() => {
+                if(Array.isArray(newData[0]) && newData[0].length > 0){
+                    const data = newData[0] ?? @json($this->sortedWeatherData);
+
+                    renderChart(data);
+                }
+                else{
+                    console.log('Nie ładuję wykresu');
+                }
+            });
+
+
+
+        });
+    });
+</script>
+
 </div>
