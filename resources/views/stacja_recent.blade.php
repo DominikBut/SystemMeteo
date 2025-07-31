@@ -1,7 +1,7 @@
 <x-guest-layout>
-    <div class="py-12">
-        <div class=" mx-auto sm:px-6 lg:px-8">
-            <div class="bg-lime-100 overflow-hidden shadow-xl sm:rounded-lg">
+    <div class="py-6">
+        <div class="mx-auto sm:px-2 lg:px-8 max-w-[100rem]">
+            <div class="bg-gray-100 overflow-hidden shadow-xl sm:rounded-lg">
                 @livewire('stacja-recent')
             </div>
         </div>

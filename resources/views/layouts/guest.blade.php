@@ -20,7 +20,7 @@
         @stack('scripts')
         @livewireStyles
     </head>
-    <body class="font-sans antialiased">
+    <body class=" font-monospace antialiased">
         <x-banner />
 
         <div class="min-h-screen bg-gray-100">

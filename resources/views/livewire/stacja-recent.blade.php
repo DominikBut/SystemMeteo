@@ -13,7 +13,7 @@
                     <div class="flex flex-col justify-between p-4">
                          @if (!empty($stations))
                         <div>
-                            <p class="p-1 font-bold text-gray-600">Wyszukaj stację z {{ count($stations) }} oficjalnych stacji IMGW (refresh 7 dni):</p>
+                            <p class="p-1 font-bold text-gray-600">Wybierz stację z {{ count($stations) }} oficjalnych stacji IMGW:</p>
                             <div class="relative w-full">
                             <input
                                 type="search"
@@ -26,7 +26,7 @@
                                 placeholder="Wpisz ID lub nazwę stacji..."
                             >
 
-                            <ul x-cloak x-show="open" class="border mt-1 bg-white max-h-60 overflow-y-auto shadow z-10 absolute w-full">
+                            <ul x-cloak x-show="open" class="border-2 rounded border-gray-400 mt-1 bg-white max-h-60 overflow-y-auto shadow z-10 absolute w-full">
                                 <template x-for="[id, name] in filtered()" :key="id">
                                     <li
                                         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
@@ -35,7 +35,7 @@
                                     ></li>
 
                                 </template>
-                                <li x-cloak class="px-4 py-2 text-sm text-gray-500 border-t bg-gray-50 sticky bottom-0 z-10">
+                                <li x-cloak class="px-4 py-2 text-sm text-gray-500 border-t-2  border-gray-200 bg-gray-50 sticky bottom-0 z-10">
                                     Dostępnych opcji: <span x-text="filtered().length"></span>
                                 </li>
                             </ul>
@@ -62,7 +62,7 @@
                             <h1><b>Błąd połączenia z API spróbuj ponownie za godzinę, aby móc przeglądać dane (również innych stacji)!</b></h1>
                         @endif
                         <div class="w-full">
-                            <div x-data="{ selectedTab: '30min' }" class="w-full bg-stone-50 min-h-56 p-4 flex flex-col justify-between rounded border-2 border-gray-200">
+                            <div x-data="{ selectedTab: '30min' }" class="w-full bg-slate-50 min-h-56 p-4 flex flex-col justify-between rounded border-2 border-gray-200">
                                 <div class="w-full">
                                     <p><b>Wybierz typ agregacji danych:</b></p>
                                     <div x-cloak class="mt-2 flex overflow-x-auto bg-gray-200 md:w-fit rounded" role="tablist" >
@@ -305,9 +305,9 @@
 
                         @if (!empty($stationData))
 
-                            <div  class=" p-4 bg-gray-100 border rounded text-sm min-h-72">
-                                <p class="font-semibold mb-2">
-                                    📡 Dane meteo dla stacji ID {{ $stationData['kod_stacji'] }} ({{ $stationData['nazwa_stacji'] ?? '-' }})
+                            <div  class=" p-4 bg-slate-50 border-2 rounded border-gray-200 text-sm min-h-72">
+                                <p class="font-bold mb-2 text-base truncate text-lime-600">
+                                    Najnowsze dane meteo dla stacji ID {{ $stationData['kod_stacji'] }} ({{ $stationData['nazwa_stacji'] ?? '-' }})
                                 </p>
 
                                 <p class="text-xs text-gray-500 mb-2">
@@ -362,21 +362,23 @@
                             </div>
 
                         @elseif(!empty($error))
-                            <div  class=" p-4 bg-gray-100 border rounded text-sm min-h-72 text-center">
-                                <div class="text-sm text-red-600">❌ W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
-                                <div class="text-gray-600 text-sm mt-2">
-                                ⏳ Wybierz inną stację lub spróbuj innej o podobnej nazwie.
+                            <div class="relative p-4 bg-slate-50 border-gray-200 border-2 rounded text-sm min-h-72 text-center ">
+                                <div class="absolute top-0 left-0 font-bold h-full w-full bg-slate-50 flex flex-col justify-center">
+                                    <div class="text-sm font-bold text-red-500">W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
+                                    <div class="font-bold text-gray-600 text-sm mt-2">
+                                        Wybierz inną stację lub spróbuj innej z tego samego regionu.
+                                    </div>
+                                    <br>
+                                    @if ($error)
+                                        <p class="font-bold text-red-500">{{ $error }}</p>
+                                    @endif
                                 </div>
-                                <br>
-                                @if ($error)
-                                    <p class="text-red-500">{{ $error }}</p>
-                                @endif
                             </div>
 
                         @else
-                            <div class=" p-4 bg-gray-100 border rounded text-sm min-h-72 text-center">
-                                <div class="text-lime-600 text-sm mt-2">
-                                ⏳ Oczekiwanie na wybór stacji.
+                            <div class="relative p-4 bg-slate-50 border-gray-200 border-2 rounded text-sm min-h-72 text-center ">
+                                <div class="absolute top-0 left-0 font-bold h-full w-full bg-slate-50 flex flex-col justify-center">
+                                    <p class="w-auto h-auto m-auto animate-pulse">Oczekiwanie na wybór stacji...</p>
                                 </div>
                             </div>
                         @endif
@@ -387,30 +389,35 @@
 
         <div class=" bg-slate-50 m-4 p-4 rounded border-2 border-gray-200">
 
-            @if ($stationId)
+            @if (!empty($stations[$stationId]) )
                 <h1 class="text-xl pb-2 font-bold">Wyszukano dane meteorologiczne dla stacji: {{ $stationId.' - '.$stations[$stationId] }}</h1>
             @else
                 <h1 class="text-xl pb-2 font-bold text-slate-50"> Brak wybranej stacji</h1>
             @endif
 
             @if(empty($this->weatherData))
-                <div class="relative w-full h-[24rem] flex justify-center p-4 bg-gray-200  border-2 rounded">
-                        <div class="absolute left-0 top-0 w-full h-full flex flex-col justify-center text-center animate-pulse border-gray-600">
-                            @if ($stationId)
-                                <p class="text-xl font-bold">Brak aktualnych danych z tego okresu dla stacji {{ $stationId.' - '.$stations[$stationId] }}</p>
+                <div class="relative w-full h-[24rem] flex justify-center p-4  bg-gray-200 border-2 rounded border-gray-300">
+                        <div wire:loading.remove class="absolute left-0 top-0 w-full h-full flex flex-col justify-center text-center ">
+                            @if (!empty($stations[$stationId]))
+                                <p   class="text-xl font-bold text-red-500">Brak aktualnych danych z tego okresu dla stacji {{ $stationId.' - '.$stations[$stationId] }}</p>
                             @else
-                                 <p class="text-xl font-bold">Oczekiwanie na wybór stacji...</p>
+                                 <p   class="text-xl font-bold animate-pulse">Oczekiwanie na wybór stacji...</p>
                             @endif
                         </div>
+                        <div wire:loading class="absolute top-0 left-0 w-full h-full z-20 animate-pulse bg-gray-200 ">
+                        <div class="w-full h-full flex flex-col justify-center animate-pulse text-center">
+                            <p class="text-xl font-bold animate-pulse">Ładowanie...</p>
+                        </div>
+                </div>
                 </div>
             @else
-            <div class="relative w-full h-[24rem] flex justify-center p-4  border-2 rounded border-gray-400">
-                <div wire:loading class="absolute top-0 left-0 w-full h-full z-10 animate-pulse bg-gray-200 border-2 rounded">
-                    <div class="w-full h-full flex flex-col justify-center text-center">
-                        <p class="text-xl font-bold">Ładowanie...</p>
+            <div class="relative w-full h-[24rem] flex justify-center p-4 border-2 rounded border-gray-300 ">
+                <div wire:loading class="absolute top-0 left-0 w-full h-full z-20 animate-pulse bg-gray-200 ">
+                    <div class="w-full h-full flex flex-col justify-center animate-pulse text-center">
+                        <p class="text-xl font-bold animate-pulse">Ładowanie...</p>
                     </div>
                 </div>
-                <canvas id="weatherChart" wire:loading.remove  class=" w-full h-full"></canvas>
+                <canvas id="weatherChart" wire:loading.remove class="w-full h-full z-0 "></canvas>
             </div>
 
                     <b>Jeżeli id się różnią nie znaleziono stacji o podanym id a wyszukano stację o tej samej nazwie <br>(niektore stacje mogą posiadać nowe id nie będące na liście wyboru stacji nie wiadomo czemu)</b>
@@ -419,7 +426,7 @@
                     @switch($this->aggregation)
                             @case('30min')
 
-                                    <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-slate-300 max-h-screen">
+                                    <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-gray-300 max-h-screen">
                                         <table class="w-full text-left text-sm ">
                                             <thead class="border-b border-slate-300 bg-slate-100 text-sm text-black ">
                                                 <tr class="even:bg-blue-700/5 ">
