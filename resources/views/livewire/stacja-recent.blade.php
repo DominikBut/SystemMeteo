@@ -3,45 +3,41 @@
          use Carbon\Carbon;
     @endphp
     <div class="p-4 space-y-4 w-full">
-
         <div class="flex flex-row align-content-center w-full text-xs sm:text-base">
-
             <div x-data="stationSelect({
                         initialId: @entangle('stationId'),
                         stations: {{ Js::from($this->stations) }},
                     })"
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
-                    <h1 class="col-span-2 bg-white rounded-md shadow-sm py-4 px-2 mx-4 text-center text-sm sm:text-2xl font-bold">Przeglądasz bieżące dane meteorologiczne IMGW API</h1>
-                    <div class="flex flex-col justify-between p-4">
+                    <h1 class="col-span-2 bg-white rounded-md shadow-sm py-4 px-2 mx-2 text-center text-sm sm:text-2xl font-bold">Przeglądasz bieżące dane meteorologiczne IMGW API</h1>
+                    <div class="flex flex-col justify-between p-2">
                          @if (!empty($stations))
-
                         <div>
                             <p class="p-1 font-bold text-gray-600">Wybierz jedną z {{ count($stations) }} oficjalnych stacji IMGW:</p>
                             <div class="relative w-full">
-                            <input
-                                type="search"
-                                class="bg-white rounded-md shadow-sm border-2 border-gray-300 p-2 w-full"
-                                :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')"
-                                @input="query = $event.target.value"
-                                {{-- to wyzej powoduje ze jak wpisuje to szuka a jak dostaje z url to nie szuka auto jak jest zle dodatkowy czek 2 kroki zamiast 1 --}}
-                                @focus="open = true"
-                                @blur="setTimeout(() => open = false, 200)"
-                                placeholder="Wpisz ID lub nazwę stacji..."
-                            >
+                                <input
+                                    type="search"
+                                    class="bg-white rounded-md shadow-sm border-2 border-gray-300 p-2 w-full"
+                                    :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')"
+                                    @input="query = $event.target.value"
+                                    {{-- to wyzej powoduje ze jak wpisuje to szuka a jak dostaje z url to nie szuka auto jak jest zle dodatkowy czek 2 kroki zamiast 1 --}}
+                                    @focus="open = true"
+                                    @blur="setTimeout(() => open = false, 200)"
+                                    placeholder="Wpisz ID lub nazwę stacji...">
 
-                            <ul x-cloak x-show="open" class="border rounded border-gray-400 mt-1 bg-white max-h-60 overflow-y-auto shadow z-10 absolute w-full">
-                                <template x-for="[id, name] in filtered()" :key="id">
-                                    <li
-                                        class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                                        @click="select(id)"
-                                        x-text="`${id} – ${name}`"
-                                    ></li>
+                                <ul x-cloak x-show="open" class="border rounded border-gray-400 mt-1 bg-white max-h-60 overflow-y-auto shadow z-10 absolute w-full">
+                                    <template x-for="[id, name] in filtered()" :key="id">
+                                        <li
+                                            class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                                            @click="select(id)"
+                                            x-text="`${id} – ${name}`"
+                                        ></li>
 
-                                </template>
-                                <li x-cloak class="px-4 py-2 text-sm text-gray-500 border-t-2  border-gray-200 bg-gray-50 sticky bottom-0 z-10">
-                                    Dostępnych opcji: <span x-text="filtered().length"></span>
-                                </li>
-                            </ul>
+                                    </template>
+                                    <li x-cloak class="px-4 py-2 text-sm text-gray-500 border-t-2  border-gray-200 bg-gray-50 sticky bottom-0 z-10">
+                                        Dostępnych opcji: <span x-text="filtered().length"></span>
+                                    </li>
+                                </ul>
                             </div>
 
                             <div class="flex flex-row ms-2 text-xs">
@@ -56,10 +52,7 @@
                                         Wybierz najpierw stację!.
                                     </p>
                                 </div>
-
                             </div>
-
-
                         </div>
                         @else
                             <h1><b>Błąd połączenia z API spróbuj ponownie za godzinę, aby móc przeglądać dane (również innych stacji)!</b></h1>
@@ -74,9 +67,7 @@
                                         $wire.loadData();
                                     }
                                 }"
-
-                                class="w-full bg-white rounded-md shadow-sm sm:min-h-56 p-4 flex flex-col justify-between"
-                            >
+                                class="w-full bg-white rounded-md shadow-sm sm:min-h-56 p-4 flex flex-col justify-between">
                                 <div class="w-full">
                                     <p class=""><b>Wybierz typ agregacji danych:</b></p>
                                      <div x-ref="tabButtons"
@@ -136,10 +127,8 @@
                                         </div>
                                     </div>
                                     <div x-cloak x-show="selectedTab === 'terminowe'"  role="tabpanel" aria-label="terminowe">
-
                                         <p class="py-2">Wybierz zakres dni odczytu danych:</p>
                                                 <div class="flex gap-2">
-
                                                      {{-- minDate below set to earliest data that i have --}}
                                                      <div class="flex flex-col md:flex-row w-full" x-data="{
                                                             start: $wire.entangle('terminoweStartDate'),
@@ -230,13 +219,9 @@
                                                             Odśwież dane
                                                         </button>
                                                         </div>
-
                                                     </div>
-
                                                 </div>
-
                                     </div>
-
 
                                     <div x-cloak x-show="selectedTab === 'dobowe'"  role="tabpanel" aria-label="dobowe">
                                         <p class="py-2 ">Wybierz miesiąc odczytu danych:</p>
@@ -320,19 +305,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-4 flex flex-col justify-end">
-
+                    <div class="p-2 flex flex-col justify-end">
                         @if (!empty($stationData))
-
                             <div  class=" p-4 bg-white rounded-md shadow-sm sm:text-sm min-h-72">
                                 <p class="font-bold mb-2 text-sm sm:text-base truncate text-lime-600">
                                     Najnowsze dane meteo dla stacji ID {{ $stationData['kod_stacji'] }} ({{ $stationData['nazwa_stacji'] ?? '-' }})
                                 </p>
-
                                 <p class="text-xs text-gray-500 mb-2">
                                     Dane pobrano: {{ $askTime ?? '–' }}
                                 </p>
-
                                 <ul class="grid grid-cols-2 gap-4 sm:text-sm">
                                     <li>
                                         <strong>Temp. gruntu:</strong> {{ $stationData['temperatura_gruntu'] ?? '-' }} °C
@@ -377,9 +358,7 @@
                                         </div>
                                     </li>
                                 </ul>
-
                             </div>
-
                         @elseif(!empty($error))
                             <div class="relative p-4 bg-white rounded-md shadow-sm text-sm min-h-72 text-center ">
                                 <div class="absolute top-0 left-0 font-bold h-full w-fullflex flex-col justify-center">
@@ -393,7 +372,6 @@
                                     @endif
                                 </div>
                             </div>
-
                         @else
                             <div class="relative p-4 bg-white rounded-md shadow-sm text-sm min-h-72 text-center ">
                                 <div class="absolute top-0 left-0 font-bold h-full w-full bg-slate-50 flex flex-col justify-center">
@@ -403,11 +381,9 @@
                         @endif
                     </div>
             </div>
-
         </div>
 
-        <div class=" m-4 p-4 bg-white rounded-md shadow-sm">
-
+        <div class=" m-2 p-4 bg-white rounded-md shadow-sm">
             @if (!empty($stations[$stationId]) )
                 <h1 class="text-sm sm:text-xl pb-2 font-bold">Wyszukano dane meteorologiczne dla stacji: {{ $stationId.' - '.$stations[$stationId] }}</h1>
             @else
@@ -430,7 +406,7 @@
                     </div>
                 </div>
             @else
-            <div class="relative w-full h-[24rem] flex justify-center p-4 bg-white rounded-md shadow-sm border">
+            <div class="relative w-full h-[28rem] flex justify-center p-4 bg-white rounded-md shadow-sm border">
                 <div wire:loading class="absolute top-0 left-0 w-full h-full z-20 animate-pulse ">
                     <div class="w-full h-full flex flex-col justify-center animate-pulse text-center">
                         <p class="text-sm sm:text-xl font-bold animate-pulse">Ładowanie...</p>
@@ -439,7 +415,6 @@
                 <canvas id="weatherChart" wire:loading.remove class="w-full h-full z-0 "></canvas>
             </div>
 
-                    <b>Jeżeli id się różnią nie znaleziono stacji o podanym id a wyszukano stację o tej samej nazwie <br>(niektore stacje mogą posiadać nowe id nie będące na liście wyboru stacji nie wiadomo czemu)</b>
                     <br>  Odczytano dane dla: {{ $this->weatherData[0]['kod_stacji'].' '. $this->weatherData[0]['nazwa_stacji'] }}
 
                     @switch($this->aggregation)
@@ -689,63 +664,229 @@
     </div>
 
     <script>
-    document.addEventListener('livewire:init', () => {
+        function parseUtcFULL(dateStr) {
+            // Split manually
+            const [datePart, timePart] = dateStr.split(' ');
+            const [year, month, day] = datePart.split('-');
+            const [hour, minute, second] = timePart.split(':');
+
+            // Create UTC date
+            const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+            // Format to Europe/Warsaw
+            return new Intl.DateTimeFormat('pl-PL', {
+                timeZone: 'Europe/Warsaw',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            }).format(utcDate);
+        }
+        function parseUtcDAY(dateStr) {
+            // Split manually
+            const [datePart, timePart] = dateStr.split(' ');
+            const [year, month, day] = datePart.split('-');
+            const [hour, minute, second] = timePart.split(':');
+
+            // Create UTC date
+            const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+            // Format to Europe/Warsaw
+            return new Intl.DateTimeFormat('pl-PL', {
+                timeZone: 'Europe/Warsaw',
+
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            }).format(utcDate);
+        }
+        function parseUtcTIME(dateStr) {
+            // Split manually
+            const [datePart, timePart] = dateStr.split(' ');
+            const [year, month, day] = datePart.split('-');
+            const [hour, minute, second] = timePart.split(':');
+
+            // Create UTC date
+            const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+            // Format to Europe/Warsaw
+            return new Intl.DateTimeFormat('pl-PL', {
+                timeZone: 'Europe/Warsaw',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            }).format(utcDate);
+        }
+
+        document.addEventListener('livewire:init', () => {
 
          var chartInstance = null;
         if (chartInstance) {
                 chartInstance.destroy(); // Clear existing chart
             }
-        function renderChart(weatherData) {
+        function renderChart(weatherData, aggr, typ) {
             if (chartInstance) {
+                chartInstance.clear();
                 chartInstance.destroy(); // Clear existing chart
             }
-            const labels = weatherData.map(item => item.temperatura_gruntu_data ?? item.data);
+            let axisLabel = 'Data zapisu';
+            const tmplabels = weatherData.map(item => {
+                const raw = item.temperatura_gruntu_data ?? item.wilgotnosc_wzgledna_data ?? item.opad_10min_data ?? item.data;
+                if(aggr === '30min' && (typ === 'today' || typ === 'yesterday')){
+                    axisLabel = 'Godzina zapisu';
+                    return raw ? parseUtcTIME(raw) : null;
+                }
+                else if(typ === '7days' || aggr === 'terminowe'){
+                    return raw ? parseUtcDAY(raw) : null;
+                }else{
+                    return raw ? raw : null;
+                }
+
+            });
+
             const temperatures = weatherData.map(item => parseFloat(item.temperatura_gruntu ?? item.mean_temp_gruntu_dobowa ?? item.mean_mean_temp_gruntu_mies) || null);
+            const humidities = weatherData.map(item => parseFloat(item.wilgotnosc_wzgledna ?? item.mean_wilgotnosc_wzgledna ?? item.mean_mean_wilgotnosc_wzgledna) || null);
+            const rain10s = weatherData.map(item => parseFloat(item.opad_10min ?? item.sum_opad_10min ?? item.sum_sumopad_10min) || null);
 
             const ctx = document.getElementById('weatherChart');
             if (!ctx) {
                     console.error('Brak canvasu!');
                     return;
             }
+                chartInstance = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: tmplabels,
+                                    datasets: [{
+                                        label: 'Temperatura gruntu (°C)',
+                                        data: temperatures,
+                                        borderColor: 'rgb(252, 198, 3)',
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        order: 1,
+                                        yAxisID: 'y', // ← attach to left axis
+                                    },
+                                    {
+                                        label: 'Wilgotność względna (%)',
+                                        data: humidities,
+                                        borderColor: 'rgb(26, 199, 149)',
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        yAxisID: 'y1', // ← attach to right axis
+                                    },
+                                    {
+                                        label: 'Opad 10 min (mm)',
+                                        data: rain10s,
+                                        type: 'bar',
+                                        // stack: 'combined',
+                                        // borderDash: [2, 2],
+                                        // pointStyle: 'circle',
+                                        // pointRadius: 3,
+                                        // pointHoverRadius: 4,
 
+                                        borderColor: 'rgb(10, 90, 280)',
+                                        backgroundColor: 'rgb(143, 175, 235)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        suggestedMin: 0,
+                                        suggestedMax: 10,
+                                        yAxisID: 'y2', // ← attach to right axis
+                                        order: 5,
+                                    }
+                                ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    // scales: {
+                                    //     x: { title: { display: true, text: axisLabel }},
+                                    //     y: { title: { display: true, text: '' }}
+                                    // },
+                                    scales: {
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: axisLabel
+                                            }
+                                        },
+                                        y: {
+                                            type: 'linear',
+                                            display: true,
+                                            position: 'left',
+                                            title: {
+                                                display: true,
+                                                text: 'Temperatura gruntu (°C)',
+                                                color: 'rgb(252, 198, 3)',
+                                            },
+                                            grid: {
+                                                drawOnChartArea: true // ← optional: don't draw both grid lines
+                                            },
+                                        },
+                                        y1: {
+                                            type: 'linear',
+                                            display: true,
+                                            position: 'left',
+                                            title: {
+                                                display: true,
+                                                text: 'Wilgotność względna (%)',
+                                                color: 'rgb(26, 199, 149)',
+                                            },
+                                            grid: {
+                                                drawOnChartArea: false // ← optional: don't draw both grid lines
+                                            },
+                                        },
+                                        y2: {
+                                            type: 'linear',
+                                            display: true,
+                                            position: 'right',
 
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Temperatura gruntu (°C)',
-                        data: temperatures,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        fill: true,
-                        tension: 0.3,
-                        spanGaps: true,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: 'Czas' }},
-                        y: { title: { display: true, text: 'Temperatura (°C)' }}
-                    }
+                                            title: {
+                                                display: true,
+                                                text: 'Opad 10 min (mm)',
+                                                color: 'rgb(10, 90, 280)',
+                                            },
+                                            grid: {
+                                                drawOnChartArea: false // ← optional: don't draw both grid lines
+                                            },
+                                        }
+                                    },
 
-                }
-            });
+                                     plugins: {
+                                        zoom: {
+                                            zoom: {
+                                            wheel: {
+                                                enabled: true,
+                                            },
+                                            pinch: {
+                                                enabled: true
+                                            },
+                                            mode: 'xy',
+                                            }
+                                        }
+                                    }
+
+                                }
+                });
+
             console.log('Odświeżono wykres');
 
         }
 
-
-
-
         Livewire.on('weatherDataUpdated', (newData) => {
             Alpine.nextTick(() => {
-                if(Array.isArray(newData[0]) && newData[0].length > 0){
-                    const data = newData[0] ?? @json($this->sortedWeatherData);
+                var weatherData = newData[0][0];
+                var aggregation = newData[0][1];
+                var type = newData[0][2];
 
-                    renderChart(data);
+                if(Array.isArray(weatherData) && weatherData.length > 0){
+                    console.log(weatherData);
+
+                    renderChart(weatherData, aggregation, type);
                 }
                 else{
                     console.log('Nie ładuję wykresu');

@@ -124,25 +124,25 @@ class StacjaRecent extends Component
             switch ($this->aggregation) {
                 case '30min':
                     $this->load30MinData();
-                    $this->dispatch('weatherDataUpdated', $this->weatherData);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation, $this->dateOption]);
                     break;
                 case 'terminowe':
                     $this->loadTerminoweData();
-                    $this->dispatch('weatherDataUpdated', $this->weatherData);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
                     break;
                 case 'dobowe':
                     $date = Carbon::parse($this->doboweDate . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
-                    $this->dispatch('weatherDataUpdated', $this->weatherData);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
                     break;
                 case 'miesieczne':
                     $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
-                    $this->dispatch('weatherDataUpdated', $this->weatherData);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
                     break;
                 default:
                     $this->load30MinData();
-                    $this->dispatch('weatherDataUpdated', $this->weatherData);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
                     break;
             }
         }
