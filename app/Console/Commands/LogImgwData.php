@@ -99,13 +99,13 @@ class LogImgwData extends Command
                         $recordsArray = $records->values(); // reset keys
 
                         foreach ([4, 10, 16] as $targetHour) {
-                            $match = $recordsArray->last(function ($item) use ($targetHour) {
+                            $match = $recordsArray->first(function ($item) use ($targetHour) {
                                 return !empty($item['temperatura_gruntu_data']) &&
                                     Carbon::parse($item['temperatura_gruntu_data'], 'UTC')->hour === $targetHour;
                             });
 
                             if (!$match) {
-                                $match = $recordsArray->last(function ($item) use ($targetHour) {
+                                $match = $recordsArray->first(function ($item) use ($targetHour) {
                                     return !empty($item['opad_10min_data']) &&
                                         Carbon::parse($item['opad_10min_data'], 'UTC')->hour === $targetHour;
                                 });

@@ -25,7 +25,7 @@ class StacjaRecent extends Component
 
     public $weatherData = [];
 
-    #[Validate('string|in:temperatura_gruntu_data,opad_10min_data', message: 'Zły format zmiennej!')]
+    #[Validate('string|in:temperatura_gruntu_data,temperatura_gruntu,wilgotnosc_wzgledna,wilgotnosc_wzgledna_data,', message: 'Zły format zmiennej!')]
     public string $sortBy = 'temperatura_gruntu_data';
 
     #[Validate('string|in:asc,desc', message: 'Zły format sortowania!')]
@@ -115,6 +115,7 @@ class StacjaRecent extends Component
             }, SORT_REGULAR, $this->sortDirection === 'desc');
         }
 
+        $this->loadData();
         return $data->values()->all();
     }
     public function loadData()
@@ -124,25 +125,60 @@ class StacjaRecent extends Component
             switch ($this->aggregation) {
                 case '30min':
                     $this->load30MinData();
-                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation, $this->dateOption]);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation, $this->dateOption], [
+                        'aggregation' => $this->aggregation,
+                        'dateOption' => $this->dateOption,
+                        'terminoweStartDate' => $this->terminoweStartDate,
+                        'terminoweEndDate' => $this->terminoweEndDate,
+                        'doboweDate' => $this->doboweDate,
+                        'miesieczneDate' => $this->miesieczneDate,
+                    ]);
                     break;
                 case 'terminowe':
                     $this->loadTerminoweData();
-                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation], [
+                        'aggregation' => $this->aggregation,
+                        'dateOption' => $this->dateOption,
+                        'terminoweStartDate' => $this->terminoweStartDate,
+                        'terminoweEndDate' => $this->terminoweEndDate,
+                        'doboweDate' => $this->doboweDate,
+                        'miesieczneDate' => $this->miesieczneDate,
+                    ]);
                     break;
                 case 'dobowe':
                     $date = Carbon::parse($this->doboweDate . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
-                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation], [
+                        'aggregation' => $this->aggregation,
+                        'dateOption' => $this->dateOption,
+                        'terminoweStartDate' => $this->terminoweStartDate,
+                        'terminoweEndDate' => $this->terminoweEndDate,
+                        'doboweDate' => $this->doboweDate,
+                        'miesieczneDate' => $this->miesieczneDate,
+                    ]);
                     break;
                 case 'miesieczne':
                     $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
-                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation], [
+                        'aggregation' => $this->aggregation,
+                        'dateOption' => $this->dateOption,
+                        'terminoweStartDate' => $this->terminoweStartDate,
+                        'terminoweEndDate' => $this->terminoweEndDate,
+                        'doboweDate' => $this->doboweDate,
+                        'miesieczneDate' => $this->miesieczneDate,
+                    ]);
                     break;
                 default:
                     $this->load30MinData();
-                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation]);
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation], [
+                        'aggregation' => $this->aggregation,
+                        'dateOption' => $this->dateOption,
+                        'terminoweStartDate' => $this->terminoweStartDate,
+                        'terminoweEndDate' => $this->terminoweEndDate,
+                        'doboweDate' => $this->doboweDate,
+                        'miesieczneDate' => $this->miesieczneDate,
+                    ]);
                     break;
             }
         }
@@ -159,7 +195,7 @@ class StacjaRecent extends Component
                 $this->weatherData = $this->loadDataForDate($date);
                 break;
             case '7days':
-                $endDate = Carbon::today();
+                $endDate = Carbon::yesterday();
                 $startDate = $endDate->copy()->subDays(6);
                 $allData = [];
                 for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
