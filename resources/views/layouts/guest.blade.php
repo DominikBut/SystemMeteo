@@ -177,7 +177,7 @@
                     </nav>
 
                     <!-- main content  -->
-                    <div  class="h-svh w-full overflow-y-auto  bg-white ">
+                    <div  class="h-svh w-full overflow-y-auto  bg-gray-100 ">
                                 <!-- Page Heading -->
                         @if (isset($header))
                             <header class="bg-white shadow">

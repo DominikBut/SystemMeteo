@@ -24,6 +24,7 @@ class StacjaRecent extends Component
     // protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
 
     public $weatherData = [];
+    public  $minMaxStats = [];
 
     #[Validate('string', message: 'Zły format zmiennej!')]
     public string $sortBy = 'kod_stacji';
@@ -40,6 +41,8 @@ class StacjaRecent extends Component
 
     #[Validate('string|in:today,yesterday,7days', message: 'Zły format wyboru!')]
     public string $dateOption = 'today'; // 'dzis', 'wczoraj', '7 dni'
+
+    #[Validate('string|in:30min,terminowe,dobowe,miesieczne', message: 'Zły format wyboru!')]
     public string $aggregation = '30min'; // Default mode
 
     public $terminoweStartDate;
@@ -58,6 +61,7 @@ class StacjaRecent extends Component
         $this->validate();
         $this->getStationData();
         $this->loadData();
+        $this->calculateMinMaxStats();
     }
 
     public function setSort(string $column)
@@ -69,6 +73,60 @@ class StacjaRecent extends Component
             $this->sortDirection = 'asc';
         }
         $this->sortWetherData();
+    }
+    public function updatedWeatherData()
+    {
+        dd('sdfs');
+        $this->calculateMinMaxStats();
+    }
+    public function calculateMinMaxStats()
+    {
+        $fields = [
+            //terminowe
+            'temperatura_gruntu',
+            'wiatr_kierunek',
+            'wiatr_srednia_predkosc',
+            'wiatr_predkosc_maksymalna',
+            'wiatr_poryw_10min',
+            'wilgotnosc_wzgledna',
+            'opad_10min',
+            'mean_temp_gruntu_dobowa',
+            'min_temp_gruntu_dobowa',
+            'max_temp_gruntu_dobowa',
+            'mean_wilgotnosc_wzgledna',
+            'min_wilgotnosc_wzgledna',
+            'max_wilgotnosc_wzgledna',
+            'sum_opad_10min',
+            'mean_wiatr_srednia_predkosc',
+            'max_wiatr_predkosc_maksymalna',
+            'max_wiatr_poryw_10min',
+            'mean_wiatr_kierunek',
+            'max_max_temp_gruntu_mies',
+            'mean_max_temp_gruntu_mies',
+            'min_min_temp_gruntu_mies',
+            'mean_min_temp_gruntu_mies',
+            'mean_mean_temp_gruntu_mies',
+            'mean_mean_wiatr_kierunek',
+            'mean_mean_wiatr_srednia_predkosc',
+            'max_max_wiatr_predkosc_maksymalna',
+            'max_max_wiatr_poryw_10min',
+            'min_min_wilgotnosc_wzgledna',
+            'mean_min_wilgotnosc_wzgledna',
+            'max_max_wilgotnosc_wzgledna',
+            'mean_max_wilgotnosc_wzgledna',
+            'mean_mean_wilgotnosc_wzgledna',
+            'max_sum_opad_10min',
+            'sum_sum_opad_10min',
+        ];
+
+        foreach ($fields as $field) {
+            $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
+            $this->minMaxStats[$field] = [
+                'min' => $values->isEmpty() ? null : $values->min(),
+                'max' => $values->isEmpty() ? null : $values->max(),
+                'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+            ];
+        }
     }
     public function updatedStationId()
     {
@@ -131,19 +189,6 @@ class StacjaRecent extends Component
         $this->weatherData = [];
         if ($this->stations) {
             switch ($this->aggregation) {
-                case '30min':
-                    $this->load30MinData();
-                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation, $this->dateOption], [
-                        'aggregation' => $this->aggregation,
-                        'dateOption' => $this->dateOption,
-                        'terminoweStartDate' => $this->terminoweStartDate,
-                        'terminoweEndDate' => $this->terminoweEndDate,
-                        'doboweDate' => $this->doboweDate,
-                        'miesieczneDate' => $this->miesieczneDate,
-                    ]);
-                    $this->sortedData = $this->weatherData;
-                    $this->sortBy = 'kod_stacji';
-                    break;
                 case 'terminowe':
                     $this->loadTerminoweData();
                     $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation], [
@@ -154,6 +199,7 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->calculateMinMaxStats();
                     $this->sortedData = $this->weatherData;
                     $this->sortBy = 'kod_stacji';
                     break;
@@ -168,6 +214,7 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->calculateMinMaxStats();
                     $this->sortedData = $this->weatherData;
                     $this->sortBy = 'kod_stacji';
                     break;
@@ -184,10 +231,11 @@ class StacjaRecent extends Component
                     ]);
                     $this->sortedData = $this->weatherData;
                     $this->sortBy = 'kod_stacji';
+                    $this->calculateMinMaxStats();
                     break;
                 default:
                     $this->load30MinData();
-                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation], [
+                    $this->dispatch('weatherDataUpdated', [$this->weatherData, $this->aggregation, $this->dateOption], [
                         'aggregation' => $this->aggregation,
                         'dateOption' => $this->dateOption,
                         'terminoweStartDate' => $this->terminoweStartDate,
@@ -195,6 +243,7 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->calculateMinMaxStats();
                     $this->sortedData = $this->weatherData;
                     $this->sortBy = 'kod_stacji';
                     break;
@@ -398,8 +447,6 @@ class StacjaRecent extends Component
                     }
                 }
                 return $stations;
-                //$latestUTC = $timestamps ? max($timestamps) : now()->toISOString();
-
             } catch (\Exception $e) {
                 $this->error = 'Błąd pobierania listy stacji: ' . $e->getMessage();
                 return [];

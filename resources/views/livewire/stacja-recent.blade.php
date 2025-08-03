@@ -9,7 +9,7 @@
                         stations: {{ Js::from($this->stations) }},
                     })"
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
-                    <h1 class="col-span-2 bg-white rounded-md shadow-sm py-4 px-2 mx-2 text-center text-sm sm:text-2xl font-bold tracking-wider">Przeglądasz bieżące dane meteorologiczne IMGW API</h1>
+                    <h1 class="col-span-2 bg-white rounded-md shadow-sm py-4 px-2 mx-2 text-center text-sm sm:text-2xl font-bold tracking-wider">Przeglądasz gromadzone przez system dane meteorologiczne API IMGW</h1>
                     <div class="flex flex-col justify-between p-2">
                          @if (!empty($stations))
                         <div>
@@ -32,7 +32,6 @@
                                             @click="select(id)"
                                             x-text="`${id} – ${name}`"
                                         ></li>
-
                                     </template>
                                     <li x-cloak class="px-4 py-2 text-sm text-gray-500 border-t-2  border-gray-200 bg-gray-50 sticky bottom-0 z-10">
                                         Dostępnych opcji: <span x-text="filtered().length"></span>
@@ -299,15 +298,13 @@
                                             </div>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="p-2 flex flex-col justify-end">
                         @if (!empty($stationData))
-                            <div  class=" p-4 bg-white rounded-md shadow-sm sm:text-sm min-h-72">
+                            <div class=" p-4 bg-white rounded-md shadow-sm sm:text-sm min-h-72">
                                 <p class="font-bold  text-sm sm:text-base text-lime-600">
                                     Najnowsze dane meteo dla stacji ID: <span class="text-nowrap">{{ $stationData['kod_stacji'] }} ({{ $stationData['nazwa_stacji'] ?? '-' }})</span>
                                 </p>
@@ -348,7 +345,7 @@
                                                 viewBox="0 0 24 24">
                                                 <path d="M4 12h16M4 6h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                            <strong>Wiatr śr.:</strong> {{ $stationData['wiatr_srednia_predkosc'] ?? '-' }} km/h
+                                            <strong>Wiatr śr.:</strong> {{ $stationData['wiatr_srednia_predkosc'] ?? '-' }} m/s
                                         </p>
 
                                         <div class="text-xs text-gray-500">
@@ -361,7 +358,7 @@
                                                 viewBox="0 0 24 24">
                                                 <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                            <strong>Wiatr maks.:</strong> {{ $stationData['wiatr_predkosc_maksymalna'] ?? '-' }} km/h
+                                            <strong>Wiatr maks.:</strong> {{ $stationData['wiatr_predkosc_maksymalna'] ?? '-' }} m/s
                                         </p>
 
                                         <div class="text-xs text-gray-500">
@@ -402,7 +399,7 @@
                                                 viewBox="0 0 24 24">
                                                 <path d="M4 4l16 16" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                            <strong>Wiatr poryw (10 min):</strong> {{ $stationData['wiatr_poryw_10min'] ?? '-' }} km/h
+                                            <strong>Wiatr poryw (10 min):</strong> {{ $stationData['wiatr_poryw_10min'] ?? '-' }} m/s
                                         </p>
 
                                         <div class="text-xs text-gray-500">
@@ -426,7 +423,7 @@
                             </div>
                         @elseif(!empty($error))
                             <div class="relative p-4 bg-white rounded-md shadow-sm text-sm min-h-72 text-center ">
-                                <div class="absolute top-0 left-0 font-bold h-full w-fullflex flex-col justify-center">
+                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center">
                                     <div class="text-sm font-bold text-red-500">W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
                                     <div class="font-bold text-gray-600 text-sm mt-2">
                                         Wybierz inną stację lub spróbuj innej z tego samego regionu.
@@ -488,14 +485,12 @@
                 </div>
                 <div wire:loading wire:target.except="setSort" class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
                         Ładowanie...
-
                 </div>
             @else
                 <h1 class="text-sm sm:text-xl pb-2 font-bold text-white">Brak wybranej stacji</h1>
                 <div class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
                     Oczekiwanie...
                 </div>
-
             @endif
             @php
                 $allNull = collect($weatherData)->every(fn($item) =>
@@ -520,6 +515,14 @@
                         </div>
                     </div>
                 </div>
+                 <div>
+                <div  class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-white flex flex-row justify-between">
+                Brak danych...
+                </div>
+                <div class="h-44 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
+
+                </div>
+            </div>
             <div class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-white flex flex-row justify-between">
                 Brak danych...
             </div>
@@ -536,7 +539,259 @@
                         Pełny ekran
                 </button>
             </div>
-
+            <div>
+                <div wire:loading wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
+                Ładowanie...
+                </div>
+                <div wire:loading.remove wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
+                Statystyki odczytanych danych:
+                </div>
+                <div class="h-44 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
+                    <table wire:loading.remove wire:target.except="setSort" class="w-full text-left h-full">
+                        @switch($aggregation)
+                            @case('dobowe')
+                                <thead class="border-b-2 border-gray-300  text-black text-center h-auto">
+                                    <th class="p-2 text-gray-600">
+                                        <span class="text-nowrap">Typ wartości</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Temp. <span class="text-nowrap">śr.  gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Temp.  <span class="text-nowrap">min. gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Temp. <span class="text-nowrap">maks. gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Wilg.  <span class="text-nowrap">śr. względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wilg. min.<span class="text-nowrap"> względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wilg. maks.<span class="text-nowrap"> względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Suma opad <span class="text-nowrap">10 min [mm]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [m/s]</span>
+                                    </th>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100  text-xs h-full">
+                                    <tr class="bg-red-50 text-center font-semibold h-auto">
+                                        <td class="p-2 text-gray-700">MAKS.</td>
+                                        <td>{{ $minMaxStats['mean_temp_gruntu_dobowa']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_gruntu_dobowa']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_opad_10min']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_poryw_10min']['max'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-green-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ŚR.</td>
+                                        <td>{{ $minMaxStats['mean_temp_gruntu_dobowa']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_gruntu_dobowa']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_opad_10min']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_poryw_10min']['avg'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-blue-50 text-center font-semibold h-auto">
+                                        <td class="p-2 text-gray-700">MIN.</td>
+                                        <td>{{ $minMaxStats['mean_temp_gruntu_dobowa']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_gruntu_dobowa']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_opad_10min']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_poryw_10min']['min'] ?? '-' }}</td>
+                                    </tr>
+                                </tbody>
+                                @break
+                            @case('miesieczne')
+                                <thead class="border-b-2 border-gray-300  text-black text-center h-auto">
+                                    <th class="p-2 text-gray-600">
+                                        <span class="text-nowrap">Typ wartości</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Temp. <span class="text-nowrap">śr.  gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Temp.  <span class="text-nowrap">min. gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Temp. min. <span class="text-nowrap">śr. gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Temp. <span class="text-nowrap">maks. gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Temp. maks. <span class="text-nowrap">śr. gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Wilg.  <span class="text-nowrap">śr. względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wilg. min.<span class="text-nowrap"> względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wilg. min. <span class="text-nowrap"> śr. względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wilg. maks.<span class="text-nowrap"> względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wilg. maks. <span class="text-nowrap"> śr. względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Suma opad <span class="text-nowrap">10 min [mm]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Suma opad <span class="text-nowrap">maks. 10 min [mm]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [m/s]</span>
+                                    </th>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100  text-xs h-full">
+                                    <tr class="bg-red-50 text-center font-semibold h-auto">
+                                        <td class="p-2 text-gray-700">MAKS.</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_gruntu_mies']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_gruntu_mies']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_gruntu_mies']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_gruntu_mies']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_sum_opad_10min']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_sum_opad_10min']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['max'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-green-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ŚR.</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_gruntu_mies']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_gruntu_mies']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_gruntu_mies']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_gruntu_mies']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_sum_opad_10min']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_sum_opad_10min']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['avg'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-blue-50 text-center font-semibold h-auto">
+                                        <td class="p-2 text-gray-700">MIN.</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_gruntu_mies']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_gruntu_mies']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_gruntu_mies']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_gruntu_mies']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_sum_opad_10min']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_sum_opad_10min']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['min'] ?? '-' }}</td>
+                                    </tr>
+                                </tbody>
+                                @break
+                            @default
+                                <thead class="border-b-2 border-gray-300  text-black text-center h-auto">
+                                    <th class="p-2 text-gray-600">
+                                        <span class="text-nowrap">Typ wartości</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Temp. <span class="text-nowrap">gruntu [°C]</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Wilg. <span class="text-nowrap">względna [%]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Opad <span class="text-nowrap">10 min [mm]</span>
+                                    </th>
+                                    <th class="p-2  text-gray-600">
+                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]</span>
+                                    </th>
+                                    <th class="p-2 text-gray-600">
+                                        Wiatr poryw <span class="text-nowrap">10 min [m/s]</span>
+                                    </th>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100  text-xs h-full">
+                                    <tr class="bg-red-50 text-center font-semibold h-auto">
+                                        <td class="p-2 text-gray-700">MAKS.</td>
+                                        <td>{{ $minMaxStats['temperatura_gruntu']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['opad_10min']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['max'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-green-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ŚR.</td>
+                                        <td>{{ $minMaxStats['temperatura_gruntu']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['opad_10min']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['avg'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-blue-50 text-center font-semibold h-auto">
+                                        <td class="p-2 text-gray-700">MIN.</td>
+                                        <td>{{ $minMaxStats['temperatura_gruntu']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['opad_10min']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['min'] ?? '-' }}</td>
+                                    </tr>
+                                </tbody>
+                        @endswitch
+                    </table>
+                </div>
+            </div>
             <div wire:loading.remove wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
                 @switch($aggregation)
                     @case('terminowe')
@@ -566,7 +821,7 @@
                             @case('dobowe')
                                 <div class="min-h-28 bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
                                         <table class="w-full text-left ">
-                                            <thead class="border-b-2 border-gray-300 bg-slate-100  text-black ">
+                                            <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-center text-xs text-wrap">
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'data' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('data')">
@@ -634,7 +889,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'mean_wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('mean_wiatr_srednia_predkosc')">
-                                                        Wiatr śr. <span class="text-nowrap">prędkość [km/h]
+                                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]
                                                         @if($sortBy === 'mean_wiatr_srednia_predkosc')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -642,14 +897,14 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_wiatr_predkosc_maksymalna' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('max_wiatr_predkosc_maksymalna')">
-                                                        Wiatr maks. <span class="text-nowrap">prędkość [km/h]
+                                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]
                                                         @if($sortBy === 'max_wiatr_predkosc_maksymalna')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_wiatr_poryw_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('max_wiatr_poryw_10min')">
-                                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [km/h]
+                                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [m/s]
                                                         @if($sortBy === 'max_wiatr_poryw_10min')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -724,12 +979,11 @@
                                             </tbody>
                                         </table>
                                 </div>
-
                                 @break
                             @case('miesieczne')
                                 <div class=" bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
                                         <table class="w-full text-left ">
-                                            <thead class="border-b-2 border-gray-300 bg-slate-100  text-black ">
+                                            <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-center text-xs  text-wrap">
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'data' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('data')">
@@ -757,7 +1011,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_min_temp_gruntu_mies' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('mean_min_temp_gruntu_mies')">
-                                                        Temp. śr. <span class="text-nowrap">min. gruntu [°C]
+                                                        Temp. min. <span class="text-nowrap">śr. gruntu [°C]
                                                         @if($sortBy === 'mean_min_temp_gruntu_mies')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -773,7 +1027,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_max_temp_gruntu_mies' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('mean_max_temp_gruntu_mies')">
-                                                        Temp. śr. <span class="text-nowrap">maks. gruntu [°C]
+                                                        Temp. maks. <span class="text-nowrap">śr. gruntu [°C]
                                                         @if($sortBy === 'mean_max_temp_gruntu_mies')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -797,7 +1051,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_min_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('mean_min_wilgotnosc_wzgledna')">
-                                                        Wilg. śr. min.<span class="text-nowrap"> względna [%]
+                                                        Wilg. min. <span class="text-nowrap"> śr. względna [%]
                                                         @if($sortBy === 'mean_min_wilgotnosc_wzgledna')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -813,7 +1067,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_max_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('mean_max_wilgotnosc_wzgledna')">
-                                                        Wilg. śr. maks.<span class="text-nowrap"> względna [%]
+                                                        Wilg. maks. <span class="text-nowrap"> śr. względna [%]
                                                         @if($sortBy === 'mean_max_wilgotnosc_wzgledna')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -838,7 +1092,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'mean_mean_wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('mean_mean_wiatr_srednia_predkosc')">
-                                                        Wiatr śr. <span class="text-nowrap">prędkość [km/h]
+                                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]
                                                         @if($sortBy === 'mean_mean_wiatr_srednia_predkosc')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -846,14 +1100,14 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_max_wiatr_predkosc_maksymalna' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('max_max_wiatr_predkosc_maksymalna')">
-                                                        Wiatr maks. <span class="text-nowrap">prędkość [km/h]
+                                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]
                                                         @if($sortBy === 'max_max_wiatr_predkosc_maksymalna')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_max_wiatr_poryw_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('max_max_wiatr_poryw_10min')">
-                                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [km/h]
+                                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [m/s]
                                                         @if($sortBy === 'max_max_wiatr_poryw_10min')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -945,9 +1199,9 @@
                                 </div>
                                 @break
                             @default
-                                <div class=" bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
+                                    <div class=" bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
                                         <table class="w-full text-left ">
-                                            <thead class="border-b-2 border-gray-300 bg-slate-100  text-black ">
+                                            <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-wrap text-center text-xs ">
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('temperatura_gruntu_data')">
@@ -1008,7 +1262,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('wiatr_srednia_predkosc')">
-                                                        Wiatr śr. <span class="text-nowrap">prędkość [km/h]
+                                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]
                                                         @if($sortBy === 'wiatr_srednia_predkosc')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -1024,7 +1278,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_predkosc_maksymalna' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('wiatr_predkosc_maksymalna')">
-                                                        Wiatr maks. <span class="text-nowrap">prędkość [km/h]
+                                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]
                                                         @if($sortBy === 'wiatr_predkosc_maksymalna')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -1039,7 +1293,7 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_poryw_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('wiatr_poryw_10min')">
-                                                        Wiatr poryw <span class="text-nowrap">10 min [km/h]
+                                                        Wiatr poryw <span class="text-nowrap">10 min [m/s]
                                                         @if($sortBy === 'wiatr_poryw_10min')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -1134,7 +1388,6 @@
             </div>
 
         @endif
-
         </div>
     </div>
 
@@ -1296,9 +1549,9 @@
             let tmpAxisLabel = 'Temp. gruntu [°C]';
             let humAxisLabel = 'Wilg. względna [%]';
             let rainAxisLabel = 'Opad 10 min - suma [mm]';
-            let meanWindAxisLabel = 'Wiatr - śr.prędkość [km/h]';
-            let maxWindAxisLabel = 'Wiatr - maks. prędkość [km/h]';
-            let porywWindAxisLabel = 'Wiatr - poryw 10 min [km/h]';
+            let meanWindAxisLabel = 'Wiatr - śr.prędkość [m/s]';
+            let maxWindAxisLabel = 'Wiatr - maks. prędkość [m/s]';
+            let porywWindAxisLabel = 'Wiatr - poryw 10 min [m/s]';
 
             //dobowe
             let mintmpAxisLabel = 'Temp. gruntu - min. dobowa [°C]';
@@ -1312,17 +1565,17 @@
                 tmpAxisLabel = 'Temp. gruntu - śr. dobowa [°C]';
                 humAxisLabel = 'Wilg. względna - śr. dobowa [%]';
                 rainAxisLabel = 'Opad 10 min - suma dobowa [mm]';
-                maxWindAxisLabel = 'Wiatr - maks. prędkość dobowa [km/h]';
-                meanWindAxisLabel = 'Wiatr - śr. prędkość dobowa [km/h]';
-                porywWindAxisLabel = 'Wiatr - maks. dobowy poryw 10 min [km/h]';
+                maxWindAxisLabel = 'Wiatr - maks. prędkość dobowa [m/s]';
+                meanWindAxisLabel = 'Wiatr - śr. prędkość dobowa [m/s]';
+                porywWindAxisLabel = 'Wiatr - maks. dobowy poryw 10 min [m/s]';
             }
             if(aggr === 'miesieczne')
             {
                 //miesieczne exclusive
-                var MeanmintmpAxisLabel = 'Temp. gruntu - śr. min. miesięczna [°C]';
-                var MeanmaxtmpAxisLabel = 'Temp. gruntu - śr. maks. miesięczna [°C]';
-                var MeanminhumAxisLabel = 'Wilg. względna - śr. min. miesięczna [%]';
-                var MeanmaxhumAxisLabel = 'Wilg. względna - śr. maks. miesięczna [%]';
+                var MeanmintmpAxisLabel = 'Temp. gruntu - min. śr.  miesięczna [°C]';
+                var MeanmaxtmpAxisLabel = 'Temp. gruntu - maks. śr.  miesięczna [°C]';
+                var MeanminhumAxisLabel = 'Wilg. względna - min. śr.  miesięczna [%]';
+                var MeanmaxhumAxisLabel = 'Wilg. względna - maks. śr.  miesięczna [%]';
                 var maxrainAxisLabel = 'Opad 10 min - maks. suma [mm]';
                 tmpAxisLabel = 'Temp. gruntu - śr. miesięczna [°C]';
                 mintmpAxisLabel = 'Temp. gruntu - min. miesięczna [°C]';
@@ -1331,9 +1584,9 @@
                 minhumAxisLabel = 'Wilg. względna - min. miesięczna [%]';
                 maxhumAxisLabel = 'Wilg. względna - maks. miesięczna [%]';
                 rainAxisLabel = 'Opad 10 min - suma miesięczna [mm]';
-                maxWindAxisLabel = 'Wiatr - maks. prędkość miesięczna [km/h]';
-                meanWindAxisLabel = 'Wiatr - śr. prędkość miesięczna [km/h]';
-                porywWindAxisLabel = 'Wiatr - maks. miesięczny poryw 10 min [km/h]';
+                maxWindAxisLabel = 'Wiatr - maks. prędkość miesięczna [m/s]';
+                meanWindAxisLabel = 'Wiatr - śr. prędkość miesięczna [m/s]';
+                porywWindAxisLabel = 'Wiatr - maks. miesięczny poryw 10 min [m/s]';
                 mintmpAxisLabel = 'Temp. gruntu - min. miesięczna [°C]';
                 maxtmpAxisLabel = 'Temp. gruntu - maks. miesięczna [°C]';
                 minhumAxisLabel = 'Wilg. względna - min. miesięczna [%]';
@@ -1693,7 +1946,7 @@
                                             suggestedMax: 10,
                                             title: {
                                                 display: true,
-                                                text: 'Wiatr - prędkość [km/h]',
+                                                text: 'Wiatr - prędkość [m/s]',
                                                 color: 'rgb(51, 51, 51)',
                                             },
                                             grid: {
@@ -1731,5 +1984,4 @@
 
     });
 </script>
-
 </div>
