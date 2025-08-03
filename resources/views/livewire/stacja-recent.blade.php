@@ -316,43 +316,108 @@
                                 </p>
                                 <ul class="grid grid-cols-2 gap-4 sm:text-sm">
                                     <li>
-                                        <strong>Temp. gruntu:</strong> {{ $stationData['temperatura_gruntu'] ?? '-' }} °C
+                                        <p class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                viewBox="0 0 24 24">
+                                                <path d="M12 3v2.25M12 18.75V21M4.22 4.22l1.59 1.59M17.19 17.19l1.59 1.59M3 12h2.25M18.75 12H21M4.22 19.78l1.59-1.59M17.19 6.81l1.59-1.59" stroke-linecap="round"
+                                                    stroke-linejoin="round"/>
+                                            </svg>
+                                            <strong>Temp. gruntu:</strong> {{ $stationData['temperatura_gruntu'] ?? '-' }} °C
+                                        </p>
+
                                         <div class="text-xs text-gray-500">
                                             {{ !empty($stationData['temperatura_gruntu_data']) ? Carbon::parse($stationData['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
-                                        <strong>Wilg. względna:</strong> {{ $stationData['wilgotnosc_wzgledna'] ?? '-' }} %
+                                        <p class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                viewBox="0 0 24 24">
+                                                <path d="M12 3v18m9-9H3" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <strong>Wilg. względna:</strong> {{ $stationData['wilgotnosc_wzgledna'] ?? '-' }} %
+                                        </p>
+
                                         <div class="text-xs text-gray-500">
                                             {{ !empty($stationData['wilgotnosc_wzgledna_data']) ? Carbon::parse($stationData['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
-                                        <strong>Wiatr śr.:</strong> {{ $stationData['wiatr_srednia_predkosc'] ?? '-' }} km/h
+                                        <p class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                viewBox="0 0 24 24">
+                                                <path d="M4 12h16M4 6h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <strong>Wiatr śr.:</strong> {{ $stationData['wiatr_srednia_predkosc'] ?? '-' }} km/h
+                                        </p>
+
                                         <div class="text-xs text-gray-500">
                                             {{ !empty($stationData['wiatr_srednia_predkosc_data']) ? Carbon::parse($stationData['wiatr_srednia_predkosc_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
-                                        <strong>Wiatr maks.:</strong> {{ $stationData['wiatr_predkosc_maksymalna'] ?? '-' }} km/h
+                                        <p class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                viewBox="0 0 24 24">
+                                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <strong>Wiatr maks.:</strong> {{ $stationData['wiatr_predkosc_maksymalna'] ?? '-' }} km/h
+                                        </p>
+
                                         <div class="text-xs text-gray-500">
                                             {{ !empty($stationData['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($stationData['wiatr_predkosc_maksymalna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
-                                        <strong>Kierunek wiatru:</strong> {{ $stationData['wiatr_kierunek'] ?? '-' }} °
+
+
+                                        @php
+                                            $rotation = is_numeric($stationData['wiatr_kierunek']) ? $stationData['wiatr_kierunek'] : 0;
+                                        @endphp
+                                        <div class="flex flex-row items-start gap-1">
+                                            <div>
+                                                <strong class="flex items-center gap-1">
+                                                <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M12 3v18M5 12h14" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                                    Kierunek wiatru:
+                                                </strong>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                {{ $stationData['wiatr_kierunek'] ?? '-' }} °
+                                                [
+                                                <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation }}deg;">
+                                                    ↑
+                                                </div>]
+                                            </div>
+                                        </div>
                                         <div class="text-xs text-gray-500">
                                             {{ !empty($stationData['wiatr_kierunek_data']) ? Carbon::parse($stationData['wiatr_kierunek_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
-                                        <strong>Wiatr poryw (10 min):</strong> {{ $stationData['wiatr_poryw_10min'] ?? '-' }} km/h
+                                        <p class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                viewBox="0 0 24 24">
+                                                <path d="M4 4l16 16" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <strong>Wiatr poryw (10 min):</strong> {{ $stationData['wiatr_poryw_10min'] ?? '-' }} km/h
+                                        </p>
+
                                         <div class="text-xs text-gray-500">
                                             {{ !empty($stationData['wiatr_poryw_10min_data']) ? Carbon::parse($stationData['wiatr_poryw_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
-                                        <strong>Opad (10 min):</strong> {{ $stationData['opad_10min'] ?? '-' }} mm
+                                        <p class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                viewBox="0 0 24 24">
+                                                <path d="M4 4v16h16V4H4zM9 9h6v6H9z" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <strong>Opad (10 min):</strong> {{ $stationData['opad_10min'] ?? '-' }} mm
+                                        </p>
+
                                         <div class="text-xs text-gray-500">
                                             {{ !empty($stationData['opad_10min_data']) ? Carbon::parse($stationData['opad_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
                                         </div>
@@ -386,9 +451,9 @@
         <div class=" m-2 p-4 bg-white rounded-md shadow-sm">
             @if (!empty($stations[$stationId]) )
                 <h1 class="text-sm sm:text-xl pb-2 font-bold">Wyszukano dane meteorologiczne dla stacji: <span class="text-lime-600">{{ $stationId.' - '.$stations[$stationId] }}</span></h1>
-                <div wire:loading.remove class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
+                <div wire:loading.remove wire:target.except="setSort" class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
                     <span>Wyświetlono na wykresie dane z okresu:
-                        <b>
+                        <b class="text-nowrap">
                         @switch($this->aggregation)
                             @case('30min')
                                 @switch($this->dateOption)
@@ -406,7 +471,7 @@
                                 @endswitch
                                 @break
                             @case('terminowe')
-                                {{ '['.$this->terminoweEndDate .'] - ['.  $this->terminoweStartDate .']' }} <span class="text-xs">(3 pomiary na dzień - około godziny 6:00, 12:00, 18:00)</span>
+                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs">(3 pomiary na dzień - około godziny 6:00, 12:00, 18:00)</span>
                                 @break
                             @case('dobowe')
                                 {{ '['.$this->doboweDate.']' }}
@@ -419,337 +484,662 @@
                         @endswitch
                         </b>
                     </span>
-                     <button id="fullscr" onclick="toggleFullscreen()"
-                        class="text-xs whitespace-nowrap rounded-xl bg-blue-600 border  px-2 py-1  font-medium text-slate-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed">
-                        Pełny ekran
-                    </button>
-                </div>
-                <div wire:loading class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
 
-                    <button
-                        class="text-xs whitespace-nowrap rounded-xl bg-white border  px-3 py-1 font-medium  transition ">
+                </div>
+                <div wire:loading wire:target.except="setSort" class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
                         Ładowanie...
-                    </button>
+
                 </div>
             @else
                 <h1 class="text-sm sm:text-xl pb-2 font-bold text-white">Brak wybranej stacji</h1>
                 <div class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
-                    <button
-                        class="text-xs whitespace-nowrap rounded-xl bg-white border  px-3 py-1 font-medium  transition ">
-                        Oczekiwanie...
-                    </button>
+                    Oczekiwanie...
                 </div>
 
             @endif
-
-            @if(empty($this->weatherData))
+            @php
+                $allNull = collect($weatherData)->every(fn($item) =>
+                    collect($item)->except(['kod_stacji', 'nazwa_stacji', 'lon', 'lat', 'data'])
+                                ->filter(fn($val) => !is_null($val))
+                                ->isEmpty()
+                );
+            @endphp
+            @if(empty($weatherData) || $allNull)
 
                 <div class="relative w-full h-[32rem] flex justify-center p-4 bg-white rounded-md shadow-sm border">
-                        <div wire:loading.remove class="absolute left-0 top-0 w-full h-full flex flex-col justify-center text-center ">
+                        <div wire:loading.remove wire:target.except="setSort" class="absolute left-0 top-0 w-full h-full flex flex-col justify-center text-center ">
                             @if (!empty($stations[$stationId]))
                                 <p class="text-sm sm:text-xl font-bold text-red-500">Brak aktualnych danych z tego okresu dla stacji {{ $stationId.' - '.$stations[$stationId] }}</p>
                             @else
                                  <p class="text-sm sm:text-xl font-bold animate-pulse">Oczekiwanie na wybór stacji...</p>
                             @endif
                         </div>
-                    <div wire:loading class="absolute top-0 left-0 w-full h-full z-20 animate-pulse border">
+                    <div wire:loading wire:target.except="setSort" class="absolute top-0 left-0 w-full h-full z-20 animate-pulse border">
                         <div class="w-full h-full flex flex-col justify-center animate-pulse text-center">
                             <p class="text-sm sm:text-xl font-bold animate-pulse">Ładowanie...</p>
                         </div>
                     </div>
                 </div>
             <div class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-white flex flex-row justify-between">
-                Oczekiwanie...
+                Brak danych...
             </div>
+            <div class="bg-white rounded-md shadow-sm border border-gray-300 min-h-32 w-full">
 
+            </div>
             @else
             <div id="chart" class="relative w-full h-[32rem] flex justify-center p-4 bg-white rounded-md shadow-sm border">
-                <div wire:loading class="absolute top-0 left-0 w-full h-full z-20 animate-pulse ">
-                    <div class="w-full h-full flex flex-col justify-center animate-pulse text-center">
-                        <p class="text-sm sm:text-xl font-bold animate-pulse">Ładowanie...</p>
-                    </div>
-                </div>
-                <canvas x-claok id="weatherChart" wire:loading.remove class="w-full h-full z-0 "></canvas>
+
+                <canvas wire:ignore id="weatherChart"  wire:target.except="setSort" class=" w-full h-full z-0 ">
+                </canvas>
+                <button  wire:target.except="setSort" id="fullscr" onclick="toggleFullscreen()" style="line-height: 0.5rem; font-size: 0.6rem"
+                        class="absolute top-1 right-1  z-10  whitespace-nowrap rounded-xl bg-blue-600 border px-2 py-2 text-slate-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed">
+                        Pełny ekran
+                </button>
             </div>
 
-            <div wire:loading.remove class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
-                Zestawienie tabelaryczne danych meteorologicznych stacji:
+            <div wire:loading.remove wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
+                @switch($aggregation)
+                    @case('terminowe')
+                        Zestawienie tabelaryczne terminowych danych meteorologicznych stacji:
+                        @break
+                    @case('dobowe')
+                        Zestawienie tabelaryczne dobowych danych meteorologicznych stacji:
+                        @break
+                    @case('miesieczne')
+                        Zestawienie tabelaryczne miesiecznych danych meteorologicznych stacji:
+                        @break
+                    @default
+                        Zestawienie tabelaryczne 30-minutowych danych meteorologicznych stacji:
+                @endswitch
+
             </div>
-            <div wire:loading class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
+            <div wire:loading wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
                 Ładowanie...
             </div>
-                    @switch($this->aggregation)
-                            @case('30min')
-                                    <div class="bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-screen">
-                                        <table class="w-full text-left text-sm ">
-                                            <thead class="border-b-2 border-gray-300 bg-slate-100 text-sm text-black ">
-                                                <tr class="even:bg-blue-600/5 text-nowrap text-center">
-                                                    <th title="Sortuj" class="p-2 cursor-pointer  text-sm transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('temperatura_gruntu_data')">
-                                                        Pomiar temp.
-                                                        @if($sortBy === 'temperatura_gruntu_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '(↑)' : '(↓)' }}</span>
-                                                        @endif
-                                                    </th>
-                                                    <th title="Sortuj" class="p-2 cursor-pointer  text-sm transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                        wire:click="setSort('temperatura_gruntu')">
-                                                        Temp. gruntu [°C]
-                                                        @if($sortBy === 'temperatura_gruntu')
-                                                            <span>{{ $sortDirection === 'asc' ? '(↑)' : '(↓)' }}</span>
-                                                        @endif
-                                                    </th>
-                                                    <th title="Sortuj" class="p-2 cursor-pointer  text-sm transition hover:opacity-75 {{$sortBy === 'wilgotnosc_wzgledna_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('wilgotnosc_wzgledna_data')">
-                                                        Pomiar wilg.
-                                                        @if($sortBy === 'wilgotnosc_wzgledna_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '(↑)' : '(↓)' }}</span>
-                                                        @endif
-                                                    </th>
-                                                    <th title="Sortuj" class="p-2 cursor-pointer  text-sm transition hover:opacity-75 {{$sortBy === 'wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                        wire:click="setSort('wilgotnosc_wzgledna')">
-                                                        Wilg. względna [%]
-                                                        @if($sortBy === 'wilgotnosc_wzgledna')
-                                                            <span>{{ $sortDirection === 'asc' ? '(↑)' : '(↓)' }}</span>
-                                                        @endif
-                                                    </th>
-                                                    <th class="p-4">wiatr_kierunek</th>
-                                                    <th class="p-4">wiatr_kierunek_data</th>
-                                                    <th class="p-4">wiatr_srednia_predkosc</th>
-                                                    <th class="p-4">wiatr_srednia_predkosc_data</th>
-                                                    <th class="p-4">wiatr_predkosc_maksymalna</th>
-                                                    <th class="p-4">wiatr_predkosc_maksymalna_data</th>
+            <div wire:loading wire:target.except="setSort" class="bg-white rounded-md shadow-sm border border-gray-300 min-h-32 w-full">
 
-                                                    <th class="p-4">wiatr_poryw_10min</th>
-                                                    <th class="p-4">wiatr_poryw_10min_data</th>
-                                                    <th class="p-4">opad_10min</th>
-                                                    <th class="p-4 cursor-pointer" wire:click="setSort('opad_10min_data')">
-                                                        opad_10min_data
-                                                        @if($sortBy === 'opad_10min_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-slate-100 ">
-                                                @foreach($this->sortedWeatherData as $data)
-                                                    <tr class="even:bg-gray-700/5 text-center">
-                                                        <td class="p-2 text-xs text-nowrap {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['temperatura_gruntu_data']) ? Carbon::parse($data['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('H:i Y-m-d') : 'Brak pomiaru' }}
-                                                        </td>
-                                                        <td class="p-2 text-sm {{$sortBy === 'temperatura_gruntu' ? 'text-blue-500 font-semibold' : ''  }}">
-                                                            {{ $data['temperatura_gruntu'] ?? 'Brak pomiaru' }}
-                                                        </td>
-                                                        <td class="p-2 text-xs text-nowrap {{$sortBy === 'wilgotnosc_wzgledna_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wilgotnosc_wzgledna_data']) ? Carbon::parse($data['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('H:i Y-m-d') : 'Brak pomiaru' }}
-                                                        </td>
-                                                        <td class="p-2 text-sm {{$sortBy === 'wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
-                                                            {{ $data['wilgotnosc_wzgledna'] ?? 'Brak pomiaru' }}
-                                                        </td>
-                                                        <td class="p-4">{{ $data['wiatr_kierunek'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_kierunek_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_srednia_predkosc'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_srednia_predkosc_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_predkosc_maksymalna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_predkosc_maksymalna_data'] ?? '-' }}</td>
+            </div>
+            <div wire:loading.remove wire:target.except="setSort" class="min-h-32">
 
-                                                        <td class="p-4">{{ $data['wiatr_poryw_10min'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_poryw_10min_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['opad_10min'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['opad_10min_data'] ?? '-' }}</td>
+                    @switch($aggregation)
 
-                                                    </tr>
-                                                @endforeach
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @break
-                            @case('terminowe')
-
-                                    <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-slate-300 max-h-screen">
-                                        <table class="w-full text-left text-sm ">
-                                            <thead class="border-b border-slate-300 bg-slate-100 text-sm text-black ">
-                                                <tr class="even:bg-blue-700/5 ">
-                                                     <th class="p-4 cursor-pointer" wire:click="setSort('temperatura_gruntu_data')">
-                                                        temperatura_gruntu_data
-                                                        @if($sortBy === 'temperatura_gruntu_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                    </th>
-                                                    <th class="p-4">temperatura_gruntu</th>
-
-                                                    <th class="p-4">wiatr_kierunek</th>
-                                                    <th class="p-4">wiatr_kierunek_data</th>
-                                                    <th class="p-4">wiatr_srednia_predkosc</th>
-                                                    <th class="p-4">wiatr_srednia_predkosc_data</th>
-                                                    <th class="p-4">wiatr_predkosc_maksymalna</th>
-                                                    <th class="p-4">wiatr_predkosc_maksymalna_data</th>
-                                                    <th class="p-4">wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">wilgotnosc_wzgledna_data</th>
-                                                    <th class="p-4">wiatr_poryw_10min</th>
-                                                    <th class="p-4">wiatr_poryw_10min_data</th>
-                                                    <th class="p-4">opad_10min</th>
-                                                    <th class="p-4 cursor-pointer" wire:click="setSort('opad_10min_data')">
-                                                        opad_10min_data
-                                                        @if($sortBy === 'opad_10min_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-slate-300 dark:divide-slate-700">
-                                                @foreach($this->sortedWeatherData as $data)
-                                                    <tr class="even:bg-blue-700/5 ">
-                                                        <td class="p-4">{{ $data['temperatura_gruntu_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['temperatura_gruntu'] ?? '-' }}</td>
-
-                                                        <td class="p-4">{{ $data['wiatr_kierunek'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_kierunek_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_srednia_predkosc'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_srednia_predkosc_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_predkosc_maksymalna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_predkosc_maksymalna_data'] ?? '-' }}</td>
-
-                                                        <td class="p-4">{{ $data['wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wilgotnosc_wzgledna_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_poryw_10min'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['wiatr_poryw_10min_data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['opad_10min'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['opad_10min_data'] ?? '-' }}</td>
-
-                                                    </tr>
-                                                @endforeach
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @break
                             @case('dobowe')
-
-                                    <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-slate-300 max-h-screen">
-                                        <table class="w-full text-left text-sm ">
-                                            <thead class="border-b border-slate-300 bg-slate-100 text-sm text-black ">
-                                                <tr class="even:bg-blue-700/5 ">
-                                                    <th class="p-4 cursor-pointer" wire:click="setSort('data')">
-                                                        data
+                                <div class="min-h-28 bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
+                                        <table class="w-full text-left ">
+                                            <thead class="border-b-2 border-gray-300 bg-slate-100  text-black ">
+                                                <tr class="even:bg-blue-600/5 text-center text-xs text-wrap">
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('data')">
+                                                        Data pomiaru <span class="">
                                                         @if($sortBy === 'data')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
+                                                        </span>
                                                     </th>
-                                                    <th class="p-4">max_temp_gruntu_dobowa</th>
-                                                    <th class="p-4">min_temp_gruntu_dobowa</th>
-                                                    <th class="p-4">mean_temp_gruntu_dobowa</th>
-                                                    <th class="p-4">mean_wiatr_kierunek</th>
-                                                    <th class="p-4">mean_wiatr_srednia_predkosc</th>
-                                                    <th class="p-4">max_wiatr_predkosc_maksymalna</th>
-                                                    <th class="p-4">max_wiatr_poryw_10min</th>
-                                                    <th class="p-4">mean_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">min_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">max_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4 cursor-pointer" wire:click="setSort('sum_opad_10min')">
-                                                        sum_opad_10min
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_temp_gruntu_dobowa' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_temp_gruntu_dobowa')">
+                                                        Temp. <span class="text-nowrap">śr.  gruntu [°C]
+                                                        @if($sortBy === 'mean_temp_gruntu_dobowa')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'min_temp_gruntu_dobowa' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('min_temp_gruntu_dobowa')">
+                                                        Temp.  <span class="text-nowrap">min. gruntu [°C]
+                                                        @if($sortBy === 'min_temp_gruntu_dobowa')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_temp_gruntu_dobowa' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_temp_gruntu_dobowa')">
+                                                        Temp. <span class="text-nowrap">maks. gruntu [°C]
+                                                        @if($sortBy === 'max_temp_gruntu_dobowa')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_wilgotnosc_wzgledna')">
+                                                        Wilg.  <span class="text-nowrap">śr. względna [%]
+                                                        @if($sortBy === 'mean_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'min_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('min_wilgotnosc_wzgledna')">
+                                                        Wilg. min.<span class="text-nowrap"> względna [%]
+                                                        @if($sortBy === 'min_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_wilgotnosc_wzgledna')">
+                                                        Wilg. maks.<span class="text-nowrap"> względna [%]
+                                                        @if($sortBy === 'max_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'sum_opad_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('sum_opad_10min')">
+                                                        Suma opad <span class="text-nowrap">10 min [mm]
                                                         @if($sortBy === 'sum_opad_10min')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
+                                                        </span>
                                                     </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'mean_wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_wiatr_srednia_predkosc')">
+                                                        Wiatr śr. <span class="text-nowrap">prędkość [km/h]
+                                                        @if($sortBy === 'mean_wiatr_srednia_predkosc')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_wiatr_predkosc_maksymalna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_wiatr_predkosc_maksymalna')">
+                                                        Wiatr maks. <span class="text-nowrap">prędkość [km/h]
+                                                        @if($sortBy === 'max_wiatr_predkosc_maksymalna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_wiatr_poryw_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_wiatr_poryw_10min')">
+                                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [km/h]
+                                                        @if($sortBy === 'max_wiatr_poryw_10min')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_wiatr_kierunek' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_wiatr_kierunek')">
+                                                        Wiatr śr. <span class="text-nowrap">kierunek [°]
+                                                        @if($sortBy === 'mean_wiatr_kierunek')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+
                                                 </tr>
                                             </thead>
-                                            <tbody class="divide-y divide-slate-300 dark:divide-slate-700">
-                                                @foreach($this->sortedWeatherData as $data)
-                                                    <tr class="even:bg-blue-700/5 ">
-                                                        <td class="p-4">{{ $data['data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_temp_gruntu_dobowa'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['min_temp_gruntu_dobowa'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_temp_gruntu_dobowa'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_wiatr_kierunek'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_wiatr_srednia_predkosc'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_wiatr_predkosc_maksymalna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_wiatr_poryw_10min'] ?? '-' }}</td>
+                                            <tbody class="divide-y divide-slate-100 ">
+                                                @foreach($sortedData as $data)
+                                                    <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                        {{ $data['data'] ?? 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_temp_gruntu_dobowa' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_temp_gruntu_dobowa'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'min_temp_gruntu_dobowa' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['min_temp_gruntu_dobowa'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_temp_gruntu_dobowa' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_temp_gruntu_dobowa'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'min_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['min_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'sum_opad_10min' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['sum_opad_10min'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_wiatr_srednia_predkosc' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_wiatr_srednia_predkosc'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_wiatr_predkosc_maksymalna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_wiatr_predkosc_maksymalna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_wiatr_poryw_10min' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_wiatr_poryw_10min'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-left  {{$sortBy === 'mean_wiatr_kierunek' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            @if(!is_null($data['mean_wiatr_kierunek']))
+                                                                @php
+                                                                    $rotation = is_numeric($data['mean_wiatr_kierunek']) ? $data['mean_wiatr_kierunek'] : 0;
+                                                                @endphp
+                                                                <span class="w-10">
+                                                                    <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
+                                                                        ↑
+                                                                    </div>
+                                                                </span>
+                                                                <span class="w-16">{{ $data['mean_wiatr_kierunek'] ?? '-' }}</span>
+                                                            @else
+                                                                <span class="w-16">{{ $data['mean_wiatr_kierunek'] ?? '-' }}</span>
+                                                            @endif
+                                                        </td>
 
-                                                        <td class="p-4">{{ $data['mean_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['min_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['sum_opad_10min'] ?? '-' }}</td>
                                                     </tr>
                                                 @endforeach
 
                                             </tbody>
                                         </table>
-                                    </div>
-                                    @break
+                                </div>
+
+                                @break
                             @case('miesieczne')
-                                    z roku {{ $this->miesieczneDate }}
-
-                                    <div class="overflow-hidden w-full overflow-x-auto overflow-y-auto rounded-xl border border-slate-300 max-h-screen">
-                                        <table class="w-full text-left text-sm ">
-                                            <thead class="border-b border-slate-300 bg-slate-100 text-sm text-black ">
-                                                <tr class="even:bg-blue-700/5 ">
-
-                                                    <th class="p-4 cursor-pointer" wire:click="setSort('data')">
-                                                        data
+                                <div class=" bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
+                                        <table class="w-full text-left ">
+                                            <thead class="border-b-2 border-gray-300 bg-slate-100  text-black ">
+                                                <tr class="even:bg-blue-600/5 text-center text-xs  text-wrap">
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('data')">
+                                                        Data pomiaru <span class="">
                                                         @if($sortBy === 'data')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
+                                                        </span>
                                                     </th>
-                                                    <th class="p-4">max_max_temp_gruntu_mies</th>
-                                                    <th class="p-4">mean_max_temp_gruntu_mies</th>
-                                                    <th class="p-4">min_min_temp_gruntu_mies</th>
-                                                    <th class="p-4">mean_min_temp_gruntu_mies</th>
-                                                    <th class="p-4">mean_mean_temp_gruntu_mies</th>
-                                                    <th class="p-4">mean_mean_wiatr_kierunek</th>
-                                                    <th class="p-4">mean_mean_wiatr_srednia_predkosc</th>
-                                                    <th class="p-4">max_max_wiatr_predkosc_maksymalna</th>
-                                                    <th class="p-4">min_min_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">mean_min_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">max_max_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">mean_max_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">mean_mean_wilgotnosc_wzgledna</th>
-                                                    <th class="p-4">max_sum_opad_10min</th>
-                                                    <th class="p-4 cursor-pointer" wire:click="setSort('sum_sum_opad_10min')">
-                                                        sum_sum_opad_10min
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_mean_temp_gruntu_mies' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_mean_temp_gruntu_mies')">
+                                                        Temp. <span class="text-nowrap">śr. gruntu [°C]
+                                                        @if($sortBy === 'mean_mean_temp_gruntu_mies')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'min_min_temp_gruntu_mies' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('min_min_temp_gruntu_mies')">
+                                                        Temp.  <span class="text-nowrap">min. gruntu [°C]
+                                                        @if($sortBy === 'min_min_temp_gruntu_mies')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_min_temp_gruntu_mies' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_min_temp_gruntu_mies')">
+                                                        Temp. śr. <span class="text-nowrap">min. gruntu [°C]
+                                                        @if($sortBy === 'mean_min_temp_gruntu_mies')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_max_temp_gruntu_mies' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_max_temp_gruntu_mies')">
+                                                        Temp. <span class="text-nowrap">maks. gruntu [°C]
+                                                        @if($sortBy === 'max_max_temp_gruntu_mies')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_max_temp_gruntu_mies' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_max_temp_gruntu_mies')">
+                                                        Temp. śr. <span class="text-nowrap">maks. gruntu [°C]
+                                                        @if($sortBy === 'mean_max_temp_gruntu_mies')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_mean_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_mean_wilgotnosc_wzgledna')">
+                                                        Wilg.  <span class="text-nowrap">śr. względna [%]
+                                                        @if($sortBy === 'mean_mean_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'min_min_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('min_min_wilgotnosc_wzgledna')">
+                                                        Wilg. min.<span class="text-nowrap"> względna [%]
+                                                        @if($sortBy === 'min_min_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_min_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_min_wilgotnosc_wzgledna')">
+                                                        Wilg. śr. min.<span class="text-nowrap"> względna [%]
+                                                        @if($sortBy === 'mean_min_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_max_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_max_wilgotnosc_wzgledna')">
+                                                        Wilg. maks.<span class="text-nowrap"> względna [%]
+                                                        @if($sortBy === 'max_max_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_max_wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_max_wilgotnosc_wzgledna')">
+                                                        Wilg. śr. maks.<span class="text-nowrap"> względna [%]
+                                                        @if($sortBy === 'mean_max_wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'sum_sum_opad_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('sum_sum_opad_10min')">
+                                                        Suma opad <span class="text-nowrap">10 min [mm]
                                                         @if($sortBy === 'sum_sum_opad_10min')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
+                                                        </span>
                                                     </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'max_sum_opad_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_sum_opad_10min')">
+                                                        Suma opad <span class="text-nowrap">maks. 10 min [mm]
+                                                        @if($sortBy === 'max_sum_opad_10min')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'mean_mean_wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_mean_wiatr_srednia_predkosc')">
+                                                        Wiatr śr. <span class="text-nowrap">prędkość [km/h]
+                                                        @if($sortBy === 'mean_mean_wiatr_srednia_predkosc')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_max_wiatr_predkosc_maksymalna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_max_wiatr_predkosc_maksymalna')">
+                                                        Wiatr maks. <span class="text-nowrap">prędkość [km/h]
+                                                        @if($sortBy === 'max_max_wiatr_predkosc_maksymalna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'max_max_wiatr_poryw_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('max_max_wiatr_poryw_10min')">
+                                                        Wiatr poryw <span class="text-nowrap">maks. 10 min [km/h]
+                                                        @if($sortBy === 'max_max_wiatr_poryw_10min')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'mean_mean_wiatr_kierunek' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('mean_mean_wiatr_kierunek')">
+                                                        Wiatr śr. <span class="text-nowrap">kierunek [°]
+                                                        @if($sortBy === 'mean_mean_wiatr_kierunek')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+
                                                 </tr>
                                             </thead>
+                                            <tbody class="divide-y divide-slate-100 ">
+                                                @foreach($sortedData as $data)
+                                                    <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                        {{ $data['data'] ?? 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_mean_temp_gruntu_mies' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_mean_temp_gruntu_mies'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'min_min_temp_gruntu_mies' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['min_min_temp_gruntu_mies'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_min_temp_gruntu_mies' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_min_temp_gruntu_mies'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_max_temp_gruntu_mies' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_max_temp_gruntu_mies'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_max_temp_gruntu_mies' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_max_temp_gruntu_mies'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_mean_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_mean_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'min_min_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['min_min_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_min_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_min_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_max_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_max_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_max_wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_max_wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'sum_sum_opad_10min' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['sum_sum_opad_10min'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_sum_opad_10min' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_sum_opad_10min'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'mean_mean_wiatr_srednia_predkosc' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['mean_mean_wiatr_srednia_predkosc'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_max_wiatr_predkosc_maksymalna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_max_wiatr_predkosc_maksymalna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'max_max_wiatr_poryw_10min' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['max_max_wiatr_poryw_10min'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-left  {{$sortBy === 'mean_mean_wiatr_kierunek' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            @if(!is_null($data['mean_mean_wiatr_kierunek']))
+                                                                @php
+                                                                    $rotation = is_numeric($data['mean_mean_wiatr_kierunek']) ? $data['mean_mean_wiatr_kierunek'] : 0;
+                                                                @endphp
+                                                                <span class="w-10">
+                                                                    <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
+                                                                        ↑
+                                                                    </div>
+                                                                </span>
+                                                                <span class="w-16">{{ $data['mean_mean_wiatr_kierunek'] ?? '-' }}</span>
+                                                            @else
+                                                                <span class="w-16">{{ $data['mean_mean_wiatr_kierunek'] ?? '-' }}</span>
+                                                            @endif
+                                                        </td>
 
-                                            <tbody class="divide-y divide-slate-300 dark:divide-slate-700">
-                                                @foreach($this->sortedWeatherData as $data)
-                                                    <tr class="even:bg-blue-700/5 ">
-                                                        <td class="p-4">{{ $data['data'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_max_temp_gruntu_mies'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_max_temp_gruntu_mies'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['min_min_temp_gruntu_mies'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_min_temp_gruntu_mies'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_mean_temp_gruntu_mies'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_mean_wiatr_kierunek'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_mean_wiatr_srednia_predkosc'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_max_wiatr_predkosc_maksymalna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['min_min_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_min_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_max_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_max_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['mean_mean_wilgotnosc_wzgledna'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['max_sum_opad_10min'] ?? '-' }}</td>
-                                                        <td class="p-4">{{ $data['sum_sum_opad_10min'] ?? '-' }}</td>
+                                                    </tr>
+                                                @endforeach
+
+                                            </tbody>
+                                        </table>
+                                </div>
+                                @break
+                            @default
+                                <div class=" bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
+                                        <table class="w-full text-left ">
+                                            <thead class="border-b-2 border-gray-300 bg-slate-100  text-black ">
+                                                <tr class="even:bg-blue-600/5 text-wrap text-center text-xs ">
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('temperatura_gruntu_data')">
+                                                        Pomiar <span class="text-nowrap">temp.
+                                                        @if($sortBy === 'temperatura_gruntu_data')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('temperatura_gruntu')">
+                                                        Temp. <span class="text-nowrap">gruntu [°C]
+                                                        @if($sortBy === 'temperatura_gruntu')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wilgotnosc_wzgledna_data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('wilgotnosc_wzgledna_data')">
+                                                        Pomiar <span class="text-nowrap">wilg.
+                                                        @if($sortBy === 'wilgotnosc_wzgledna_data')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('wilgotnosc_wzgledna')">
+                                                        Wilg. <span class="text-nowrap">względna [%]
+                                                        @if($sortBy === 'wilgotnosc_wzgledna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'opad_10min_data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('opad_10min_data')">
+                                                        Pomiar <span class="text-nowrap">opadu
+                                                        @if($sortBy === 'opad_10min_data')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'opad_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('opad_10min')">
+                                                        Opad <span class="text-nowrap">10 min [mm]
+                                                        @if($sortBy === 'opad_10min')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_srednia_predkosc_data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('wiatr_srednia_predkosc_data')">
+                                                        Pomiar <span class="text-nowrap">śr. wiatru
+                                                        @if($sortBy === 'wiatr_srednia_predkosc_data')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('wiatr_srednia_predkosc')">
+                                                        Wiatr śr. <span class="text-nowrap">prędkość [km/h]
+                                                        @if($sortBy === 'wiatr_srednia_predkosc')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_predkosc_maksymalna_data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('wiatr_predkosc_maksymalna_data')">
+                                                        Pomiar <span class="text-nowrap">maks. wiatru
+                                                        @if($sortBy === 'wiatr_predkosc_maksymalna_data')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_predkosc_maksymalna' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('wiatr_predkosc_maksymalna')">
+                                                        Wiatr maks. <span class="text-nowrap">prędkość [km/h]
+                                                        @if($sortBy === 'wiatr_predkosc_maksymalna')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_poryw_10min_data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('wiatr_poryw_10min_data')">
+                                                        Pomiar <span class="text-nowrap">porywu wiatru
+                                                        @if($sortBy === 'wiatr_poryw_10min_data')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_poryw_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('wiatr_poryw_10min')">
+                                                        Wiatr poryw <span class="text-nowrap">10 min [km/h]
+                                                        @if($sortBy === 'wiatr_poryw_10min')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_kierunek_data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('wiatr_kierunek_data')">
+                                                        Pomiar <span class="text-nowrap">kierunku wiatru
+                                                        @if($sortBy === 'wiatr_kierunek_data')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_kierunek' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('wiatr_kierunek')">
+                                                        Wiatr <span class="text-nowrap">kierunek [°]
+                                                        @if($sortBy === 'wiatr_kierunek')
+                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                                        @endif
+                                                        </span>
+                                                    </th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100 ">
+                                                @foreach($sortedData as $data)
+                                                    <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['temperatura_gruntu_data']) ? Carbon::parse($data['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'temperatura_gruntu' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['temperatura_gruntu'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'wilgotnosc_wzgledna_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['wilgotnosc_wzgledna_data']) ? Carbon::parse($data['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['wilgotnosc_wzgledna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'opad_10min_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['opad_10min_data']) ? Carbon::parse($data['opad_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'opad_10min' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['opad_10min'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_srednia_predkosc_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['wiatr_srednia_predkosc_data']) ? Carbon::parse($data['wiatr_srednia_predkosc_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'wiatr_srednia_predkosc' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['wiatr_srednia_predkosc'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_predkosc_maksymalna_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($data['wiatr_predkosc_maksymalna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'wiatr_predkosc_maksymalna' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['wiatr_predkosc_maksymalna'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_poryw_10min_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['wiatr_poryw_10min_data']) ? Carbon::parse($data['wiatr_poryw_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'wiatr_poryw_10min' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['wiatr_poryw_10min'] ?? '-' }}
+                                                        </td>
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_kierunek_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['wiatr_kierunek_data']) ? Carbon::parse($data['wiatr_kierunek_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'wiatr_kierunek' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            @if(!is_null($data['wiatr_kierunek']))
+                                                                @php
+                                                                    $rotation = is_numeric($data['wiatr_kierunek']) ? $data['wiatr_kierunek'] : 0;
+                                                                @endphp
+                                                                <span class="w-10">
+                                                                    [
+                                                                    <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
+                                                                        ↑
+                                                                    </div>]
+                                                                </span>
+
+                                                                {{ $data['wiatr_kierunek'] ?? '-' }}
+                                                            @else
+                                                                <span>{{ $data['wiatr_kierunek'] ?? '-' }}</span>
+                                                            @endif
+                                                        </td>
+
                                                     </tr>
                                                 @endforeach
 
                                             </tbody>
                                         </table>
                                     </div>
-                                @break
-                            @default
-
                         @endswitch
+            </div>
 
-            @endif
+        @endif
 
         </div>
     </div>
 
     <script>
+        //chart fullscreen
         function toggleFullscreen(elem) {
             elem = elem || document.getElementById('chart');
             if (!document.fullscreenElement && !document.mozFullScreenElement &&
@@ -775,9 +1165,7 @@
                 }
             }
         }
-
-
-
+        //chart title label for times
         function getLabelFromContext(ctx) {
 
             const formatDate = (date) => date.toLocaleDateString('sv-SE'); // yyyy-mm-dd
@@ -817,9 +1205,7 @@
                     return '';
             }
         }
-
-
-
+        //parse date for chart to without year
         function parseUtcDAY(dateStr) {
             // Split manually
             const [datePart, timePart] = dateStr.split(' ');
@@ -840,7 +1226,7 @@
                 hour12: false,
             }).format(utcDate);
         }
-
+        //parse date for chart to only time
         function parseUtcTIME(dateStr) {
             // Split manually
             const [datePart, timePart] = dateStr.split(' ');
@@ -861,8 +1247,9 @@
 
         document.addEventListener('livewire:init', () => {
 
-         var chartInstance = null;
+        var chartInstance = null;
         if (chartInstance) {
+                chartInstance.clear();
                 chartInstance.destroy(); // Clear existing chart
             }
 
@@ -874,46 +1261,86 @@
             let axisLabel = 'Data zapisu';
             const tmplabels = weatherData.map(item => {
                 //cos z datami jest nie tak sprawdzic co jest nowsze?
-                const raw = item.temperatura_gruntu_data ?? item.wilgotnosc_wzgledna_data ?? item.opad_10min_data
-                ?? item.wiatr_srednia_predkosc_data ?? item.wiatr_predkosc_maksymalna_data ?? item.wiatr_poryw_10min_data ?? item.data;
-                if(aggr === '30min' && (typ === 'today' || typ === 'yesterday')){
+                // const raw = item.temperatura_gruntu_data ?? item.wilgotnosc_wzgledna_data ?? item.opad_10min_data
+                // ?? item.wiatr_srednia_predkosc_data ?? item.wiatr_predkosc_maksymalna_data ?? item.wiatr_poryw_10min_data ?? item.wiatr_kierunek_data;
+                if(aggr === '30min' || aggr === 'terminowe'){
                     axisLabel = 'Godzina zapisu';
-                    return raw ? parseUtcTIME(raw) : null;
-                }
-                else if(typ === '7days' || aggr === 'terminowe'){
-                    return raw ? parseUtcDAY(raw) : null;
+                    // Collect all date strings from the item
+                    let dateFields = [
+                        item.temperatura_gruntu_data,
+                        item.wilgotnosc_wzgledna_data,
+                        item.opad_10min_data,
+                        item.wiatr_srednia_predkosc_data,
+                        item.wiatr_predkosc_maksymalna_data,
+                        item.wiatr_poryw_10min_data,
+                        item.wiatr_kierunek_data
+                    ];
+
+                    // Filter out null/undefined and sort by newest
+                    let newestDateStr = dateFields
+                        .filter(Boolean)
+                        .sort((a, b) => new Date(b) - new Date(a))[0];
+                    if(typ === '7days' || aggr === 'terminowe'){
+                        return newestDateStr ? parseUtcDAY(newestDateStr) : null;
+                    }
+                    return newestDateStr ? parseUtcTIME(newestDateStr) : null;
+
                 }else{
+                    let raw = item.data;
                     return raw ? raw : null;
                 }
 
             });
 
             let titleLabel = 'Dane meteorologiczne stacji ' + weatherData[0].nazwa_stacji + ' ' + titlelabel;
-            let tmpAxisLabel = 'Temperatura gruntu [°C]';
-            let humAxisLabel = 'Wilgotność względna [%]';
+            let tmpAxisLabel = 'Temp. gruntu [°C]';
+            let humAxisLabel = 'Wilg. względna [%]';
             let rainAxisLabel = 'Opad 10 min - suma [mm]';
-            let meanWindAxisLabel = 'Wiatr - średnia prędkość [km/h]';
+            let meanWindAxisLabel = 'Wiatr - śr.prędkość [km/h]';
             let maxWindAxisLabel = 'Wiatr - maks. prędkość [km/h]';
             let porywWindAxisLabel = 'Wiatr - poryw 10 min [km/h]';
 
+            //dobowe
+            let mintmpAxisLabel = 'Temp. gruntu - min. dobowa [°C]';
+            let maxtmpAxisLabel = 'Temp. gruntu - maks. dobowa [°C]';
+            let minhumAxisLabel = 'Wilg. względna - min. dobowa [%]';
+            let maxhumAxisLabel = 'Wilg. względna - maks. dobowa [%]';
+
+
+
             if(aggr === 'dobowe'){
-                tmpAxisLabel = 'Temperatura gruntu - średnia dobowa [°C]';
-                humAxisLabel = 'Wilgotność względna - średnia dobowa [%]';
+                tmpAxisLabel = 'Temp. gruntu - śr. dobowa [°C]';
+                humAxisLabel = 'Wilg. względna - śr. dobowa [%]';
                 rainAxisLabel = 'Opad 10 min - suma dobowa [mm]';
                 maxWindAxisLabel = 'Wiatr - maks. prędkość dobowa [km/h]';
-                meanWindAxisLabel = 'Wiatr - średnia prędkość dobowa [km/h]';
+                meanWindAxisLabel = 'Wiatr - śr. prędkość dobowa [km/h]';
                 porywWindAxisLabel = 'Wiatr - maks. dobowy poryw 10 min [km/h]';
             }
             if(aggr === 'miesieczne')
             {
-                tmpAxisLabel = 'Temperatura gruntu - średnia miesieczna [°C]';
-                humAxisLabel = 'Wilgotność względna - średnia miesieczna [%]';
-                rainAxisLabel = 'Opad 10 min - suma miesieczna [mm]';
-                maxWindAxisLabel = 'Wiatr - maks. prędkość miesieczna [km/h]';
-                meanWindAxisLabel = 'Wiatr - średnia prędkość miesieczna [km/h]';
-                porywWindAxisLabel = 'Wiatr - maks. miesieczny poryw 10 min [km/h]';
+                //miesieczne exclusive
+                var MeanmintmpAxisLabel = 'Temp. gruntu - śr. min. miesięczna [°C]';
+                var MeanmaxtmpAxisLabel = 'Temp. gruntu - śr. maks. miesięczna [°C]';
+                var MeanminhumAxisLabel = 'Wilg. względna - śr. min. miesięczna [%]';
+                var MeanmaxhumAxisLabel = 'Wilg. względna - śr. maks. miesięczna [%]';
+                var maxrainAxisLabel = 'Opad 10 min - maks. suma [mm]';
+                tmpAxisLabel = 'Temp. gruntu - śr. miesięczna [°C]';
+                mintmpAxisLabel = 'Temp. gruntu - min. miesięczna [°C]';
+                maxtmpAxisLabel = 'Temp. gruntu - maks. miesięczna [°C]';
+                humAxisLabel = 'Wilg. względna - śr. miesięczna [%]';
+                minhumAxisLabel = 'Wilg. względna - min. miesięczna [%]';
+                maxhumAxisLabel = 'Wilg. względna - maks. miesięczna [%]';
+                rainAxisLabel = 'Opad 10 min - suma miesięczna [mm]';
+                maxWindAxisLabel = 'Wiatr - maks. prędkość miesięczna [km/h]';
+                meanWindAxisLabel = 'Wiatr - śr. prędkość miesięczna [km/h]';
+                porywWindAxisLabel = 'Wiatr - maks. miesięczny poryw 10 min [km/h]';
+                mintmpAxisLabel = 'Temp. gruntu - min. miesięczna [°C]';
+                maxtmpAxisLabel = 'Temp. gruntu - maks. miesięczna [°C]';
+                minhumAxisLabel = 'Wilg. względna - min. miesięczna [%]';
+                maxhumAxisLabel = 'Wilg. względna - maks. miesięczna [%]';
             }
 
+            let datasetsM = [];
 
             const temperatures = weatherData.map(item => parseFloat(item.temperatura_gruntu ?? item.mean_temp_gruntu_dobowa ?? item.mean_mean_temp_gruntu_mies) || null);
             const humidities = weatherData.map(item => parseFloat(item.wilgotnosc_wzgledna ?? item.mean_wilgotnosc_wzgledna ?? item.mean_mean_wilgotnosc_wzgledna) || null);
@@ -922,30 +1349,7 @@
             const maxWind = weatherData.map(item => parseFloat(item.wiatr_predkosc_maksymalna ?? item.max_wiatr_predkosc_maksymalna ?? item.max_max_wiatr_predkosc_maksymalna) || null);
             const porywWind = weatherData.map(item => parseFloat(item.wiatr_poryw_10min ?? item.max_wiatr_poryw_10min ?? item.max_max_wiatr_poryw_10min) || null);
 
-            const ctx = document.getElementById('weatherChart');
-            const plugin = {
-                id: 'customCanvasBackgroundColor',
-                beforeDraw: (chart, args, options) => {
-                    const {ctx} = chart;
-                    ctx.save();
-                    ctx.globalCompositeOperation = 'destination-over';
-                    ctx.fillStyle = options.color || '#99ffff';
-                    ctx.fillRect(0, 0, chart.width, chart.height);
-                    ctx.restore();
-                }
-                };
-            if (!ctx) {
-                    console.error('Brak canvasu!');
-                    return;
-            }
-            Chart.defaults.plugins.legend.position = 'bottom';
-
-                chartInstance = new Chart(ctx, {
-                                type: 'line',
-                                plugins: [plugin],
-                                data: {
-                                    labels: tmplabels,
-                                    datasets: [{
+             datasetsM.push({
                                         label: tmpAxisLabel,
                                         data: temperatures,
                                         borderColor: 'rgb(252, 198, 3)',
@@ -999,7 +1403,6 @@
                                         tension: 0.1,
                                         spanGaps: false,
                                         pointStyle: 'circle',
-
                                         yAxisID: 'y3', // ← attach to right axis
                                         order: 5,
                                         hidden: true,
@@ -1028,13 +1431,186 @@
                                         borderWidth: 2,
                                         spanGaps: false,
                                         pointStyle: 'circle',
-                                        pointRadius: 0.5,
-                                        pointHoverRadius: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
                                         yAxisID: 'y3', // ← attach to right axis
                                         order: 6,
                                         hidden: true,
                                     },
-                                ]
+            );
+
+            if( aggr==='dobowe'|| aggr === 'miesieczne')
+            {
+                const Mintemperatures = weatherData.map(item => parseFloat(item.min_temp_gruntu_dobowa ?? item.min_min_temp_gruntu_mies ) || null);
+                const Maxtemperatures = weatherData.map(item => parseFloat(item.max_temp_gruntu_dobowa ?? item.max_max_temp_gruntu_mies ) || null);
+                const Minhumidities = weatherData.map(item => parseFloat(item.min_wilgotnosc_wzgledna ?? item.min_min_wilgotnosc_wzgledna ) || null);
+                const Maxhumidities = weatherData.map(item => parseFloat(item.max_wilgotnosc_wzgledna ?? item.max_max_wilgotnosc_wzgledna ) || null);
+                datasetsM.push({
+                                        label: mintmpAxisLabel,
+                                        data: Mintemperatures,
+                                        borderColor: 'rgb(255, 223, 107)',
+                                        backgroundColor: 'rgb(255, 223, 107, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        order: 1,
+                                        yAxisID: 'y', // ← attach to left axis
+                                        hidden: true,
+                                    },
+                                    {
+                                        label: maxtmpAxisLabel,
+                                        data: Maxtemperatures,
+                                        borderColor: 'rgb(161, 126, 2)',
+                                        backgroundColor: 'rgb(161, 126, 2, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        order: 1,
+                                        yAxisID: 'y', // ← attach to left axis
+                                        hidden: true,
+                                    },
+                                    {
+                                        label: minhumAxisLabel,
+                                        data: Minhumidities,
+                                        borderColor: 'rgb(98, 240, 199)',
+                                        backgroundColor: 'rgb(98, 240, 199, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        yAxisID: 'y1', // ← attach to right axis
+                                        order: 2,
+                                        hidden: true,
+                                    },
+                                    {
+                                        label: maxhumAxisLabel,
+                                        data: Maxhumidities,
+                                        borderColor: 'rgb(1, 140, 100)',
+                                        backgroundColor: 'rgb(1, 140, 100, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        yAxisID: 'y1', // ← attach to right axis
+                                        order: 2,
+                                        hidden: true,
+                                    },
+                );
+            }
+            if(aggr === 'miesieczne')
+            {
+                const MeanMintemperatures = weatherData.map(item => parseFloat(item.mean_min_temp_gruntu_mies) || null);
+                const MeanMaxtemperatures = weatherData.map(item => parseFloat(item.mean_max_temp_gruntu_mies) || null);
+                const MeanMinhumidities = weatherData.map(item => parseFloat(item.mean_min_wilgotnosc_wzgledna ) || null);
+                const MeanMaxhumidities = weatherData.map(item => parseFloat(item.mean_max_wilgotnosc_wzgledna) || null);
+                const Maxrain10s = weatherData.map(item => parseFloat(item.max_sum_opad_10min) || null);
+                datasetsM.push({
+                                        label: MeanmintmpAxisLabel,
+                                        data: MeanMintemperatures,
+                                        borderColor: 'rgb(252, 233, 162)',
+                                        backgroundColor: 'rgb(252, 233, 162, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        order: 7,
+                                        yAxisID: 'y', // ← attach to left axis
+                                        hidden: true,
+                                    },
+                                    {
+                                        label: MeanmaxtmpAxisLabel,
+                                        data: MeanMaxtemperatures,
+                                        borderColor: 'rgb(105, 82, 1)',
+                                        backgroundColor: 'rgb(105, 82, 1, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        order: 7,
+                                        yAxisID: 'y', // ← attach to left axis
+                                        hidden: true,
+                                    },
+                                    {
+                                        label: MeanminhumAxisLabel,
+                                        data: MeanMinhumidities,
+                                        borderColor: 'rgb(168, 255, 230)',
+                                        backgroundColor: 'rgb(168, 255, 230, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        yAxisID: 'y1', // ← attach to right axis
+                                        order: 7,
+                                        hidden: true,
+                                    },
+                                    {
+                                        label: MeanmaxhumAxisLabel,
+                                        data: MeanMaxhumidities,
+                                        borderColor: 'rgb(3, 69, 50)',
+                                        backgroundColor: 'rgb(3, 69, 50, 0.5)',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        pointHoverRadius: 3,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        yAxisID: 'y1', // ← attach to right axis
+                                        order: 7,
+                                        hidden: true,
+                                    },
+                                    {
+                                        label: maxrainAxisLabel,
+                                        data: rain10s,
+                                        type: 'bar',
+                                        stack: 'combined',
+                                        // borderDash: [2, 2],
+                                        // pointStyle: 'circle',
+                                        // pointRadius: 3,
+                                        // pointHoverRadius: 4,
+                                        borderColor: 'rgb(1, 48, 135)',
+                                        backgroundColor: 'rgb(37, 104, 230)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        yAxisID: 'y2', // ← attach to right axis
+                                        order: 3,
+                                    },
+                );
+
+            }
+
+            const ctx = document.getElementById('weatherChart');
+            const plugin = {
+                id: 'customCanvasBackgroundColor',
+                beforeDraw: (chart, args, options) => {
+                    const {ctx} = chart;
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'destination-over';
+                    ctx.fillStyle = options.color || '#99ffff';
+                    ctx.fillRect(0, 0, chart.width, chart.height);
+                    ctx.restore();
+                }
+                };
+            if (!ctx) {
+                    console.error('Brak canvasu!');
+                    return;
+            }
+            Chart.defaults.plugins.legend.position = 'bottom';
+
+                chartInstance = new Chart(ctx, {
+                                type: 'line',
+                                plugins: [plugin],
+                                data: {
+                                    labels: tmplabels,
+                                    datasets: datasetsM,
                                 },
                                 options: {
                                     responsive: true,
@@ -1135,22 +1711,6 @@
         }
         var titlelabel = '';
 
-        // Livewire.on('weatherDataUpdated', (newData) => {
-        //     Alpine.nextTick(() => {
-        //         var weatherData = newData[0][0];
-        //         var aggregation = newData[0][1];
-        //         var type = newData[0][2];
-
-        //         if(Array.isArray(weatherData) && weatherData.length > 0){
-        //             //console.log(weatherData);
-        //             renderChart(weatherData, aggregation, type);
-        //         }
-        //         else{
-        //             console.log('Nie ładuję wykresu');
-        //         }
-        //     });
-        // });
-
         Livewire.on('weatherDataUpdated', (newData) => {
             Alpine.nextTick(() => {
                 const weatherData = newData[0][0];
@@ -1161,7 +1721,7 @@
 
                     //  Generate label using fresh values
                     titlelabel = getLabelFromContext(newData[1]);
-
+                    // console.log(weatherData);
                     renderChart(weatherData, aggregation, type);
                 } else {
                     console.log('Nie ładuję wykresu – brak danych');

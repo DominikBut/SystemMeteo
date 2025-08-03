@@ -25,11 +25,13 @@ class StacjaRecent extends Component
 
     public $weatherData = [];
 
-    #[Validate('string|in:temperatura_gruntu_data,temperatura_gruntu,wilgotnosc_wzgledna,wilgotnosc_wzgledna_data,', message: 'Zły format zmiennej!')]
-    public string $sortBy = 'temperatura_gruntu_data';
+    #[Validate('string', message: 'Zły format zmiennej!')]
+    public string $sortBy = 'kod_stacji';
 
     #[Validate('string|in:asc,desc', message: 'Zły format sortowania!')]
     public string $sortDirection = 'desc'; // or 'desc'
+
+    public $sortedData;
 
     public bool $stop = false;
 
@@ -66,10 +68,13 @@ class StacjaRecent extends Component
             $this->sortBy = $column;
             $this->sortDirection = 'asc';
         }
+        $this->sortWetherData();
     }
     public function updatedStationId()
     {
         if ($this->validate()) {
+            $this->sortBy = 'kod_stacji';
+            $this->sortDirection = 'desc';
             $this->getStationData();
         } else {
             $date = Carbon::yesterday();
@@ -77,9 +82,11 @@ class StacjaRecent extends Component
             $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
             $this->doboweDate = $date->format('Y-m');
             $this->miesieczneDate = $date->format('Y');
-            $this->sortBy = 'desc';
-            $this->sortDirection = 'temperatura_gruntu_data';
+            $this->sortBy = 'kod_stacji';
+            $this->sortDirection = 'desc';
             $this->stationData = [];
+            $this->sortedData = $this->weatherData;
+            $this->sortBy = 'kod_stacji';
         }
     }
     public function getStationData()
@@ -105,21 +112,22 @@ class StacjaRecent extends Component
         }
     }
 
-    public function getSortedWeatherDataProperty()
+    public function sortWetherData()
     {
-        $data = collect($this->weatherData);
+        $this->sortedData = collect($this->weatherData);
 
         if ($this->sortBy !== '') {
-            $data = $data->sortBy(function ($item) {
-                return $item[$this->sortBy] ?? null;
+            $data = $this->sortedData->sortBy(function ($item) {
+                return is_null($item[$this->sortBy]) ? PHP_INT_MAX : $item[$this->sortBy];
             }, SORT_REGULAR, $this->sortDirection === 'desc');
         }
+        $this->sortedData = $data->values()->all();
+        //$this->loadData(); //tu ejst problem bo odswieza wykres ? ale mozna prosto zamienic na inna zmienna i tyl?
 
-        $this->loadData();
-        return $data->values()->all();
     }
     public function loadData()
     {
+
         $this->weatherData = [];
         if ($this->stations) {
             switch ($this->aggregation) {
@@ -133,6 +141,8 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->sortedData = $this->weatherData;
+                    $this->sortBy = 'kod_stacji';
                     break;
                 case 'terminowe':
                     $this->loadTerminoweData();
@@ -144,6 +154,8 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->sortedData = $this->weatherData;
+                    $this->sortBy = 'kod_stacji';
                     break;
                 case 'dobowe':
                     $date = Carbon::parse($this->doboweDate . '-01');
@@ -156,6 +168,8 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->sortedData = $this->weatherData;
+                    $this->sortBy = 'kod_stacji';
                     break;
                 case 'miesieczne':
                     $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
@@ -168,6 +182,8 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->sortedData = $this->weatherData;
+                    $this->sortBy = 'kod_stacji';
                     break;
                 default:
                     $this->load30MinData();
@@ -179,6 +195,8 @@ class StacjaRecent extends Component
                         'doboweDate' => $this->doboweDate,
                         'miesieczneDate' => $this->miesieczneDate,
                     ]);
+                    $this->sortedData = $this->weatherData;
+                    $this->sortBy = 'kod_stacji';
                     break;
             }
         }
@@ -189,10 +207,14 @@ class StacjaRecent extends Component
             case 'today':
                 $date = Carbon::today();
                 $this->weatherData = $this->loadDataForDate($date);
+                $this->sortedData = $this->weatherData;
+                $this->sortBy = 'kod_stacji';
                 break;
             case 'yesterday':
                 $date = Carbon::yesterday();
                 $this->weatherData = $this->loadDataForDate($date);
+                $this->sortedData = $this->weatherData;
+                $this->sortBy = 'kod_stacji';
                 break;
             case '7days':
                 $endDate = Carbon::yesterday();
@@ -205,10 +227,14 @@ class StacjaRecent extends Component
                     }
                 }
                 $this->weatherData = $allData;
+                $this->sortedData = $this->weatherData;
+                $this->sortBy = 'kod_stacji';
                 break;
             default:
                 $date = Carbon::today();
                 $this->weatherData = $this->loadDataForDate($date);
+                $this->sortedData = $this->weatherData;
+                $this->sortBy = 'kod_stacji';
                 break;
         }
     }
@@ -268,8 +294,10 @@ class StacjaRecent extends Component
             $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
             $this->doboweDate = $date->format('Y-m');
             $this->miesieczneDate = $date->format('Y');
-            $this->sortBy = 'desc';
-            $this->sortDirection = 'temperatura_gruntu_data';
+
+            $this->sortDirection = 'desc';
+            $this->sortedData = $this->weatherData;
+            $this->sortBy = 'kod_stacji';
         }
     }
 
@@ -341,8 +369,10 @@ class StacjaRecent extends Component
             $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
             $this->doboweDate = $date->format('Y-m');
             $this->miesieczneDate = $date->format('Y');
-            $this->sortBy = 'desc';
-            $this->sortDirection = 'temperatura_gruntu_data';
+
+            $this->sortDirection = 'desc';
+            $this->sortedData = $this->weatherData;
+            $this->sortBy = 'kod_stacji';
         }
     }
 
