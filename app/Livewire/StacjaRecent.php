@@ -74,11 +74,7 @@ class StacjaRecent extends Component
         }
         $this->sortWetherData();
     }
-    public function updatedWeatherData()
-    {
-        dd('sdfs');
-        $this->calculateMinMaxStats();
-    }
+
     public function calculateMinMaxStats()
     {
         $fields = [
