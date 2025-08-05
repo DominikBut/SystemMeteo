@@ -9,6 +9,7 @@ use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -29,8 +30,8 @@ class StacjaRead extends Component
     public $stationData = [];
     public string $askTime;
 
-    // protected $stationListPath = 'imgw/wykaz_stacji.csv';
-    // protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
+    protected $stationListPath = 'imgw/wykaz_stacji.csv';
+    protected $stationListUrl = 'https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv';
 
     public $weatherData = [];
     public  $minMaxStats = [];
@@ -83,7 +84,7 @@ class StacjaRead extends Component
                     return;
                 }
             } catch (\Exception $e) {
-                $this->error = "Błąd podczas pobierania: " . $e->getMessage();
+                $this->error = "Błąd podczas pobierania: "; //$e->getMessage()
                 return;
             }
         } else {
@@ -141,7 +142,7 @@ class StacjaRead extends Component
                 $this->error = "Nie znaleziono danych dla podanej stacji i daty.";
             }
         } catch (\Exception $e) {
-            $this->error = "Błąd odczytu pliku CSV: " . $e->getMessage();
+            $this->error = "Błąd odczytu pliku CSV: "; //$e->getMessage()
         }
     }
 
@@ -439,7 +440,7 @@ class StacjaRead extends Component
                             return [];
                         }
                     } catch (\Exception $e) {
-                        $this->error = "Błąd podczas pobierania: " . $e->getMessage();
+                        $this->error = "Błąd podczas pobierania: "; //$e->getMessage()
                         return [];
                     }
                 } else {
@@ -638,7 +639,7 @@ class StacjaRead extends Component
                     //     $this->error = "Nie znaleziono danych dla podanej stacji i daty.";
                     // }
                 } catch (\Exception $e) {
-                    $this->error = "Błąd odczytu pliku CSV: " . $e->getMessage();
+                    $this->error = "Błąd odczytu pliku CSV: "; //$e->getMessage()
                 }
 
 
@@ -698,18 +699,66 @@ class StacjaRead extends Component
                     throw new Exception('Nie udało się pobrać wykazu stacji.');
                 }
                 $data = $response->json();
-                $stations = [];
+                $apistations = [];
                 foreach ($data as $entry) {
                     $id = trim($entry['kod_stacji'] ?? '');
                     $name = trim($entry['nazwa_stacji'] ?? '');
 
                     if ($id && $name) {
-                        $stations[$id] = $name;
+                        $apistations[$id] = $name;
                     }
                 }
-                return $stations;
+
+                //csv
+                $csvData = [];
+                if (!Cache::has('station_list_csv')) {
+
+                    $response = Http::timeout(30)->connectTimeout(30)->retry(3, 100)->get($this->stationListUrl);
+                    if ($response->successful()) {
+
+                        $utf8Content = iconv('Windows-1250', 'UTF-8//IGNORE', $response->body());
+                        Storage::put($this->stationListPath, $utf8Content);
+                        // Step 2: Read the file (whether downloaded or fallback)
+                        $lines = explode("\n", Storage::get($this->stationListPath));
+                        $csvstations = [];
+
+                        foreach ($lines as $line) {
+                            if (trim($line) === '') continue;
+
+                            [$id, $name] = str_getcsv($line);
+                            if ($id && $name) {
+                                $csvstations[trim($id)] = trim($name);
+                            }
+                        }
+
+                        $csvData = $csvstations;
+                        Cache::put('station_list_csv', $csvData, now()->addDays(1));
+                    } else {
+                        $csvData = [];
+                    }
+                } else {
+                    $csvData = Cache::get('station_list_csv');
+                }
+
+                // === 3. Combine both lists ===
+                $combined = $apistations;
+
+                foreach ($csvData as $id => $name) {
+                    if (!isset($combined[$id])) {
+                        // Only add if not already in API list
+                        $combined[$id] = $name;
+                    } elseif ($combined[$id] !== $name) {
+                        // Optional: Log conflict if names differ
+                        Log::channel('imgw')->info("Station ID conflict: $id — API: '{$combined[$id]}' vs CSV: '$name'");
+                        // Or prefer API version and skip CSV
+                    }
+                }
+
+                return $combined;
+
+                //return $apistations;
             } catch (\Exception $e) {
-                $this->error = 'Błąd pobierania listy stacji: ';
+                $this->error = 'Błąd pobierania listy stacji: '; //e.getMessage()
                 return [];
             }
         });
