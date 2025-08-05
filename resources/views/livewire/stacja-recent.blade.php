@@ -215,7 +215,7 @@
                                                             :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                             :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
                                                         >
-                                                            Odśwież dane
+                                                            Załaduj dane
                                                         </button>
                                                         </div>
                                                     </div>
@@ -385,7 +385,7 @@
                                                 {{ $stationData['wiatr_kierunek'] ?? '-' }} °
                                                 [
                                                 <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation }}deg;">
-                                                    ↑
+                                                    ↓
                                                 </div>]
                                             </div>
                                         </div>
@@ -468,7 +468,7 @@
                                 @endswitch
                                 @break
                             @case('terminowe')
-                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs">(3 pomiary na dzień - około godziny 6:00, 12:00, 18:00)</span>
+                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs">(4 okresy pomiarowe na dzień - około godziny do 6:00, 12:00, 18:00, 23:59)</span>
                                 @break
                             @case('dobowe')
                                 {{ '['.$this->doboweDate.']' }}
@@ -964,7 +964,7 @@
                                                                 @endphp
                                                                 <span class="w-10">
                                                                     <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
-                                                                        ↑
+                                                                        ↓
                                                                     </div>
                                                                 </span>
                                                                 <span class="w-16">{{ $data['mean_wiatr_kierunek'] ?? '-' }}</span>
@@ -1182,7 +1182,7 @@
                                                                 @endphp
                                                                 <span class="w-10">
                                                                     <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
-                                                                        ↑
+                                                                        ↓
                                                                     </div>
                                                                 </span>
                                                                 <span class="w-16">{{ $data['mean_mean_wiatr_kierunek'] ?? '-' }}</span>
@@ -1368,7 +1368,7 @@
                                                                 <span class="w-10">
                                                                     [
                                                                     <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
-                                                                        ↑
+                                                                        ↓
                                                                     </div>]
                                                                 </span>
 
@@ -1446,7 +1446,7 @@
                 }
 
                 case 'terminowe':
-                    return `[${ctx.terminoweStartDate}] - [${ctx.terminoweEndDate}] (3 pomiary na dzień)`;
+                    return `[${ctx.terminoweStartDate}] - [${ctx.terminoweEndDate}] (4 okresy pomiarowe na dzień)`;
 
                 case 'dobowe':
                     return `[${ctx.doboweDate}]`;

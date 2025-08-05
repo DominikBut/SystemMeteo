@@ -7,6 +7,7 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -297,8 +298,8 @@ class StacjaRecent extends Component
                 $this->weatherData = [];
                 $combinedData = [];
                 for ($day = $day1; $day <= $day2; $day++) {
-
-                    $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$day}.json";
+                    $dayFormatted = str_pad($day, 2, '0', STR_PAD_LEFT);
+                    $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$dayFormatted}.json";
 
                     if (!Storage::exists($filePath)) {
                         continue;
@@ -326,6 +327,7 @@ class StacjaRecent extends Component
                         }
                     }
                     $data = null;
+
                     $combinedData = array_merge($combinedData, array_values($filtered));
                     $filtered = null;
                 }

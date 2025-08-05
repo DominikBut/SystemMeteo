@@ -291,6 +291,7 @@ class LogImgwData extends Command
                         };
 
                         $gruntu      = $getValues('temperatura_gruntu', 'temperatura_gruntu_data');
+                        $powietrza   = $getValues('temperatura_powietrza', 'temperatura_powietrza_data');
                         $kierunek    = $getValues('wiatr_kierunek', 'wiatr_kierunek_data');
                         $srednia     = $getValues('wiatr_srednia_predkosc', 'wiatr_srednia_predkosc_data');
                         $maks        = $getValues('wiatr_predkosc_maksymalna', 'wiatr_predkosc_maksymalna_data');
@@ -308,6 +309,10 @@ class LogImgwData extends Command
                             'max_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ? round($gruntu->max(), 1) : null,
                             'min_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ? round($gruntu->min(), 1) : null,
                             'mean_temp_gruntu_dobowa' => $gruntu->isNotEmpty() ?  round($gruntu->avg(), 1) : null,
+
+                            'max_temp_powietrza_dobowa' => $powietrza->isNotEmpty() ? round($powietrza->max(), 1) : null,
+                            'min_temp_powietrza_dobowa' => $powietrza->isNotEmpty() ? round($powietrza->min(), 1) : null,
+                            'mean_temp_powietrza_dobowa' => $powietrza->isNotEmpty() ?  round($powietrza->avg(), 1) : null,
 
                             'mean_wiatr_kierunek' => $kierunek->isNotEmpty() ? round($kierunek->avg(), 1) : null,
                             'mean_wiatr_srednia_predkosc' => $srednia->isNotEmpty() ?  round($srednia->avg(), 1) : null,
@@ -361,9 +366,14 @@ class LogImgwData extends Command
                             $pluck = fn($key) => collect($records)->pluck($key)->filter(fn($v) => is_numeric($v))->map(fn($v) => (float) $v);
 
                             // Example usage
+
                             $gruntu_max  = $fieldStats($pluck('max_temp_gruntu_dobowa'));
                             $gruntu_min  = $fieldStats($pluck('min_temp_gruntu_dobowa'));
                             $gruntu_mean = $fieldStats($pluck('mean_temp_gruntu_dobowa'));
+
+                            $powietrza_max  = $fieldStats($pluck('max_temp_powietrza_dobowa'));
+                            $powietrza_min  = $fieldStats($pluck('min_temp_powietrza_dobowa'));
+                            $powietrza_mean = $fieldStats($pluck('mean_temp_powietrza_dobowa'));
 
                             $kierunek = $fieldStats($pluck('mean_wiatr_kierunek'));
                             $srednia  = $fieldStats($pluck('mean_wiatr_srednia_predkosc'));
@@ -388,6 +398,12 @@ class LogImgwData extends Command
                                 'min_min_temp_gruntu_mies' => $gruntu_min['min'] !== null ?  $gruntu_min['min'] : null,
                                 'mean_min_temp_gruntu_mies' => $gruntu_min['mean'] !== null ?  $gruntu_min['mean'] : null,
                                 'mean_mean_temp_gruntu_mies' => $gruntu_mean['mean'] !== null ?  $gruntu_mean['mean'] : null,
+
+                                'max_max_temp_powietrza_mies' => $powietrza_max['max'] !== null ?  $powietrza_max['max'] : null,
+                                'mean_max_temp_powietrza_mies' => $powietrza_max['mean'] !== null ? $powietrza_max['mean'] : null,
+                                'min_min_temp_powietrza_mies' => $powietrza_min['min'] !== null ?  $powietrza_min['min'] : null,
+                                'mean_min_temp_powietrza_mies' => $powietrza_min['mean'] !== null ?  $powietrza_min['mean'] : null,
+                                'mean_mean_temp_powietrza_mies' => $powietrza_mean['mean'] !== null ?  $powietrza_mean['mean'] : null,
 
                                 'mean_mean_wiatr_kierunek' => $kierunek['mean'] !== null ? $kierunek['mean'] : null,
                                 'mean_mean_wiatr_srednia_predkosc' => $srednia['mean'] !== null ?  $srednia['mean'] : null,

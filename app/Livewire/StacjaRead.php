@@ -343,8 +343,8 @@ class StacjaRead extends Component
                 $this->weatherData = [];
                 $combinedData = [];
                 for ($day = $day1; $day <= $day2; $day++) {
-
-                    $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$day}.json";
+                    $dayFormatted = str_pad($day, 2, '0', STR_PAD_LEFT);
+                    $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$dayFormatted}.json";
 
                     //to skipuje jak nie znjadzie pliku dla tego dnia?
                     if (!Storage::exists($filePath)) {
@@ -688,6 +688,7 @@ class StacjaRead extends Component
 
     public function getStationsProperty(): array
     {
+        //add logic for csv too and konkatenuj distinct
         return $this->stations = Cache::remember('station_list_api_2', now()->addHour(1), function () {
             // Step 1: Download latest CSV file
             try {
