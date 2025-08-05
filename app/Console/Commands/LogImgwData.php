@@ -94,21 +94,119 @@ class LogImgwData extends Command
                     $grouped = collect($prevData)->groupBy('kod_stacji');
                     $prevData = null;
                     $summary = [];
-
+                    $yesterday = Carbon::yesterday('Europe/Warsaw')->toDateString();
                     foreach ($grouped as $kod => $records) {
                         $recordsArray = $records->values(); // reset keys
 
-                        foreach ([4, 10, 16] as $targetHour) {
-                            $match = $recordsArray->first(function ($item) use ($targetHour) {
-                                return !empty($item['temperatura_gruntu_data']) &&
-                                    Carbon::parse($item['temperatura_gruntu_data'], 'UTC')->hour === $targetHour;
-                            });
+                        // Define intervals based on target hours
+                        $targets = [
+                            4  => ['start' => 22, 'end' => 4],
+                            10 => ['start' => 4,  'end' => 10],
+                            16 => ['start' => 10, 'end' => 16],
+                            21 => ['start' => 16, 'end' => 21],
+                        ];
 
-                            if (!$match) {
-                                $match = $recordsArray->first(function ($item) use ($targetHour) {
-                                    return !empty($item['opad_10min_data']) &&
-                                        Carbon::parse($item['opad_10min_data'], 'UTC')->hour === $targetHour;
+                        foreach ($targets as $targetHour => $interval) {
+                            $start = $interval['start'];
+                            $end = $interval['end'];
+
+                            // // Sum all opad_10min values in the interval [start, end)
+                            // $opadSum = $recordsArray->filter(function ($item) use ($start, $end) {
+                            //     if (!empty($item['opad_10min_data'])) {
+                            //         $hour = Carbon::parse($item['opad_10min_data'])->hour;
+                            //         // Handle crossing midnight: e.g., 22–4
+                            //         if ($start > $end) {
+                            //             return $hour >= $start || $hour < $end;
+                            //         } else {
+                            //             return $hour >= $start && $hour < $end;
+                            //         }
+                            //     }
+                            //     return false;
+                            // })->reduce(function ($carry, $item) {
+                            //     $val = is_numeric($item['opad_10min']) ? floatval($item['opad_10min']) : (int)0;
+                            //     Log::channel('imgw')->info("Saved:  {$item['opad_10min_data']}");
+                            //     return $carry + $val;
+                            // }, (int)0);
+
+                            // Filter records in interval, on correct (UTC+2) date
+                            // Interval filter helper
+                            $inIntervalYesterday = function ($datetimeStr) use ($start, $end, $yesterday) {
+                                if (empty($datetimeStr)) return false;
+                                $dt = Carbon::parse($datetimeStr, 'UTC')->addHours(2);
+                                $date = $dt->toDateString();
+                                $hour = Carbon::parse($datetimeStr)->hour;
+                                $inRange = $start > $end
+                                    ? ($hour >= $start || $hour < $end)
+                                    : ($hour >= $start && $hour < $end);
+                                return $inRange && $date === $yesterday;
+                            };
+
+                            // Sum opad_10min
+                            $opadSum = $recordsArray->filter(
+                                fn($item) =>
+                                $inIntervalYesterday($item['opad_10min_data'])
+                            )->sum(fn($item) => is_numeric($item['opad_10min']) ? floatval($item['opad_10min']) : 0);
+
+                            // Averages
+                            $average = function ($field, $dateField) use ($recordsArray, $inIntervalYesterday) {
+                                $filtered = $recordsArray->filter(
+                                    fn($item) =>
+                                    isset($item[$field], $item[$dateField]) &&
+                                        is_numeric($item[$field]) &&
+                                        $inIntervalYesterday($item[$dateField])
+                                );
+                                return $filtered->isEmpty() ? null : round($filtered->avg(fn($i) => floatval($i[$field])), 1);
+                            };
+
+                            // Maximums
+                            $maximum = function ($field, $dateField) use ($recordsArray, $inIntervalYesterday) {
+                                $filtered = $recordsArray->filter(
+                                    fn($item) =>
+                                    isset($item[$field], $item[$dateField]) &&
+                                        is_numeric($item[$field]) &&
+                                        $inIntervalYesterday($item[$dateField])
+                                );
+                                return $filtered->isEmpty() ? null : $filtered->max(fn($i) => floatval($i[$field]));
+                            };
+                            // Compute stats
+                            $avg_gruntu      = $average('temperatura_gruntu', 'temperatura_gruntu_data');
+                            $avg_powietrza   = $average('temperatura_powietrza', 'temperatura_powietrza_data');
+                            $avg_kierunek    = $average('wiatr_kierunek', 'wiatr_kierunek_data');
+                            $avg_srednia     = $average('wiatr_srednia_predkosc', 'wiatr_srednia_predkosc_data');
+                            $avg_wilgotnosc  = $average('wilgotnosc_wzgledna', 'wilgotnosc_wzgledna_data');
+
+                            $max_poryw       = $maximum('wiatr_poryw_10min', 'wiatr_poryw_10min_data');
+                            $max_maksymalna  = $maximum('wiatr_predkosc_maksymalna', 'wiatr_predkosc_maksymalna_data');
+
+                            // For timestamps and metadata, pick a representative row near targetHour
+                            $match = null;
+
+                            if ($targetHour === 21) {
+                                // Find representative record closest to the target hour
+                                $match = $recordsArray->last(function ($item) use ($targetHour) {
+                                    return !empty($item['temperatura_gruntu_data']) &&
+                                        Carbon::parse($item['temperatura_gruntu_data'])->hour === $targetHour;
                                 });
+
+                                if (!$match) {
+                                    $match = $recordsArray->last(function ($item) use ($targetHour) {
+                                        return !empty($item['opad_10min_data']) &&
+                                            Carbon::parse($item['opad_10min_data'])->hour === $targetHour;
+                                    });
+                                }
+                            } else {
+                                // Find representative record closest to the target hour
+                                $match = $recordsArray->first(function ($item) use ($targetHour) {
+                                    return !empty($item['temperatura_gruntu_data']) &&
+                                        Carbon::parse($item['temperatura_gruntu_data'])->hour === $targetHour;
+                                });
+
+                                if (!$match) {
+                                    $match = $recordsArray->first(function ($item) use ($targetHour) {
+                                        return !empty($item['opad_10min_data']) &&
+                                            Carbon::parse($item['opad_10min_data'])->hour === $targetHour;
+                                    });
+                                }
                             }
 
                             if (!$match) {
@@ -116,12 +214,41 @@ class LogImgwData extends Command
                                     $match = $recordsArray->first();
                                 } elseif ($targetHour === 10) {
                                     $match = $recordsArray->get(intval(floor($recordsArray->count() / 2)));
+                                } elseif ($targetHour === 16) {
+                                    $match = $recordsArray->get(intval(floor($recordsArray->count())) * 0.75);
                                 } else {
                                     $match = $recordsArray->last();
                                 }
                             }
 
-                            $summary[] = $match;
+                            $intervalRecord = $match ?? [];
+
+                            // Attach summary values
+                            $intervalRecord['opad_10min']                = $opadSum !== null ? round($opadSum, 1) : null;
+                            $intervalRecord['temperatura_gruntu']        = $avg_gruntu !== null ? round($avg_gruntu, 1) : null;
+                            $intervalRecord['temperatura_powietrza']     = $avg_powietrza !== null ? round($avg_powietrza, 1) : null;
+                            $intervalRecord['wiatr_kierunek']            = $avg_kierunek !== null ? round($avg_kierunek, 1) : null;
+                            $intervalRecord['wiatr_srednia_predkosc']    = $avg_srednia !== null ? round($avg_srednia, 1) : null;
+                            $intervalRecord['wilgotnosc_wzgledna']       = $avg_wilgotnosc !== null ? round($avg_wilgotnosc, 1) : null;
+                            $intervalRecord['wiatr_poryw_10min']         = $max_poryw;
+                            $intervalRecord['wiatr_predkosc_maksymalna'] = $max_maksymalna;
+                            $opadSum = null;
+                            $avg_gruntu = null;
+                            $avg_powietrza = null;
+                            $avg_kierunek = null;
+                            $avg_srednia = null;
+                            $avg_wilgotnosc = null;
+                            $max_poryw = null;
+                            $max_maksymalna = null;
+
+                            $summary[] = $intervalRecord;
+                            $intervalRecord = null;
+                            $match = null;
+                            // Attach the opad_10min sum to the representative record
+                            // $intervalRecord = $match ? $match : [];
+                            // $intervalRecord['opad_10min'] = $opadSum;
+
+                            // $summary[] = $intervalRecord;
                         }
                     }
                     $grouped = null;

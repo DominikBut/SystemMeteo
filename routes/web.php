@@ -18,7 +18,7 @@ Route::get('/station/recent', function () {
 })->name('stacja_recent');
 
 Route::get('/station/archive', function () {
-    return view('stacja_archive');
+    return view('stacja_history');
 })->name('stacja_archive');
 
 Route::middleware([

@@ -54,7 +54,7 @@
                             </div>
                         </div>
                         @else
-                            <h1><b>Błąd połączenia z API spróbuj ponownie za godzinę, aby móc przeglądać dane (również innych stacji)!</b></h1>
+                            <h1 class="w-full bg-white rounded-md shadow-sm text-sm text-red-500 p-4 mb-2 text-center"><b>Błąd połączenia z API spróbuj ponownie za godzinę, aby móc przeglądać dane!</b></h1>
                         @endif
                         <div class="w-full">
                             <div
@@ -1983,5 +1983,5 @@
         });
 
     });
-</script>
+    </script>
 </div>
