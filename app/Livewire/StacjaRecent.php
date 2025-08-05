@@ -114,6 +114,16 @@ class StacjaRecent extends Component
             'mean_mean_wilgotnosc_wzgledna',
             'max_sum_opad_10min',
             'sum_sum_opad_10min',
+            'max_max_temp_powietrza_mies',
+            'mean_max_temp_powietrza_mies',
+            'min_min_temp_powietrza_mies',
+            'mean_min_temp_powietrza_mies',
+            'mean_mean_temp_powietrza_mies',
+            'max_temp_powietrza_dobowa',
+            'min_temp_powietrza_dobowa',
+            'mean_temp_powietrza_dobowa',
+            'temperatura_powietrza',
+            'temperatura_powietrza_data',
         ];
 
         foreach ($fields as $field) {
@@ -173,12 +183,23 @@ class StacjaRecent extends Component
 
         if ($this->sortBy !== '') {
             $data = $this->sortedData->sortBy(function ($item) {
+                $item[$this->sortBy] ?? $this->sortBy = 'kod_stacji';
                 return is_null($item[$this->sortBy]) ? PHP_INT_MAX : $item[$this->sortBy];
             }, SORT_REGULAR, $this->sortDirection === 'desc');
         }
         $this->sortedData = $data->values()->all();
-        //$this->loadData(); //tu ejst problem bo odswieza wykres ? ale mozna prosto zamienic na inna zmienna i tyl?
+        // //$this->loadData(); //tu ejst problem bo odswieza wykres ? ale mozna prosto zamienic na inna zmienna i tyl?
+        // $this->sortedData = collect($this->weatherData);
 
+        // if ($this->sortBy !== '') {
+        //     $data = $this->sortedData->sortBy(function ($item) {
+        //         // Fallback to 'kod_stacji' if the desired key doesn't exist
+        //         $value = $item[$this->sortBy] ?? $item['kod_stacji'] ?? PHP_INT_MAX;
+        //         return is_null($value) ? PHP_INT_MAX : $value;
+        //     }, SORT_REGULAR, $this->sortDirection === 'desc');
+
+        //     $this->sortedData = $data->values()->all();
+        // }
     }
     public function loadData()
     {

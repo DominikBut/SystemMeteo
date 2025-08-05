@@ -52,99 +52,101 @@ class StacjaRead extends Component
     #[Validate('string|in:today,yesterday,7days', message: 'Zły format wyboru!')]
     public string $dateOption = 'today'; // 'dzis', 'wczoraj', '7 dni'
 
-    #[Validate('string|in:30min,terminowe,dobowe,miesieczne', message: 'Zły format wyboru!')]
-    public string $aggregation = '30min'; // Default mode
+    #[Validate('string|in:terminowe,dobowe,miesieczne', message: 'Zły format wyboru!')]
+    public string $aggregation = 'dobowe'; // Default mode
 
     public $terminoweStartDate;
     public $terminoweEndDate;
     public $doboweDate;
     public $miesieczneDate;
     protected string $delimiter = ',';
+    public $doboweType = false;
+    public $miesieczneType = false;
 
-    public function loadData2()
-    {
-        ///
-        $fileName = sprintf('%04d_%02d_k.zip', $this->year, $this->month);
-        $csvFileName = sprintf('k_d_%02d_%04d.csv', $this->month, $this->year);
+    // public function loadData2()
+    // {
+    //     ///
+    //     $fileName = sprintf('%04d_%02d_k.zip', $this->year, $this->month);
+    //     $csvFileName = sprintf('k_d_%02d_%04d.csv', $this->month, $this->year);
 
-        $relativeFolder = "imgw/archived/dobowe/{$this->year}";
-        $relativeZipPath = "{$relativeFolder}/{$fileName}";
-        $relativeCsvPath = "{$relativeFolder}/{$csvFileName}";
+    //     $relativeFolder = "imgw/archived/dobowe/{$this->year}";
+    //     $relativeZipPath = "{$relativeFolder}/{$fileName}";
+    //     $relativeCsvPath = "{$relativeFolder}/{$csvFileName}";
 
-        // Step 1: Download ZIP if not exists
-        ////
-        if (!Storage::exists($relativeCsvPath) && !Storage::exists($relativeZipPath)) {
-            try {
-                $response = Http::timeout(30)->get("https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/dobowe/klimat/{$this->year}/{$fileName}");
-                if ($response->ok()) {
-                    Storage::put($relativeZipPath, $response->body());
-                    $this->info = "Pobrano.";
-                } else {
-                    $this->error = "Nie udało się pobrać pliku ZIP.";
-                    return;
-                }
-            } catch (\Exception $e) {
-                $this->error = "Błąd podczas pobierania: "; //$e->getMessage()
-                return;
-            }
-        } else {
-            $this->info = "Istnieje zip.";
-        }
-        ////
-        // Step 2: Extract CSV if not already extracted
-        if (!Storage::exists($relativeCsvPath)) {
-            $zipPath = Storage::path($relativeZipPath);
-            $extractPath = Storage::path($relativeFolder);
+    //     // Step 1: Download ZIP if not exists
+    //     ////
+    //     if (!Storage::exists($relativeCsvPath) && !Storage::exists($relativeZipPath)) {
+    //         try {
+    //             $response = Http::timeout(30)->get("https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/dobowe/klimat/{$this->year}/{$fileName}");
+    //             if ($response->ok()) {
+    //                 Storage::put($relativeZipPath, $response->body());
+    //                 $this->info = "Pobrano.";
+    //             } else {
+    //                 $this->error = "Nie udało się pobrać pliku ZIP.";
+    //                 return;
+    //             }
+    //         } catch (\Exception $e) {
+    //             $this->error = "Błąd podczas pobierania: "; //$e->getMessage()
+    //             return;
+    //         }
+    //     } else {
+    //         $this->info = "Istnieje zip.";
+    //     }
+    //     ////
+    //     // Step 2: Extract CSV if not already extracted
+    //     if (!Storage::exists($relativeCsvPath)) {
+    //         $zipPath = Storage::path($relativeZipPath);
+    //         $extractPath = Storage::path($relativeFolder);
 
-            $zip = new ZipArchive();
-            if ($zip->open($zipPath) === true) {
-                $zip->extractTo($extractPath);
-                $zip->close();
-                Storage::delete($relativeZipPath); // delete ZIP after extraction
-                Storage::delete($relativeFolder . '/' . sprintf('k_d_t_%02d_%04d.csv', $this->month, $this->year)); //delete some additional .csv that comes from before 2024.05 months
-                $this->info = "Rozpakowano.";
-            } else {
-                $this->error = "Nie można rozpakować pliku ZIP.";
-                return;
-            }
-        } else {
-            $this->info = "Istnieje plik.";
-        }
+    //         $zip = new ZipArchive();
+    //         if ($zip->open($zipPath) === true) {
+    //             $zip->extractTo($extractPath);
+    //             $zip->close();
+    //             Storage::delete($relativeZipPath); // delete ZIP after extraction
+    //             Storage::delete($relativeFolder . '/' . sprintf('k_d_t_%02d_%04d.csv', $this->month, $this->year)); //delete some additional .csv that comes from before 2024.05 months
+    //             $this->info = "Rozpakowano.";
+    //         } else {
+    //             $this->error = "Nie można rozpakować pliku ZIP.";
+    //             return;
+    //         }
+    //     } else {
+    //         $this->info = "Istnieje plik.";
+    //     }
 
-        // Step 3: Read CSV and find matching rows
-        try {
-            $csvPath = Storage::path($relativeCsvPath);
-            $line_of_text = [];
-            $file_handle = fopen($csvPath, 'r');
+    //     // Step 3: Read CSV and find matching rows
+    //     try {
+    //         $csvPath = Storage::path($relativeCsvPath);
+    //         $line_of_text = [];
+    //         $file_handle = fopen($csvPath, 'r');
 
-            while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
-                if (empty($csvRow) || count($csvRow) < 5) continue;
+    //         while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
+    //             if (empty($csvRow) || count($csvRow) < 5) continue;
 
-                $csvRow = array_map(function ($value) {
-                    $value = trim($value);
-                    $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
-                    return $value;
-                }, $csvRow);
+    //             $csvRow = array_map(function ($value) {
+    //                 $value = trim($value);
+    //                 $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
+    //                 return $value;
+    //             }, $csvRow);
 
-                $stationId = (int) $csvRow[0];
-                $year = (int) $csvRow[2];
-                $month = (int) $csvRow[3];
+    //             $stationId = (int) $csvRow[0];
+    //             $year = (int) $csvRow[2];
+    //             $month = (int) $csvRow[3];
 
-                if ($stationId === (int) $this->stationId) {
-                    $line_of_text[] = $csvRow;
-                }
-            }
+    //             if ($stationId === (int) $this->stationId) {
+    //                 $line_of_text[] = $csvRow;
+    //             }
+    //         }
 
-            fclose($file_handle);
-            $this->stationData = $line_of_text;
+    //         fclose($file_handle);
+    //         $this->stationData = $line_of_text;
 
-            if (empty($this->stationData)) {
-                $this->error = "Nie znaleziono danych dla podanej stacji i daty.";
-            }
-        } catch (\Exception $e) {
-            $this->error = "Błąd odczytu pliku CSV: "; //$e->getMessage()
-        }
-    }
+    //         if (empty($this->stationData)) {
+    //             $this->error = "Nie znaleziono danych dla podanej stacji i daty.";
+    //         }
+    //     } catch (\Exception $e) {
+    //         $this->error = "Błąd odczytu pliku CSV: "; //$e->getMessage()
+    //     }
+    // }
 
 
 
@@ -156,10 +158,10 @@ class StacjaRead extends Component
         $this->doboweDate = $date->format('Y-m');
         $this->miesieczneDate = $date->format('Y');
         $this->stations = $this->getStationsProperty();
-        // $this->validate();
-        // $this->getStationData();
-        // $this->loadData();
-        // $this->calculateMinMaxStats();
+        $this->validate();
+        $this->getStationData();
+        $this->loadData();
+        $this->calculateMinMaxStats();
     }
 
     public function setSort(string $column)
@@ -172,7 +174,11 @@ class StacjaRead extends Component
         }
         $this->sortWetherData();
     }
-
+    public function updatedAggregation()
+    {
+        $this->doboweType = false;
+        $this->miesieczneType = false;
+    }
     public function calculateMinMaxStats()
     {
         $fields = [
@@ -211,6 +217,16 @@ class StacjaRead extends Component
             'mean_mean_wilgotnosc_wzgledna',
             'max_sum_opad_10min',
             'sum_sum_opad_10min',
+            'max_max_temp_powietrza_mies',
+            'mean_max_temp_powietrza_mies',
+            'min_min_temp_powietrza_mies',
+            'mean_min_temp_powietrza_mies',
+            'mean_mean_temp_powietrza_mies',
+            'max_temp_powietrza_dobowa',
+            'min_temp_powietrza_dobowa',
+            'mean_temp_powietrza_dobowa',
+            'temperatura_powietrza',
+            'temperatura_powietrza_data',
         ];
 
         foreach ($fields as $field) {
@@ -240,6 +256,8 @@ class StacjaRead extends Component
             $this->sortedData = $this->weatherData;
             $this->sortBy = 'kod_stacji';
         }
+        $this->doboweType = false;
+        $this->miesieczneType = false;
     }
     public function getStationData()
     {
@@ -270,12 +288,11 @@ class StacjaRead extends Component
 
         if ($this->sortBy !== '') {
             $data = $this->sortedData->sortBy(function ($item) {
+                $item[$this->sortBy] ?? $this->sortBy = 'kod_stacji';
                 return is_null($item[$this->sortBy]) ? PHP_INT_MAX : $item[$this->sortBy];
             }, SORT_REGULAR, $this->sortDirection === 'desc');
         }
         $this->sortedData = $data->values()->all();
-        //$this->loadData(); //tu ejst problem bo odswieza wykres ? ale mozna prosto zamienic na inna zmienna i tyl?
-
     }
     public function loadData()
     {
@@ -396,6 +413,7 @@ class StacjaRead extends Component
 
     public function loadDataForDate(Carbon $date)
     {
+        //add checka for wersje t mies dobowe jak 30mins a b  do kazdego? fomysle a a b jest do zmienienia moze toggle w tabie dobowe i mies
         if ($this->validate()) {
             if ($this->stop == false) {
                 $filtered = null;
@@ -737,7 +755,7 @@ class StacjaRead extends Component
                         $csvData = [];
                     }
                 } else {
-                    $csvData = Cache::get('station_list_csv');
+                    $csvData = Cache::get('station_list_csv', []);
                 }
 
                 // === 3. Combine both lists ===
