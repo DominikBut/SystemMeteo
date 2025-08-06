@@ -107,7 +107,7 @@
                         <div class="w-full">
                             <div
                                 x-data="{
-                                    selectedTab: '30min',
+                                    selectedTab: 'terminowe',
                                     selectTab(tab, $el) {
                                         this.selectedTab = tab;
                                         $wire.set('aggregation', tab);
@@ -145,7 +145,7 @@
                                 </div>
 
                                 <div class="px-2 py-3 ">
-                                    <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min" x-cloak>
+                                    {{-- <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min" x-cloak>
                                         <p class="py-2 ">Wybierz okres odczytu danych:</p>
                                         <div x-cloak class="flex gap-2">
                                             <button wire:click="$set('dateOption', 'today'); $wire.loadData()"
@@ -172,7 +172,7 @@
                                                 7 ostatnich dni
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div x-cloak x-show="selectedTab === 'terminowe'"  role="tabpanel" aria-label="terminowe">
                                         <p class="py-2">Wybierz zakres dni odczytu danych:</p>
                                                 <div class="flex gap-2">
@@ -514,7 +514,7 @@
                     <span>Wyświetlono na wykresie dane z okresu:
                         <b class="text-nowrap">
                         @switch($this->aggregation)
-                            @case('30min')
+                            {{-- @case('30min')
                                 @switch($this->dateOption)
                                     @case('today')
                                         {{ '['. Carbon::today()->setTimezone('Europe/Warsaw')->format('Y-m-d') .']' }}
@@ -528,9 +528,9 @@
                                     @default
 
                                 @endswitch
-                                @break
+                                @break --}}
                             @case('terminowe')
-                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs">(4 okresy pomiarowe na dzień - około godziny do 6:00, 12:00, 18:00, 23:59)</span>
+                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs">(3 pomiary na dzień - 6:00, 12:00, 18:00)</span>
                                 @break
                             @case('dobowe')
                                 {{ '['.$this->doboweDate.']' }}
@@ -852,57 +852,189 @@
                                         <span class="text-nowrap">Typ wartości</span>
                                     </th>
                                     <th class="p-2  text-gray-600">
-                                        Temp. <span class="text-nowrap">gruntu [°C]</span>
+                                        <div class="flex flex-col">Temp. <span class="text-nowrap">powietrza [°C]</span></div>
                                     </th>
                                     <th class="p-2  text-gray-600">
-                                        Temp. <span class="text-nowrap">powietrza [°C]</span>
+                                        <div class="flex flex-col">Temp. zwilżonego <span class="text-nowrap">powietrza [°C]</span></div>
                                     </th>
                                     <th class="p-2  text-gray-600">
-                                        Wilg. <span class="text-nowrap">względna [%]</span>
+                                        <div class="flex flex-col">Wilg. <span class="text-nowrap">względna [%]</span></div>
                                     </th>
                                     <th class="p-2 text-gray-600">
-                                        Opad <span class="text-nowrap">10 min [mm]</span>
+                                        <div class="flex flex-col">Wiatr śr. <span class="text-nowrap">prędkość [m/s]</span></div>
                                     </th>
                                     <th class="p-2  text-gray-600">
-                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]</span>
-                                    </th>
-                                    <th class="p-2 text-gray-600">
-                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]</span>
-                                    </th>
-                                    <th class="p-2 text-gray-600">
-                                        Wiatr poryw <span class="text-nowrap">10 min [m/s]</span>
+                                        <div class="flex flex-col">Stopień zachmurzenia<span class="text-nowrap"> [0-8 oktany]</span></div>
                                     </th>
                                 </thead>
+
                                 <tbody class="divide-y divide-slate-100  text-xs h-full">
                                     <tr class="bg-red-50 text-center font-semibold h-auto">
                                         <td class="p-2 text-gray-700">MAKS.</td>
-                                        <td>{{ $minMaxStats['temperatura_gruntu']['max'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['temperatura_powietrza']['max'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temp_term_zw']['max'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['opad_10min']['max'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['max'] ?? '-' }}</td>
+                                        <td class="flex flex-col">
+                                        <strong>{{ $minMaxStats['zachmurzenie']['max'] ?? '-' }}</strong>
+                                                            @php
+                                                                $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
+                                                                $zachmurzenie = $minMaxStats['zachmurzenie']['max'] ?? null;
+
+                                                                $zachmurzenieMapOktanty = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => 'Bardzo małe zachmurzenie',
+                                                                    2 => 'Małe zachmurzenie',
+                                                                    3 => 'Umiarkowane zachmurzenie',
+                                                                    4 => 'Połowiczne zachmurzenie',
+                                                                    5 => 'Umiarkowanie duże',
+                                                                    6 => 'Duże zachmurzenie',
+                                                                    7 => 'Prawie całkowite',
+                                                                    8 => 'Całkowite zachmurzenie',
+                                                                    9 => 'Nie można określić',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieMapDziesiatki = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => '1/10 nieba',
+                                                                    2 => '2/10 nieba',
+                                                                    3 => '3/10 nieba',
+                                                                    4 => '4/10 nieba',
+                                                                    5 => 'Połowiczne',
+                                                                    6 => '6/10 nieba',
+                                                                    7 => '7/10 nieba',
+                                                                    8 => '8/10 nieba',
+                                                                    9 => '9/10 nieba',
+                                                                    10 => 'Całkowite zachmurzenie',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieOpis = '-';
+
+                                                                if (!is_null($zachmurzenie)) {
+                                                                    if (!is_null($rok) && (int)$rok < 1989) {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapDziesiatki[$zachmurzenie] ?? '-';
+                                                                    } else {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapOktanty[$zachmurzenie] ?? '-';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                           <span class="font-normal">{{ $zachmurzenieOpis }}</span>
+                                        </td>
+
                                     </tr>
                                     <tr class="bg-green-50 text-center h-auto">
                                         <td class="p-2 text-gray-700">ŚR.</td>
-                                        <td>{{ $minMaxStats['temperatura_gruntu']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['temperatura_powietrza']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temp_term_zw']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['opad_10min']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['avg'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['avg'] ?? '-' }}</td>
+                                        <td class="flex flex-col">
+                                        <strong>{{ $minMaxStats['zachmurzenie']['avg'] ?? '-' }}</strong>
+                                                            @php
+                                                                $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
+                                                                $zachmurzenie = $minMaxStats['zachmurzenie']['avg'] ?? null;
+
+                                                                $zachmurzenieMapOktanty = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => 'Bardzo małe zachmurzenie',
+                                                                    2 => 'Małe zachmurzenie',
+                                                                    3 => 'Umiarkowane zachmurzenie',
+                                                                    4 => 'Połowiczne zachmurzenie',
+                                                                    5 => 'Umiarkowanie duże',
+                                                                    6 => 'Duże zachmurzenie',
+                                                                    7 => 'Prawie całkowite',
+                                                                    8 => 'Całkowite zachmurzenie',
+                                                                    9 => 'Nie można określić',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieMapDziesiatki = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => '1/10 nieba',
+                                                                    2 => '2/10 nieba',
+                                                                    3 => '3/10 nieba',
+                                                                    4 => '4/10 nieba',
+                                                                    5 => 'Połowiczne',
+                                                                    6 => '6/10 nieba',
+                                                                    7 => '7/10 nieba',
+                                                                    8 => '8/10 nieba',
+                                                                    9 => '9/10 nieba',
+                                                                    10 => 'Całkowite zachmurzenie',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieOpis = '-';
+
+                                                                if (!is_null($zachmurzenie)) {
+                                                                    if (!is_null($rok) && (int)$rok < 1989) {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapDziesiatki[$zachmurzenie] ?? '-';
+                                                                    } else {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapOktanty[$zachmurzenie] ?? '-';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                            <span class="font-normal">{{ $zachmurzenieOpis }}</span>
+                                        </td>
                                     </tr>
                                     <tr class="bg-blue-50 text-center font-semibold h-auto">
                                         <td class="p-2 text-gray-700">MIN.</td>
-                                        <td>{{ $minMaxStats['temperatura_gruntu']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['temperatura_powietrza']['min'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temp_term_zw']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['opad_10min']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['min'] ?? '-' }}</td>
+                                        <td class="flex flex-col">
+                                        <strong>{{ $minMaxStats['zachmurzenie']['min'] ?? '-' }}</strong>
+                                                            @php
+                                                                $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
+                                                                $zachmurzenie = $minMaxStats['zachmurzenie']['min'] ?? null;
+
+                                                                $zachmurzenieMapOktanty = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => 'Bardzo małe zachmurzenie',
+                                                                    2 => 'Małe zachmurzenie',
+                                                                    3 => 'Umiarkowane zachmurzenie',
+                                                                    4 => 'Połowiczne zachmurzenie',
+                                                                    5 => 'Umiarkowanie duże',
+                                                                    6 => 'Duże zachmurzenie',
+                                                                    7 => 'Prawie całkowite',
+                                                                    8 => 'Całkowite zachmurzenie',
+                                                                    9 => 'Nie można określić',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieMapDziesiatki = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => '1/10 nieba',
+                                                                    2 => '2/10 nieba',
+                                                                    3 => '3/10 nieba',
+                                                                    4 => '4/10 nieba',
+                                                                    5 => 'Połowiczne',
+                                                                    6 => '6/10 nieba',
+                                                                    7 => '7/10 nieba',
+                                                                    8 => '8/10 nieba',
+                                                                    9 => '9/10 nieba',
+                                                                    10 => 'Całkowite zachmurzenie',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieOpis = '-';
+
+                                                                if (!is_null($zachmurzenie)) {
+                                                                    if (!is_null($rok) && (int)$rok < 1989) {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapDziesiatki[$zachmurzenie] ?? '-';
+                                                                    } else {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapOktanty[$zachmurzenie] ?? '-';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                         <span class="font-normal">{{ $zachmurzenieOpis }}</span>
+                                        </td>
+
                                     </tr>
                                 </tbody>
                         @endswitch
@@ -1405,193 +1537,116 @@
                                         </table>
                                 </div>
                                 @break
-                            @default
+                            @case('terminowe')
+
                                     <div class=" bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto max-h-[80vh]">
                                         <table class="w-full text-left ">
                                             <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-wrap text-center text-xs ">
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('temperatura_gruntu_data')">
-                                                        Pomiar <span class="text-nowrap">temp.
-                                                        @if($sortBy === 'temperatura_gruntu_data')
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'data' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                    wire:click="setSort('data')">
+                                                        <div class="flex flex-col">Data wykonania <span class="text-nowrap">pomiarów
+                                                        @if($sortBy === 'data')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                        wire:click="setSort('temperatura_gruntu')">
-                                                        Temp. <span class="text-nowrap">gruntu [°C]
-                                                        @if($sortBy === 'temperatura_gruntu')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
-                                                    </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'temperatura_powietrza_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('temperatura_powietrza_data')">
-                                                        Pomiar temp.<span class="text-nowrap"> powietrza
-                                                        @if($sortBy === 'temperatura_powietrza_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
-                                                    </th>
+
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'temperatura_powietrza' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('temperatura_powietrza')">
-                                                        Temp. <span class="text-nowrap">powietrza [°C]
+                                                        <div class="flex flex-col">Temp. <span class="text-nowrap">powietrza [°C]
                                                         @if($sortBy === 'temperatura_powietrza')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wilgotnosc_wzgledna_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('wilgotnosc_wzgledna_data')">
-                                                        Pomiar <span class="text-nowrap">wilg.
-                                                        @if($sortBy === 'wilgotnosc_wzgledna_data')
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'temp_term_zw' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('temp_term_zw')">
+                                                        <div class="flex flex-col">Temp. zwilżonego <span class="text-nowrap">powietrza [°C]
+                                                        @if($sortBy === 'temp_term_zw')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wilgotnosc_wzgledna' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('wilgotnosc_wzgledna')">
-                                                        Wilg. <span class="text-nowrap">względna [%]
+                                                        <div class="flex flex-col">Wilg. <span class="text-nowrap">względna [%]
                                                         @if($sortBy === 'wilgotnosc_wzgledna')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
 
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'opad_10min_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('opad_10min_data')">
-                                                        Pomiar <span class="text-nowrap">opadu
-                                                        @if($sortBy === 'opad_10min_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
-                                                    </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'opad_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                        wire:click="setSort('opad_10min')">
-                                                        Opad <span class="text-nowrap">10 min [mm]
-                                                        @if($sortBy === 'opad_10min')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
-                                                    </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_srednia_predkosc_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('wiatr_srednia_predkosc_data')">
-                                                        Pomiar <span class="text-nowrap">śr. wiatru
-                                                        @if($sortBy === 'wiatr_srednia_predkosc_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
-                                                    </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('wiatr_srednia_predkosc')">
-                                                        Wiatr śr. <span class="text-nowrap">prędkość [m/s]
+                                                        <div class="flex flex-col">Wiatr śr. <span class="text-nowrap">prędkość [m/s]
                                                         @if($sortBy === 'wiatr_srednia_predkosc')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_predkosc_maksymalna_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('wiatr_predkosc_maksymalna_data')">
-                                                        Pomiar <span class="text-nowrap">maks. wiatru
-                                                        @if($sortBy === 'wiatr_predkosc_maksymalna_data')
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_kierunek_kod' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('wiatr_kierunek_kod')">
+                                                        <div class="flex flex-col">Wiatr <span class="text-nowrap">kierunek [kod]
+                                                        @if($sortBy === 'wiatr_kierunek_kod')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_predkosc_maksymalna' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                        wire:click="setSort('wiatr_predkosc_maksymalna')">
-                                                        Wiatr maks. <span class="text-nowrap">prędkość [m/s]
-                                                        @if($sortBy === 'wiatr_predkosc_maksymalna')
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'zachmurzenie' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('zachmurzenie')">
+                                                        <div class="flex flex-col">Stopień zachmurzenia<span class="text-nowrap"> [0-8 oktany]
+                                                        @if($sortBy === 'zachmurzenie')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
+                                                        </span></div>
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_poryw_10min_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('wiatr_poryw_10min_data')">
-                                                        Pomiar <span class="text-nowrap">porywu wiatru
-                                                        @if($sortBy === 'wiatr_poryw_10min_data')
+                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'widzialnosc' ? 'text-blue-600' : 'text-gray-600'  }}"
+                                                        wire:click="setSort('widzialnosc')">
+                                                        <div class="flex flex-col">Stopień <span class="text-nowrap"> widzialności
+                                                        @if($sortBy === 'widzialnosc')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_poryw_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                        wire:click="setSort('wiatr_poryw_10min')">
-                                                        Wiatr poryw <span class="text-nowrap">10 min [m/s]
-                                                        @if($sortBy === 'wiatr_poryw_10min')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
+                                                    <th title="Sortuj" class=" p-2 transition  text-gray-600">
+                                                        <div class="flex flex-col">Zakłócenie - wskaźnik <span class="text-nowrap">wentylacji
+                                                            {{-- [W/N] --}}
+
+                                                        </span></div>
                                                     </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_kierunek_data' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                    wire:click="setSort('wiatr_kierunek_data')">
-                                                        Pomiar <span class="text-nowrap">kierunku wiatru
-                                                        @if($sortBy === 'wiatr_kierunek_data')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
-                                                    </th>
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 {{$sortBy === 'wiatr_kierunek' ? 'text-blue-600' : 'text-gray-600'  }}"
-                                                        wire:click="setSort('wiatr_kierunek')">
-                                                        Wiatr <span class="text-nowrap">kierunek [°]
-                                                        @if($sortBy === 'wiatr_kierunek')
-                                                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                                                        @endif
-                                                        </span>
+                                                    <th title="Sortuj" class=" p-2 transition  text-gray-600"
+                                                        >
+                                                        <div class="flex flex-col">Zakłócenie - wskaźnik <span class="text-nowrap">lodu
+                                                            {{-- [L/W] --}}
+
+                                                        </span></div>
                                                     </th>
 
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-slate-100 ">
+
                                                 @foreach($sortedData as $data)
                                                     <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['temperatura_gruntu_data']) ? Carbon::parse($data['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
-                                                        </td>
-                                                        <td class="p-2  {{$sortBy === 'temperatura_gruntu' ? 'text-blue-500 font-semibold' : ''  }}">
-                                                            {{ $data['temperatura_gruntu'] ?? '-' }}
-                                                        </td>
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'temperatura_powietrza_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['temperatura_powietrza_data']) ? Carbon::parse($data['temperatura_powietrza_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        <td class="p-2 text-nowrap {{$sortBy === 'data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
+                                                            {{ !empty($data['data']) ? Carbon::parse($data['data'], 'UTC')->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'temperatura_powietrza' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['temperatura_powietrza'] ?? '-' }}
                                                         </td>
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'wilgotnosc_wzgledna_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wilgotnosc_wzgledna_data']) ? Carbon::parse($data['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                        <td class="p-2  {{$sortBy === 'temp_term_zw' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{ $data['temp_term_zw'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['wilgotnosc_wzgledna'] ?? '-' }}
                                                         </td>
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'opad_10min_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['opad_10min_data']) ? Carbon::parse($data['opad_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
-                                                        </td>
-                                                        <td class="p-2  {{$sortBy === 'opad_10min' ? 'text-blue-500 font-semibold' : ''  }}">
-                                                            {{ $data['opad_10min'] ?? '-' }}
-                                                        </td>
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_srednia_predkosc_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_srednia_predkosc_data']) ? Carbon::parse($data['wiatr_srednia_predkosc_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
-                                                        </td>
                                                         <td class="p-2  {{$sortBy === 'wiatr_srednia_predkosc' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['wiatr_srednia_predkosc'] ?? '-' }}
                                                         </td>
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_predkosc_maksymalna_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($data['wiatr_predkosc_maksymalna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
-                                                        </td>
-                                                        <td class="p-2  {{$sortBy === 'wiatr_predkosc_maksymalna' ? 'text-blue-500 font-semibold' : ''  }}">
-                                                            {{ $data['wiatr_predkosc_maksymalna'] ?? '-' }}
-                                                        </td>
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_poryw_10min_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_poryw_10min_data']) ? Carbon::parse($data['wiatr_poryw_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
-                                                        </td>
-                                                        <td class="p-2  {{$sortBy === 'wiatr_poryw_10min' ? 'text-blue-500 font-semibold' : ''  }}">
-                                                            {{ $data['wiatr_poryw_10min'] ?? '-' }}
-                                                        </td>
-                                                        <td class="p-2 text-nowrap {{$sortBy === 'wiatr_kierunek_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_kierunek_data']) ? Carbon::parse($data['wiatr_kierunek_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
-                                                        </td>
-                                                        <td class="p-2  {{$sortBy === 'wiatr_kierunek' ? 'text-blue-500 font-semibold' : ''  }}">
-                                                            @if(!is_null($data['wiatr_kierunek']))
-                                                                @php
+                                                        <td class="p-2  {{$sortBy === 'wiatr_kierunek_kod' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            @if(!is_null($data['wiatr_kierunek_kod']))
+                                                                {{-- @php
                                                                     $rotation = is_numeric($data['wiatr_kierunek']) ? $data['wiatr_kierunek'] : 0;
                                                                 @endphp
                                                                 <span class="w-10">
@@ -1599,12 +1654,93 @@
                                                                     <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
                                                                         ↓
                                                                     </div>]
-                                                                </span>
+                                                                </span> --}}
 
-                                                                {{ $data['wiatr_kierunek'] ?? '-' }}
+                                                                {{ $data['wiatr_kierunek_kod'] ?? '-' }}
                                                             @else
-                                                                <span>{{ $data['wiatr_kierunek'] ?? '-' }}</span>
+                                                                <span>{{ $data['wiatr_kierunek_kod'] ?? '-' }}</span>
                                                             @endif
+                                                        </td>
+                                                        <td class="p-2 flex flex-col  {{$sortBy === 'zachmurzenie' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            <strong>{{ $data['zachmurzenie'] ?? '-' }}</strong>
+                                                            @php
+                                                                $rok = Carbon::parse($data['data'], 'UTC')->format('Y') ?? null;
+                                                                $zachmurzenie = $data['zachmurzenie'] ?? null;
+
+                                                                $zachmurzenieMapOktanty = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => 'Bardzo małe zachmurzenie',
+                                                                    2 => 'Małe zachmurzenie',
+                                                                    3 => 'Umiarkowane zachmurzenie',
+                                                                    4 => 'Połowiczne zachmurzenie',
+                                                                    5 => 'Umiarkowanie duże',
+                                                                    6 => 'Duże zachmurzenie',
+                                                                    7 => 'Prawie całkowite',
+                                                                    8 => 'Całkowite zachmurzenie',
+                                                                    9 => 'Nie można określić',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieMapDziesiatki = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => '1/10 nieba',
+                                                                    2 => '2/10 nieba',
+                                                                    3 => '3/10 nieba',
+                                                                    4 => '4/10 nieba',
+                                                                    5 => 'Połowiczne',
+                                                                    6 => '6/10 nieba',
+                                                                    7 => '7/10 nieba',
+                                                                    8 => '8/10 nieba',
+                                                                    9 => '9/10 nieba',
+                                                                    10 => 'Całkowite zachmurzenie',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieOpis = '-';
+
+                                                                if (!is_null($zachmurzenie)) {
+                                                                    if (!is_null($rok) && (int)$rok < 1989) {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapDziesiatki[$zachmurzenie] ?? '-';
+                                                                    } else {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapOktanty[$zachmurzenie] ?? '-';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                            {{ $zachmurzenieOpis }}
+                                                        </td>
+                                                        <td class="p-2  {{$sortBy === 'widzialnosc' ? 'text-blue-500 font-semibold' : ''  }}">
+                                                            {{-- {{ $data['widzialnosc'] ?? '-' }} --}}
+                                                            @php
+                                                                $widzialnosc = $data['widzialnosc'] ?? null;
+
+                                                                if (is_numeric($widzialnosc)) {
+                                                                    $kod = (int) $widzialnosc;
+
+                                                                    if ($kod >= 0 && $kod <= 49) {
+                                                                        $widzialnoscText = ($kod * 100) . ' m';
+                                                                    } elseif ($kod >= 50 && $kod <= 80) {
+                                                                        $widzialnoscText = ($kod - 45) . ' km';
+                                                                    } elseif ($kod >= 81 && $kod <= 89) {
+                                                                        $widzialnoscText = (($kod - 80) * 5 + 30) . ' km';
+                                                                    } elseif ($kod === 99) {
+                                                                        $widzialnoscText = 'brak danych';
+                                                                    } else {
+                                                                        $widzialnoscText = '-';
+                                                                    }
+                                                                } else {
+                                                                    $widzialnoscText = '-';
+                                                                }
+                                                            @endphp
+                                                            {{ $widzialnoscText }}
+                                                        </td>
+                                                        <td class="p-2">
+                                                            {{-- {{ $data['wskaz_wentylacji']}} --}}
+                                                            {{ $data['wskaz_wentylacji'] ? ($data['wskaz_wentylacji'] =="W" ? 'Wentylowana' : 'Niewentylowana') : '-' }}
+                                                        </td>
+                                                        <td class="p-2">
+                                                            {{-- {{ $data['wskaz_lodu'] ?? '-' }} --}}
+                                                             {{ $data['wskaz_lodu'] ? ($data['wskaz_lodu'] =="W" ? 'Wolna od lodu' : 'Lód') : '-' }}
                                                         </td>
 
                                                     </tr>
@@ -1613,6 +1749,9 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                @break
+                        @default
+
                     @endswitch
             </div>
 
@@ -1650,32 +1789,32 @@
         //chart title label for times
         function getLabelFromContext(ctx) {
 
-            const formatDate = (date) => date.toLocaleDateString('sv-SE'); // yyyy-mm-dd
+            const formatDate = (date) => date; // yyyy-mm-dd
             if (!ctx || !ctx.aggregation) return '';
 
             switch (ctx.aggregation) {
-                case '30min': {
-                    const today = new Date();
-                    const yesterday = new Date(today);
-                    yesterday.setDate(today.getDate() - 1);
+                // case '30min': {
+                //     const today = new Date();
+                //     const yesterday = new Date(today);
+                //     yesterday.setDate(today.getDate() - 1);
 
-                    switch (ctx.dateOption) {
-                        case 'today':
-                            return `[${formatDate(today)}]`;
-                        case 'yesterday':
-                            return `[${formatDate(yesterday)}]`;
-                        case '7days': {
-                            const sevenDaysAgo = new Date(yesterday);
-                            sevenDaysAgo.setDate(yesterday.getDate() - 6);
-                            return `[${formatDate(sevenDaysAgo)}] - [${formatDate(yesterday)}]`;
-                        }
-                        default:
-                            return '';
-                    }
-                }
+                //     switch (ctx.dateOption) {
+                //         case 'today':
+                //             return `[${formatDate(today)}]`;
+                //         case 'yesterday':
+                //             return `[${formatDate(yesterday)}]`;
+                //         case '7days': {
+                //             const sevenDaysAgo = new Date(yesterday);
+                //             sevenDaysAgo.setDate(yesterday.getDate() - 6);
+                //             return `[${formatDate(sevenDaysAgo)}] - [${formatDate(yesterday)}]`;
+                //         }
+                //         default:
+                //             return '';
+                //     }
+                // }
 
                 case 'terminowe':
-                    return `[${ctx.terminoweStartDate}] - [${ctx.terminoweEndDate}] (4 okresy pomiarowe na dzień)`;
+                    return `[${ctx.terminoweStartDate}] - [${ctx.terminoweEndDate}] (3 pomiary na dzień - 6:00, 12:00, 18:00)`;
 
                 case 'dobowe':
                     return `[${ctx.doboweDate}]`;
@@ -1687,45 +1826,59 @@
                     return '';
             }
         }
-        //parse date for chart to without year
+        // //parse date for chart to without year
+        // function parseUtcDAY(dateStr) {
+        //     // Split manually
+        //     const [datePart, timePart] = dateStr.split(' ');
+        //     const [year, month, day] = datePart.split('-');
+        //     const [hour, minute, second] = timePart.split(':');
+
+        //     // Create UTC date
+        //     const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+        //     // Format to Europe/Warsaw
+        //     return new Intl.DateTimeFormat('pl-PL', {
+        //         month: '2-digit',
+        //         day: '2-digit',
+        //         hour: '2-digit',
+        //         minute: '2-digit',
+        //         hour12: false,
+        //     }).format(utcDate);
+        // }
         function parseUtcDAY(dateStr) {
-            // Split manually
+            // Example input: "2025-08-06 14:30:00"
+            // Remove the year and keep the rest: "08-06 14:30"
+
+            // Split the input date string into date and time parts
             const [datePart, timePart] = dateStr.split(' ');
-            const [year, month, day] = datePart.split('-');
-            const [hour, minute, second] = timePart.split(':');
 
-            // Create UTC date
-            const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+            // Split the date part into year, month, day
+            const [, month, day] = datePart.split('-');
 
-            // Format to Europe/Warsaw
-            return new Intl.DateTimeFormat('pl-PL', {
-                timeZone: 'Europe/Warsaw',
+            // Split the time part into hour, minute, second
+            const [hour, minute] = timePart.split(':');
 
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            }).format(utcDate);
+            // Return formatted string without year
+            return `${day}.${month}, ${hour}:${minute}`;
         }
-        //parse date for chart to only time
-        function parseUtcTIME(dateStr) {
-            // Split manually
-            const [datePart, timePart] = dateStr.split(' ');
-            const [year, month, day] = datePart.split('-');
-            const [hour, minute, second] = timePart.split(':');
+        // //parse date for chart to only time
+        // function parseUtcTIME(dateStr) {
+        //     // Split manually
+        //     const [datePart, timePart] = dateStr.split(' ');
+        //     const [year, month, day] = datePart.split('-');
+        //     const [hour, minute, second] = timePart.split(':');
 
-            // Create UTC date
-            const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+        //     // Create UTC date
+        //     const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
 
-            // Format to Europe/Warsaw
-            return new Intl.DateTimeFormat('sv-SE', {
-                timeZone: 'Europe/Warsaw',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            }).format(utcDate);
-        }
+        //     // Format to Europe/Warsaw
+        //     return new Intl.DateTimeFormat('sv-SE', {
+
+        //         hour: '2-digit',
+        //         minute: '2-digit',
+        //         hour12: false,
+        //     }).format(utcDate);
+        // }
 
         document.addEventListener('livewire:init', () => {
 
@@ -1735,7 +1888,7 @@
                 chartInstance.destroy(); // Clear existing chart
             }
 
-        function renderChart(weatherData, aggr, typ) {
+        function renderChart(weatherData, aggr) {
             if (chartInstance) {
                 chartInstance.clear();
                 chartInstance.destroy(); // Clear existing chart
@@ -1745,44 +1898,50 @@
                 //cos z datami jest nie tak sprawdzic co jest nowsze?
                 // const raw = item.temperatura_gruntu_data ?? item.wilgotnosc_wzgledna_data ?? item.opad_10min_data
                 // ?? item.wiatr_srednia_predkosc_data ?? item.wiatr_predkosc_maksymalna_data ?? item.wiatr_poryw_10min_data ?? item.wiatr_kierunek_data;
-                if(aggr === '30min' || aggr === 'terminowe'){
-                    axisLabel = 'Godzina zapisu';
-                    // Collect all date strings from the item
-                    let dateFields = [
-                        item.temperatura_gruntu_data,
-                        item.temperatura_powietrza_data,
-                        item.wilgotnosc_wzgledna_data,
-                        item.opad_10min_data,
-                        item.wiatr_srednia_predkosc_data,
-                        item.wiatr_predkosc_maksymalna_data,
-                        item.wiatr_poryw_10min_data,
-                        item.wiatr_kierunek_data
-                    ];
+                // if(aggr === 'terminowe'){
+                //     axisLabel = 'Godzina zapisu';
+                //     // Collect all date strings from the item
+                //     let dateFields = [
+                //         item.temperatura_gruntu_data,
+                //         item.temperatura_powietrza_data,
+                //         item.wilgotnosc_wzgledna_data,
+                //         item.opad_10min_data,
+                //         item.wiatr_srednia_predkosc_data,
+                //         item.wiatr_predkosc_maksymalna_data,
+                //         item.wiatr_poryw_10min_data,
+                //         item.wiatr_kierunek_data
+                //     ];
 
-                    // Filter out null/undefined and sort by newest
-                    let newestDateStr = dateFields
-                        .filter(Boolean)
-                        .sort((a, b) => new Date(b) - new Date(a))[0];
-                    if(typ === '7days' || aggr === 'terminowe'){
-                        return newestDateStr ? parseUtcDAY(newestDateStr) : null;
+                //     // Filter out null/undefined and sort by newest
+                //     let newestDateStr = dateFields
+                //         .filter(Boolean)
+                //         .sort((a, b) => new Date(b) - new Date(a))[0];
+                //     // if(typ === '7days' || aggr === 'terminowe'){
+                //     //     return newestDateStr ? parseUtcDAY(newestDateStr) : null;
+                //     // }
+                //     return newestDateStr ? parseUtcTIME(newestDateStr) : null;
+
+                // }
+                //Filter out null/undefined and sort by newest
+
+                    if(aggr === 'terminowe'){
+                        axisLabel = 'Godzina zapisu';
+
+                        return item.data ? parseUtcDAY(item.data) : null;
                     }
-                    return newestDateStr ? parseUtcTIME(newestDateStr) : null;
-
-                }else{
                     let raw = item.data;
                     return raw ? raw : null;
-                }
-
             });
 
             let titleLabel = 'Dane meteorologiczne stacji ' + weatherData[0].nazwa_stacji + ' ' + titlelabel;
-            let tmpAxisLabel = 'Temp. gruntu [°C]';
+            let tmpzwAxisLabel = 'Temp. zwilżonego powietrza [°C]';
             let tmpPowAxisLabel = 'Temp. powietrza [°C]';
             let humAxisLabel = 'Wilg. względna [%]';
-            let rainAxisLabel = 'Opad 10 min - suma [mm]';
+            let cloudsAxisLabel = 'Stopień zachmurzenia [0-8 okatny]';
+            // let rainAxisLabel = 'Opad 10 min - suma [mm]';
             let meanWindAxisLabel = 'Wiatr - śr.prędkość [m/s]';
-            let maxWindAxisLabel = 'Wiatr - maks. prędkość [m/s]';
-            let porywWindAxisLabel = 'Wiatr - poryw 10 min [m/s]';
+            // let maxWindAxisLabel = 'Wiatr - maks. prędkość [m/s]';
+            // let porywWindAxisLabel = 'Wiatr - poryw 10 min [m/s]';
 
             //dobowe
             let mintmpAxisLabel = 'Temp. gruntu - min. dobowa [°C]';
@@ -1834,17 +1993,34 @@
 
             let datasetsM = [];
 
-            const temperatures = weatherData.map(item => parseFloat(item.temperatura_gruntu ?? item.mean_temp_gruntu_dobowa ?? item.mean_mean_temp_gruntu_mies) || null);
-            const Powtemperatures = weatherData.map(item => parseFloat(item.temperatura_powietrza ?? item.mean_temp_powietrza_dobowa ?? item.mean_min_temp_powietrza_mies) || null);
-            const humidities = weatherData.map(item => parseFloat(item.wilgotnosc_wzgledna ?? item.mean_wilgotnosc_wzgledna ?? item.mean_mean_wilgotnosc_wzgledna) || null);
-            const rain10s = weatherData.map(item => parseFloat(item.opad_10min ?? item.sum_opad_10min ?? item.sum_sum_opad_10min) || null);
-            const meanWind = weatherData.map(item => parseFloat(item.wiatr_srednia_predkosc ?? item.mean_wiatr_srednia_predkosc ?? item.mean_mean_wiatr_srednia_predkosc) || null);
-            const maxWind = weatherData.map(item => parseFloat(item.wiatr_predkosc_maksymalna ?? item.max_wiatr_predkosc_maksymalna ?? item.max_max_wiatr_predkosc_maksymalna) || null);
-            const porywWind = weatherData.map(item => parseFloat(item.wiatr_poryw_10min ?? item.max_wiatr_poryw_10min ?? item.max_max_wiatr_poryw_10min) || null);
+            const zwtemperatures = weatherData.map(item => {
+                 const val = parseFloat(item.temp_term_zw);
+                return isNaN(val) ? null : val;
+            });
+            const Powtemperatures = weatherData.map(item => {
+                const val = parseFloat(item.temperatura_powietrza);
+                return isNaN(val) ? null : val;
+            });
+            const humidities = weatherData.map(item => {
+                const val = parseFloat(item.wilgotnosc_wzgledna);
+                return isNaN(val) ? null : val;
+            });
+            const clouds = weatherData.map(item => {
+                const val = parseFloat(item.zachmurzenie);
+                return isNaN(val) ? null : val;
+            });
+            const meanWind = weatherData.map(item => {
+                const val = parseFloat(item.wiatr_srednia_predkosc);
+                return isNaN(val) ? null : val;
+            });
+            //const rain10s = weatherData.map(item => parseFloat(item.opad_10min ?? item.sum_opad_10min ?? item.sum_sum_opad_10min) || null);
+            //const meanWind = weatherData.map(item => parseFloat(item.wiatr_srednia_predkosc) )|| null;
+            // maxWind = weatherData.map(item => parseFloat(item.wiatr_predkosc_maksymalna ?? item.max_wiatr_predkosc_maksymalna ?? item.max_max_wiatr_predkosc_maksymalna) || null);
+            //const porywWind = weatherData.map(item => parseFloat(item.wiatr_poryw_10min ?? item.max_wiatr_poryw_10min ?? item.max_max_wiatr_poryw_10min) || null);
 
              datasetsM.push({
-                                        label: tmpAxisLabel,
-                                        data: temperatures,
+                                        label: tmpzwAxisLabel,
+                                        data: zwtemperatures,
                                         borderColor: 'rgb(252, 198, 3)',
                                         backgroundColor: 'rgb(252, 198, 3, 0.5)',
                                         borderWidth: 2,
@@ -1881,23 +2057,23 @@
                                         yAxisID: 'y1', // ← attach to right axis
                                         order: 2,
                                     },
-                                    {
-                                        label: rainAxisLabel,
-                                        data: rain10s,
-                                        type: 'bar',
-                                        // stack: 'combined',
-                                        // borderDash: [2, 2],
-                                        // pointStyle: 'circle',
-                                        // pointRadius: 3,
-                                        // pointHoverRadius: 4,
-                                        borderColor: 'rgb(10, 90, 280)',
-                                        backgroundColor: 'rgb(143, 175, 235)',
-                                        borderWidth: 2,
-                                        tension: 0.3,
-                                        spanGaps: false,
-                                        yAxisID: 'y2', // ← attach to right axis
-                                        order: 3,
-                                    },
+                                    // {
+                                    //     label: rainAxisLabel,
+                                    //     data: rain10s,
+                                    //     type: 'bar',
+                                    //     // stack: 'combined',
+                                    //     // borderDash: [2, 2],
+                                    //     // pointStyle: 'circle',
+                                    //     // pointRadius: 3,
+                                    //     // pointHoverRadius: 4,
+                                    //     borderColor: 'rgb(10, 90, 280)',
+                                    //     backgroundColor: 'rgb(143, 175, 235)',
+                                    //     borderWidth: 2,
+                                    //     tension: 0.3,
+                                    //     spanGaps: false,
+                                    //     yAxisID: 'y2', // ← attach to right axis
+                                    //     order: 3,
+                                    // },
                                     {
                                         label: meanWindAxisLabel,
                                         data: meanWind,
@@ -1911,38 +2087,53 @@
                                         pointStyle: 'circle',
                                         yAxisID: 'y3', // ← attach to right axis
                                         order: 5,
-                                        hidden: true,
+                                        hidden: false,
                                     },
                                     {
-                                        label: maxWindAxisLabel,
-                                        data: maxWind,
-                                        borderColor: 'rgb(51, 51, 51)',
-                                        backgroundColor: 'rgb(51, 51, 51, 0.5)',
-                                        tension: 0.1,
+                                        label: cloudsAxisLabel,
+                                        data: clouds,
+                                        borderColor: 'rgb(98, 3, 145)',
+                                        backgroundColor: 'rgb(98, 3, 145, 0.5)',
                                         borderWidth: 1,
-                                        spanGaps: false,
-                                        pointStyle: 'circle',
                                         pointRadius: 1,
                                         pointHoverRadius: 2,
-                                        yAxisID: 'y3', // ← attach to right axis
-                                        order: 6,
-                                        hidden: true,
-                                    },
-                                    {
-                                        label: porywWindAxisLabel,
-                                        data: porywWind,
-                                        borderColor: 'rgb(212, 19, 45)',
-                                        backgroundColor: 'rgb(212, 19, 45, 0.5)',
                                         tension: 0.1,
-                                        borderWidth: 2,
                                         spanGaps: false,
                                         pointStyle: 'circle',
-                                        pointRadius: 2,
-                                        pointHoverRadius: 3,
-                                        yAxisID: 'y3', // ← attach to right axis
-                                        order: 6,
+                                        yAxisID: 'y2', // ← attach to right axis
+                                        order: 5,
                                         hidden: true,
                                     },
+                                    // {
+                                    //     label: maxWindAxisLabel,
+                                    //     data: maxWind,
+                                    //     borderColor: 'rgb(51, 51, 51)',
+                                    //     backgroundColor: 'rgb(51, 51, 51, 0.5)',
+                                    //     tension: 0.1,
+                                    //     borderWidth: 1,
+                                    //     spanGaps: false,
+                                    //     pointStyle: 'circle',
+                                    //     pointRadius: 1,
+                                    //     pointHoverRadius: 2,
+                                    //     yAxisID: 'y3', // ← attach to right axis
+                                    //     order: 6,
+                                    //     hidden: true,
+                                    // },
+                                    // {
+                                    //     label: porywWindAxisLabel,
+                                    //     data: porywWind,
+                                    //     borderColor: 'rgb(212, 19, 45)',
+                                    //     backgroundColor: 'rgb(212, 19, 45, 0.5)',
+                                    //     tension: 0.1,
+                                    //     borderWidth: 2,
+                                    //     spanGaps: false,
+                                    //     pointStyle: 'circle',
+                                    //     pointRadius: 2,
+                                    //     pointHoverRadius: 3,
+                                    //     yAxisID: 'y3', // ← attach to right axis
+                                    //     order: 6,
+                                    //     hidden: true,
+                                    // },
             );
 
             if( aggr==='dobowe'|| aggr === 'miesieczne')
@@ -2215,7 +2406,7 @@
                                             title: {
                                                 display: true,
                                                 text: 'Temperatura [°C]',
-                                                color: 'rgb(252, 198, 3)',
+                                                color: 'rgb(256, 150, 120)',
                                             },
                                             grid: {
                                                 drawOnChartArea: true // ← optional: don't draw both grid lines
@@ -2236,27 +2427,43 @@
                                                 drawOnChartArea: false // ← optional: don't draw both grid lines
                                             },
                                         },
+
                                         y2: {
                                             type: 'linear',
                                             display: true,
                                             position: 'right',
                                             min: 0,
-                                            suggestedMax: 1,
+                                            max: 10,
                                             title: {
                                                 display: true,
-                                                text: 'Opad 10 min [mm]',
-                                                color: 'rgb(10, 90, 280)',
+                                                text: 'Zachmurzenie [0-10]',
+                                                color: 'rgb(98, 3, 145)',
                                             },
                                             grid: {
                                                 drawOnChartArea: false // ← optional: don't draw both grid lines
                                             },
                                         },
+                                        // y2: {
+                                        //     type: 'linear',
+                                        //     display: true,
+                                        //     position: 'right',
+                                        //     min: 0,
+                                        //     suggestedMax: 1,
+                                        //     title: {
+                                        //         display: true,
+                                        //         text: 'Opad 10 min [mm]',
+                                        //         color: 'rgb(10, 90, 280)',
+                                        //     },
+                                        //     grid: {
+                                        //         drawOnChartArea: false // ← optional: don't draw both grid lines
+                                        //     },
+                                        // },
                                         y3: {
                                             type: 'linear',
                                             display: true,
                                             position: 'right',
                                             min: 0,
-                                            suggestedMax: 10,
+                                            suggestedMax: 8,
                                             title: {
                                                 display: true,
                                                 text: 'Wiatr [m/s]',
@@ -2277,18 +2484,18 @@
         }
         var titlelabel = '';
 
-        Livewire.on('weatherDataUpdated', (newData) => {
+        Livewire.on('weatherDataUpdated2', (newData) => {
             Alpine.nextTick(() => {
                 const weatherData = newData[0][0];
                 const aggregation = newData[0][1];
-                const type = newData[0][2];
+
 
                 if (Array.isArray(weatherData) && weatherData.length > 0) {
 
                     //  Generate label using fresh values
                     titlelabel = getLabelFromContext(newData[1]);
-                    // console.log(weatherData);
-                    renderChart(weatherData, aggregation, type);
+                    console.log(weatherData);
+                    renderChart(weatherData, aggregation);
                 } else {
                     console.log('Nie ładuję wykresu – brak danych');
                 }

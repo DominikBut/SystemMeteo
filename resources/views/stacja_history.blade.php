@@ -27,10 +27,10 @@
                              this.$wire.set('stationId', id).then(() => {
                                 if (this.stations[id]) {
                                     this.$wire.call('loadData');
-                                    this.$wire.set('dateOption', 'today');
+
                                 } else {
                                     this.$wire.set('weatherData', []); // Clear data if ID is invalid
-                                    this.$wire.set('dateOption', 'today');
+
                                 }
                             });
                             this.$wire.set('stop', false);
