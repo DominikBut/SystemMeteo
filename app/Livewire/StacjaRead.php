@@ -152,7 +152,9 @@ class StacjaRead extends Component
 
     public function mount()
     {
-        $date = Carbon::yesterday()->subMonths(4);
+        $today = Carbon::today();
+        $monthsAgo = $today->day > 10 ? 2 : 3;
+        $date = $today->copy()->subMonthsNoOverflow($monthsAgo)->endOfMonth();
         $this->terminoweEndDate = $date->format('Y-m-d');
         $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
         $this->doboweDate = $date->format('Y-m');
@@ -185,27 +187,28 @@ class StacjaRead extends Component
             //terminowe
             "temperatura_powietrza",
             "temp_term_zw",
-            //"wskaz_lodu",
-            //"wskaz_wentylacji",
             "wilgotnosc_wzgledna",
             "wiatr_srednia_predkosc",
-            //"wiatr_kierunek_kod",
             "zachmurzenie",
-            //"widzialnosc",
+            //dobowe
+            "max_temp_powietrza_dobowa",
+            "min_temp_powietrza_dobowa",
+            "mean_temp_powietrza_dobowa",
+            "min_temp_gruntu_dobowa",
+            "sum_opad_10min",
+            "pokrywa_sniezna_wys",
 
             'temperatura_gruntu',
             'wiatr_srednia_predkosc',
             'wiatr_predkosc_maksymalna',
             'wiatr_poryw_10min',
             'wilgotnosc_wzgledna',
-            'opad_10min',
-            'mean_temp_gruntu_dobowa',
-            'min_temp_gruntu_dobowa',
-            'max_temp_gruntu_dobowa',
+
+
             'mean_wilgotnosc_wzgledna',
             'min_wilgotnosc_wzgledna',
             'max_wilgotnosc_wzgledna',
-            'sum_opad_10min',
+
             'mean_wiatr_srednia_predkosc',
             'max_wiatr_predkosc_maksymalna',
             'max_wiatr_poryw_10min',
@@ -243,6 +246,32 @@ class StacjaRead extends Component
                 'max' => $values->isEmpty() ? null : $values->max(),
                 'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
             ];
+            // Extra stats ONLY for 'sum_opad_10min'
+            if ($field === 'sum_opad_10min') {
+                // For snow (contains 'S')
+                $snowValues = collect($this->weatherData)
+                    ->filter(fn($row) => str_contains($row['rodzaj_opadu'] ?? '', 'S'))
+                    ->pluck($field)
+                    ->filter(fn($val) => is_numeric($val));
+
+                $this->minMaxStats["{$field}_snow"] = [
+                    'min' => $snowValues->isEmpty() ? null : $snowValues->min(),
+                    'max' => $snowValues->isEmpty() ? null : $snowValues->max(),
+                    'avg' => $snowValues->isEmpty() ? null : round($snowValues->avg(), 1),
+                ];
+
+                // For rain (contains 'W')
+                $rainValues = collect($this->weatherData)
+                    ->filter(fn($row) => str_contains($row['rodzaj_opadu'] ?? '', 'W'))
+                    ->pluck($field)
+                    ->filter(fn($val) => is_numeric($val));
+
+                $this->minMaxStats["{$field}_rain"] = [
+                    'min' => $rainValues->isEmpty() ? null : $rainValues->min(),
+                    'max' => $rainValues->isEmpty() ? null : $rainValues->max(),
+                    'avg' => $rainValues->isEmpty() ? null : round($rainValues->avg(), 1),
+                ];
+            }
         }
     }
     public function updatedStationId()
@@ -690,13 +719,13 @@ class StacjaRead extends Component
                                 $tmin_status,
                                 $tavg,
                                 $tavg_status,
-                                $tmng,
-                                $tmng_status,
+                                $temp_grunt_min,
+                                $temp_grunt_min_status,
                                 $suma_opadow,
                                 $suma_opadow_status,
                                 $rodzaj_opadu,
-                                $pokrywa_sniezna,
-                                $pokrywa_sniezna_status
+                                $pokrywa_sniezna_wys,
+                                $pokrywa_sniezna_wys_status
                             ] = array_pad($csvRow, 18, null); // pad in case fewer than 18 values
 
                             // Validate minimal required fields
@@ -708,17 +737,16 @@ class StacjaRead extends Component
                                     "kod_stacji" => $kod_stacji,
                                     "nazwa_stacji" => $nazwa_stacji,
                                     "data" => sprintf('%04d-%02d-%02d', $rok, $miesiac, $dzien),
-                                    "max_temp_gruntu_dobowa" => is_numeric($tmax) ? (float) $tmax : null,
-                                    "min_temp_gruntu_dobowa" => is_numeric($tmin) ? (float) $tmin : null,
-                                    "mean_temp_gruntu_dobowa" => is_numeric($tavg) ? (float) $tavg : null,
-                                    "mean_wiatr_kierunek" => null,
-                                    "mean_wiatr_srednia_predkosc" => null,
-                                    "max_wiatr_predkosc_maksymalna" => null,
-                                    "max_wiatr_poryw_10min" => null,
-                                    "mean_wilgotnosc_wzgledna" => null,
-                                    "min_wilgotnosc_wzgledna" => null,
-                                    "max_wilgotnosc_wzgledna" => null,
-                                    "sum_opad_10min" => is_numeric($suma_opadow) ? (float) $suma_opadow : 0,
+                                    "max_temp_powietrza_dobowa" => ($tmax_status === '' || is_null($tmax_status)) ? (float) $tmax : null,
+                                    "min_temp_powietrza_dobowa" => ($tmin_status === '' || is_null($tmin_status)) ? (float) $tmin : null,
+                                    "mean_temp_powietrza_dobowa" => ($tavg_status === '' || is_null($tavg_status)) ? (float) $tavg : null,
+                                    "min_temp_gruntu_dobowa" => ($temp_grunt_min_status === '' || is_null($temp_grunt_min_status)) ? (float) $temp_grunt_min : null,
+
+                                    "sum_opad_10min" => ($suma_opadow_status === '' || is_null($suma_opadow_status)) ? (float) $suma_opadow : null,
+                                    "pokrywa_sniezna_wys" => ($pokrywa_sniezna_wys_status === '' || is_null($pokrywa_sniezna_wys_status)) ? (float) $pokrywa_sniezna_wys : null,
+
+                                    "rodzaj_opadu" => ($suma_opadow_status === '' || is_null($suma_opadow_status)) ? (string) $rodzaj_opadu : null,
+
                                 ];
                             }
                         }
