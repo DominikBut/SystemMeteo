@@ -1837,7 +1837,7 @@
                                         label: rainAxisLabel,
                                         data: rain10s,
                                         type: 'bar',
-                                        // stack: 'combined',
+                                        stack: 'combined',
                                         // borderDash: [2, 2],
                                         // pointStyle: 'circle',
                                         // pointRadius: 3,
@@ -1848,7 +1848,7 @@
                                         tension: 0.3,
                                         spanGaps: false,
                                         yAxisID: 'y2', // ← attach to right axis
-                                        order: 3,
+                                        order: 4,
                                     },
                                     {
                                         label: meanWindAxisLabel,
@@ -2086,7 +2086,7 @@
                                     },
                                     {
                                         label: maxrainAxisLabel,
-                                        data: rain10s,
+                                        data: Maxrain10s,
                                         type: 'bar',
                                         stack: 'combined',
                                         // borderDash: [2, 2],
