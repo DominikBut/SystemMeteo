@@ -74,33 +74,33 @@
                                         role="tablist">
 
                                         <!-- Buttons -->
-                                        <button data-tab="30min" x-on:click="selectTab('30min');"
+                                        <button data-tab="30min" x-on:click="selectTab('30min');" wire:loading.attr="disabled" wire:targetr="loadData"
                                         :class="selectedTab === '30min' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                          class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
                                         type="button" role="tab">30-minutowa</button>
 
-                                        <button data-tab="terminowe" x-on:click="selectTab('terminowe');"
+                                        <button data-tab="terminowe" x-on:click="selectTab('terminowe');" wire:loading.attr="disabled" wire:targetr="loadData"
                                         :class="selectedTab === 'terminowe' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                         class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
                                         type="button" role="tab">Terminowa</button>
 
-                                        <button data-tab="dobowe" x-on:click="selectTab('dobowe'); "
+                                        <button data-tab="dobowe" x-on:click="selectTab('dobowe'); " wire:loading.attr="disabled" wire:targetr="loadData"
                                         :class="selectedTab === 'dobowe' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                          class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
                                         type="button" role="tab">Dobowa</button>
 
-                                        <button data-tab="miesieczne" x-on:click="selectTab('miesieczne');"
+                                        <button data-tab="miesieczne" x-on:click="selectTab('miesieczne');" wire:loading.attr="disabled" wire:targetr="loadData"
                                         :class="selectedTab === 'miesieczne' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                          class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
-                                        type="button" role="tab">Miesieczna</button>
+                                        type="button" role="tab">Miesięczna</button>
                                     </div>
                                 </div>
 
                                 <div class="px-2 py-3 ">
-                                    <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min" x-cloak>
+                                    <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min">
                                         <p class="py-2 ">Wybierz okres odczytu danych:</p>
-                                        <div x-cloak class="flex gap-2">
-                                            <button wire:click="$set('dateOption', 'today'); $wire.loadData()"
+                                        <div  class="flex gap-2">
+                                            <button wire:click="$set('dateOption', 'today'); $wire.loadData()" wire:loading.attr="disabled" wire:targetr="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -108,7 +108,7 @@
                                                 Dzisiaj
                                             </button>
 
-                                            <button wire:click="$set('dateOption', 'yesterday'); $wire.loadData()"
+                                            <button wire:click="$set('dateOption', 'yesterday'); $wire.loadData()" wire:loading.attr="disabled" wire:targetr="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -116,7 +116,7 @@
                                                 Wczoraj
                                             </button>
 
-                                            <button wire:click="$set('dateOption', '7days'); $wire.loadData()"
+                                            <button wire:click="$set('dateOption', '7days'); $wire.loadData()" wire:loading.attr="disabled" wire:targetr="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -187,7 +187,7 @@
                                                         <div class="flex flex-col sm:flex-row items-end gap-4 w-full">
                                                             <div class="flex flex-col w-full">
                                                                 <label for="start" class="sm:text-sm font-medium text-gray-700">Data początkowa:</label>
-                                                                <input type="date" id="start"
+                                                                <input type="date" id="start" wire:loading.attr="disabled" wire:targetr="loadData"
                                                                     x-model="start" x-on:change="validateRange()"
                                                                     :min="minDate"
                                                                     :max="maxDate"
@@ -199,7 +199,7 @@
 
                                                             <div class="flex flex-col w-full">
                                                                 <label for="end" class="sm:text-sm font-medium text-gray-700">Dzień Końcowy:</label>
-                                                                <input type="date" id="end"
+                                                                <input type="date" id="end" wire:loading.attr="disabled" wire:targetr="loadData"
                                                                     x-model="end" x-on:change="validateRange()"
                                                                     :min="endMin"
                                                                     :max="endMax"
@@ -208,7 +208,7 @@
                                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
                                                                     class="w-full border border-gray-300 px-2 py-1 rounded" />
                                                             </div>
-                                                            <button
+                                                            <button wire:loading.attr="disabled" wire:targetr="loadData"
                                                             wire:click="loadData"
                                                             class="whitespace-nowrap rounded-xl bg-blue-600 border  px-4 py-2  font-medium text-slate-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed"
                                                             :disabled="!selectedId || !stations[selectedId] || !query"
@@ -241,7 +241,7 @@
                                                             <div class="flex flex-col w-full   justify-center">
                                                                 <div class="flex flex-col w-full  justify-center ">
                                                                     <label for="start" class="sm:text-sm font-medium text-gray-700">Miesiąc z roku:</label>
-                                                                    <input type="month" id="start"
+                                                                    <input type="month" id="start" wire:loading.attr="disabled" wire:targetr="loadData"
                                                                         x-model="start" x-on:change="validateRange(); $wire.loadData()"
                                                                         min="2025-07"
                                                                         :max="maxDate"
@@ -282,7 +282,7 @@
                                                     <div class="flex flex-col w-full">
                                                         <label for="year" class="sm:text-sm font-medium text-gray-700">Rok:</label>
                                                         <select
-                                                            id="year"
+                                                            id="year" wire:loading.attr="disabled" wire:targetr="loadData"
                                                             :disabled="!selectedId || !stations[selectedId] || !query"
                                                             :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                             :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -714,7 +714,7 @@
                                         Suma opad <span class="text-nowrap">10 min [mm]</span>
                                     </th>
                                     <th class="p-2 text-gray-600">
-                                        Suma opad <span class="text-nowrap">maks. 10 min [mm]</span>
+                                        <div class="flex flex-col">Suma opad maks.<span class="text-nowrap"> dobowa 10 min [mm]</span></div>
                                     </th>
                                     <th class="p-2 text-gray-600">
                                         Wiatr śr. <span class="text-nowrap">prędkość [m/s]</span>
@@ -1227,11 +1227,11 @@
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'max_sum_opad_10min' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('max_sum_opad_10min')">
-                                                        Suma opad <span class="text-nowrap">maks. 10 min [mm]
+                                                        <div class="flex flex-col">Suma opad maks.<span class="text-nowrap"> dobowa 10 min [mm]
                                                         @if($sortBy === 'max_sum_opad_10min')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
-                                                        </span>
+                                                        </span></div>
                                                     </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'mean_mean_wiatr_srednia_predkosc' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                         wire:click="setSort('mean_mean_wiatr_srednia_predkosc')">
@@ -1764,7 +1764,7 @@
                 var MeanmaxtmpPowAxisLabel = 'Temp. powietrza - maks. śr.  miesięczna [°C]';
                 var MeanminhumAxisLabel = 'Wilg. względna - min. śr.  miesięczna [%]';
                 var MeanmaxhumAxisLabel = 'Wilg. względna - maks. śr.  miesięczna [%]';
-                var maxrainAxisLabel = 'Opad 10 min - maks. suma [mm]';
+                var maxrainAxisLabel = 'Opad 10 min - maks. suma dobowa [mm]';
                 tmpAxisLabel = 'Temp. gruntu - śr. miesięczna [°C]';
                 mintmpAxisLabel = 'Temp. gruntu - min. miesięczna [°C]';
                 maxtmpAxisLabel = 'Temp. gruntu - maks. miesięczna [°C]';

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class StacjaRecent extends Component
 {
-    #[Url(except: null, as: 'id')]
+    #[Url(except: null, as: 'id', history: true)]
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
     public $stations = [];
@@ -138,10 +138,6 @@ class StacjaRecent extends Component
     public function updatedStationId()
     {
         if ($this->validate()) {
-            $this->sortBy = 'kod_stacji';
-            $this->sortDirection = 'desc';
-            $this->getStationData();
-        } else {
             $date = Carbon::yesterday();
             $this->terminoweEndDate = $date->format('Y-m-d');
             $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
@@ -152,6 +148,7 @@ class StacjaRecent extends Component
             $this->stationData = [];
             $this->sortedData = $this->weatherData;
             $this->sortBy = 'kod_stacji';
+            $this->getStationData();
         }
     }
     public function getStationData()

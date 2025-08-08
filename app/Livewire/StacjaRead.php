@@ -17,13 +17,7 @@ use Illuminate\Support\Facades\Storage;
 class StacjaRead extends Component
 {
 
-    // #[Url(except: '', keep: true)]
-    // public $year = 2025;
-    // #[Url(except: '', keep: true)]
-    // public $month = 4;
-    // public $day;
-
-    #[Url(except: null, as: 'id')]
+    #[Url(except: null, as: 'id', history: true)]
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
     public $stations = [];
@@ -49,8 +43,6 @@ class StacjaRead extends Component
     public $error = null;
     public $info;
 
-    // #[Validate('string|in:today,yesterday,7days', message: 'Zły format wyboru!')]
-    // public string $dateOption = 'today'; // 'dzis', 'wczoraj', '7 dni'
 
     #[Validate('string|in:terminowe,dobowe,miesieczne', message: 'Zły format wyboru!')]
     public string $aggregation = 'terminowe'; // Default mode
@@ -63,102 +55,23 @@ class StacjaRead extends Component
     public $doboweType = false;
     public $miesieczneType = false;
 
-    // public function loadData2()
-    // {
-    //     ///
-    //     $fileName = sprintf('%04d_%02d_k.zip', $this->year, $this->month);
-    //     $csvFileName = sprintf('k_d_%02d_%04d.csv', $this->month, $this->year);
-
-    //     $relativeFolder = "imgw/archived/dobowe/{$this->year}";
-    //     $relativeZipPath = "{$relativeFolder}/{$fileName}";
-    //     $relativeCsvPath = "{$relativeFolder}/{$csvFileName}";
-
-    //     // Step 1: Download ZIP if not exists
-    //     ////
-    //     if (!Storage::exists($relativeCsvPath) && !Storage::exists($relativeZipPath)) {
-    //         try {
-    //             $response = Http::timeout(30)->get("https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/dobowe/klimat/{$this->year}/{$fileName}");
-    //             if ($response->ok()) {
-    //                 Storage::put($relativeZipPath, $response->body());
-    //                 $this->info = "Pobrano.";
-    //             } else {
-    //                 $this->error = "Nie udało się pobrać pliku ZIP.";
-    //                 return;
-    //             }
-    //         } catch (\Exception $e) {
-    //             $this->error = "Błąd podczas pobierania: "; //$e->getMessage()
-    //             return;
-    //         }
-    //     } else {
-    //         $this->info = "Istnieje zip.";
-    //     }
-    //     ////
-    //     // Step 2: Extract CSV if not already extracted
-    //     if (!Storage::exists($relativeCsvPath)) {
-    //         $zipPath = Storage::path($relativeZipPath);
-    //         $extractPath = Storage::path($relativeFolder);
-
-    //         $zip = new ZipArchive();
-    //         if ($zip->open($zipPath) === true) {
-    //             $zip->extractTo($extractPath);
-    //             $zip->close();
-    //             Storage::delete($relativeZipPath); // delete ZIP after extraction
-    //             Storage::delete($relativeFolder . '/' . sprintf('k_d_t_%02d_%04d.csv', $this->month, $this->year)); //delete some additional .csv that comes from before 2024.05 months
-    //             $this->info = "Rozpakowano.";
-    //         } else {
-    //             $this->error = "Nie można rozpakować pliku ZIP.";
-    //             return;
-    //         }
-    //     } else {
-    //         $this->info = "Istnieje plik.";
-    //     }
-
-    //     // Step 3: Read CSV and find matching rows
-    //     try {
-    //         $csvPath = Storage::path($relativeCsvPath);
-    //         $line_of_text = [];
-    //         $file_handle = fopen($csvPath, 'r');
-
-    //         while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
-    //             if (empty($csvRow) || count($csvRow) < 5) continue;
-
-    //             $csvRow = array_map(function ($value) {
-    //                 $value = trim($value);
-    //                 $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
-    //                 return $value;
-    //             }, $csvRow);
-
-    //             $stationId = (int) $csvRow[0];
-    //             $year = (int) $csvRow[2];
-    //             $month = (int) $csvRow[3];
-
-    //             if ($stationId === (int) $this->stationId) {
-    //                 $line_of_text[] = $csvRow;
-    //             }
-    //         }
-
-    //         fclose($file_handle);
-    //         $this->stationData = $line_of_text;
-
-    //         if (empty($this->stationData)) {
-    //             $this->error = "Nie znaleziono danych dla podanej stacji i daty.";
-    //         }
-    //     } catch (\Exception $e) {
-    //         $this->error = "Błąd odczytu pliku CSV: "; //$e->getMessage()
-    //     }
-    // }
-
-
 
     public function mount()
     {
+        $this->doboweType = false;
+        $this->miesieczneType = false;
         $today = Carbon::today();
         $monthsAgo = $today->day > 10 ? 2 : 3;
         $date = $today->copy()->subMonthsNoOverflow($monthsAgo)->endOfMonth();
         $this->terminoweEndDate = $date->format('Y-m-d');
         $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
         $this->doboweDate = $date->format('Y-m');
-        $this->miesieczneDate = $date->format('Y');
+        $date2 = now(); // or Carbon::now()
+        if ($date2->month > 2 || ($date2->month === 2 && $date2->day >= 10)) {
+            $this->miesieczneDate = $date2->subYear()->format('Y');
+        } else {
+            $this->miesieczneDate = $date2->subYears(2)->format('Y');
+        }
         $this->stations = $this->getStationsProperty();
         $this->validate();
         $this->getStationData();
@@ -198,6 +111,22 @@ class StacjaRead extends Component
             "sum_opad_10min",
             "pokrywa_sniezna_wys",
 
+
+            //miesieczne
+            "max_max_temp_powietrza_mies",
+            "min_min_temp_powietrza_mies",
+            "abs_max_max_temp_powietrza_mies",
+            "abs_min_min_temp_powietrza_mies",
+            "mean_mean_temp_powietrza_mies",
+            "min_min_temp_gruntu_mies",
+            "sum_sum_opad_10min",
+            "max_sum_opad_10min",
+
+            "dni_deszcz_opad_10min",
+            "dni_snieg_opad_10min",
+            "pokrywa_sniezna_wys",
+            "dni_pokrywa_sniezna_wys",
+
             'temperatura_gruntu',
             'wiatr_srednia_predkosc',
             'wiatr_predkosc_maksymalna',
@@ -205,38 +134,6 @@ class StacjaRead extends Component
             'wilgotnosc_wzgledna',
 
 
-            'mean_wilgotnosc_wzgledna',
-            'min_wilgotnosc_wzgledna',
-            'max_wilgotnosc_wzgledna',
-
-            'mean_wiatr_srednia_predkosc',
-            'max_wiatr_predkosc_maksymalna',
-            'max_wiatr_poryw_10min',
-            'mean_wiatr_kierunek',
-            'max_max_temp_gruntu_mies',
-            'mean_max_temp_gruntu_mies',
-            'min_min_temp_gruntu_mies',
-            'mean_min_temp_gruntu_mies',
-            'mean_mean_temp_gruntu_mies',
-            'mean_mean_wiatr_kierunek',
-            'mean_mean_wiatr_srednia_predkosc',
-            'max_max_wiatr_predkosc_maksymalna',
-            'max_max_wiatr_poryw_10min',
-            'min_min_wilgotnosc_wzgledna',
-            'mean_min_wilgotnosc_wzgledna',
-            'max_max_wilgotnosc_wzgledna',
-            'mean_max_wilgotnosc_wzgledna',
-            'mean_mean_wilgotnosc_wzgledna',
-            'max_sum_opad_10min',
-            'sum_sum_opad_10min',
-            'max_max_temp_powietrza_mies',
-            'mean_max_temp_powietrza_mies',
-            'min_min_temp_powietrza_mies',
-            'mean_min_temp_powietrza_mies',
-            'mean_mean_temp_powietrza_mies',
-            'max_temp_powietrza_dobowa',
-            'min_temp_powietrza_dobowa',
-            'mean_temp_powietrza_dobowa',
         ];
 
         foreach ($fields as $field) {
@@ -277,24 +174,30 @@ class StacjaRead extends Component
     public function updatedStationId()
     {
         if ($this->validate()) {
-            $this->sortBy = 'kod_stacji';
-            $this->sortDirection = 'desc';
-            $this->getStationData();
-        } else {
-            $date = Carbon::yesterday();
+            $today = Carbon::today();
+            $monthsAgo = $today->day > 10 ? 2 : 3;
+            $date = $today->copy()->subMonthsNoOverflow($monthsAgo)->endOfMonth();
             $this->terminoweEndDate = $date->format('Y-m-d');
             $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
             $this->doboweDate = $date->format('Y-m');
-            $this->miesieczneDate = $date->format('Y');
+            $date2 = now(); // or Carbon::now()
+            if ($date2->month > 2 || ($date2->month === 2 && $date2->day >= 10)) {
+                $this->miesieczneDate = $date2->subYear()->format('Y');
+            } else {
+                $this->miesieczneDate = $date2->subYears(2)->format('Y');
+            }
+            $this->doboweType = false;
+            $this->miesieczneType = false;
             $this->sortBy = 'kod_stacji';
             $this->sortDirection = 'desc';
             $this->stationData = [];
             $this->sortedData = $this->weatherData;
             $this->sortBy = 'kod_stacji';
+            $this->getStationData();
         }
-        $this->doboweType = false;
-        $this->miesieczneType = false;
     }
+
+
     public function getStationData()
     {
         try {
@@ -339,7 +242,7 @@ class StacjaRead extends Component
                 case 'dobowe':
                     $date = Carbon::parse($this->doboweDate . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
-                    $this->dispatch('weatherDataUpdated2', [$this->weatherData, $this->aggregation], [
+                    $this->dispatch('weatherDataUpdated2', [$this->weatherData, $this->aggregation, $this->doboweType], [
                         'aggregation' => $this->aggregation,
 
                         'terminoweStartDate' => $this->terminoweStartDate,
@@ -354,7 +257,7 @@ class StacjaRead extends Component
                 case 'miesieczne':
                     $date = Carbon::parse($this->miesieczneDate . '-01' . '-01');
                     $this->weatherData = $this->loadDataForDate($date);
-                    $this->dispatch('weatherDataUpdated2', [$this->weatherData, $this->aggregation], [
+                    $this->dispatch('weatherDataUpdated2', [$this->weatherData, $this->aggregation, $this->miesieczneType], [
                         'aggregation' => $this->aggregation,
 
                         'terminoweStartDate' => $this->terminoweStartDate,
@@ -366,20 +269,20 @@ class StacjaRead extends Component
                     $this->sortBy = 'kod_stacji';
                     $this->calculateMinMaxStats();
                     break;
-                case 'terminowe':
-                    $this->loadTerminoweData();
-                    $this->dispatch('weatherDataUpdated2', [$this->weatherData, $this->aggregation], [
-                        'aggregation' => $this->aggregation,
+                // case 'terminowe':
+                //     $this->loadTerminoweData();
+                //     $this->dispatch('weatherDataUpdated2', [$this->weatherData, $this->aggregation], [
+                //         'aggregation' => $this->aggregation,
 
-                        'terminoweStartDate' => $this->terminoweStartDate,
-                        'terminoweEndDate' => $this->terminoweEndDate,
-                        'doboweDate' => $this->doboweDate,
-                        'miesieczneDate' => $this->miesieczneDate,
-                    ]);
-                    $this->calculateMinMaxStats();
-                    $this->sortedData = $this->weatherData;
-                    $this->sortBy = 'kod_stacji';
-                    break;
+                //         'terminoweStartDate' => $this->terminoweStartDate,
+                //         'terminoweEndDate' => $this->terminoweEndDate,
+                //         'doboweDate' => $this->doboweDate,
+                //         'miesieczneDate' => $this->miesieczneDate,
+                //     ]);
+                //     $this->calculateMinMaxStats();
+                //     $this->sortedData = $this->weatherData;
+                //     $this->sortBy = 'kod_stacji';
+                //     break;
                 default:
                     $this->loadTerminoweData();
                     $this->dispatch('weatherDataUpdated2', [$this->weatherData, $this->aggregation], [
@@ -532,44 +435,9 @@ class StacjaRead extends Component
                     $this->weatherData = array_values($filtered);
                     $filtered = null;
                 } catch (\Exception $e) {
-                    $this->error = "Błąd odczytu pliku CSV: "; //$e->getMessage()
+                    $this->error = "Błąd odczytu pliku CSV."; //$e->getMessage()
                     $this->weatherData = [];
                 }
-                // for ($day = $day1; $day <= $day2; $day++) {
-                //     $dayFormatted = str_pad($day, 2, '0', STR_PAD_LEFT);
-                //     $filePath = "imgw/collected/terminowe/{$year}/{$month}/{$year}-{$month}-{$dayFormatted}.json";
-
-                //     //to skipuje jak nie znjadzie pliku dla tego dnia?
-                //     if (!Storage::exists($filePath)) {
-                //         continue;
-                //     }
-
-                //     $json = Storage::get($filePath);
-                //     $data = json_decode($json, true);
-                //     if (!$data) {
-                //         continue;
-                //     }
-                //     $json = null;
-                //     // Filter by stationId
-                //     $filtered = array_filter($data, function ($record) {
-                //         return isset($record['kod_stacji']) && $record['kod_stacji'] == $this->stationId;
-                //     });
-
-                //     if (count($filtered) === 0) {
-                //         // Fallback to name
-                //         $stationName = $this->stations[$this->stationId] ?? null;
-                //         if ($stationName) {
-                //             $filtered = array_filter($data, function ($record) use ($stationName) {
-                //                 return isset($record['nazwa_stacji']) &&
-                //                     strcasecmp(trim($record['nazwa_stacji']), trim($stationName)) === 0;
-                //             });
-                //         }
-                //     }
-                //     $data = null;
-                //     $combinedData = array_merge($combinedData, array_values($filtered));
-                //     $filtered = null;
-                // }
-
             }
         } else {
             $date = Carbon::yesterday();
@@ -590,20 +458,31 @@ class StacjaRead extends Component
         if ($this->validate()) {
             if ($this->stop == false) {
                 $filtered = null;
-
+                $relativeCsvPath = null;
                 switch ($this->aggregation) {
-                    case 'dobowe':
-                        $year = $date->format('Y');
-                        $month = $date->format('m');
-                        $relativeFolder = "imgw/archived/dobowe/{$year}";
-                        $relativeCsvPath = $relativeFolder . "/k_d_{$month}_{$year}.csv";
-                        $fileName = "{$year}_{$month}_k.zip";
-                        $relativeZipPath = $relativeFolder . "/{$fileName}";
-                        break;
+                    // case 'dobowe':
+                    //     $year = $date->format('Y');
+                    //     $month = $date->format('m');
+                    //     $relativeFolder = "imgw/archived/dobowe/{$year}";
+                    //     if ($this->doboweType === false) {
+                    //         $relativeCsvPath = $relativeFolder . "/k_d_{$month}_{$year}.csv";
+                    //     } else {
+                    //         $relativeCsvPath = $relativeFolder . "/k_d_t_{$month}_{$year}.csv";
+                    //     }
+
+                    //     $fileName = "{$year}_{$month}_k.zip";
+                    //     $relativeZipPath = $relativeFolder . "/{$fileName}";
+                    //     break;
+
                     case 'miesieczne':
                         $year = $date->format('Y');
                         $relativeFolder = "imgw/archived/miesieczne/{$year}";
-                        $relativeCsvPath = $relativeFolder . "/k_m_d_{$year}.csv";
+                        if ($this->miesieczneType === false) {
+                            $relativeCsvPath = $relativeFolder . "/k_m_d_{$year}.csv";
+                        } else {
+                            $relativeCsvPath = $relativeFolder . "/k_m_t_{$year}.csv";
+                        }
+
                         $fileName = "{$year}_m_k.zip";
                         $relativeZipPath = $relativeFolder . "/{$fileName}";
                         break;
@@ -611,7 +490,11 @@ class StacjaRead extends Component
                         $year = $date->format('Y');
                         $month = $date->format('m');
                         $relativeFolder = "imgw/archived/dobowe/{$year}";
-                        $relativeCsvPath = $relativeFolder . "/k_d_{$month}_{$year}.csv";
+                        if ($this->doboweType === false) {
+                            $relativeCsvPath = $relativeFolder . "/k_d_{$month}_{$year}.csv";
+                        } else {
+                            $relativeCsvPath = $relativeFolder . "/k_d_t_{$month}_{$year}.csv";
+                        }
                         $fileName = "{$year}_{$month}_k.zip";
                         $relativeZipPath = $relativeFolder . "/{$fileName}";
                         break;
@@ -669,199 +552,235 @@ class StacjaRead extends Component
                     $csvPath = Storage::path($relativeCsvPath);
                     $file_handle = fopen($csvPath, 'r');
 
-                    // $line_of_text = [];
-                    // while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
-                    //     if (empty($csvRow) || count($csvRow) < 5) continue;
 
-                    //     $csvRow = array_map(function ($value) {
-                    //         $value = trim($value);
-                    //         $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
-                    //         return $value;
-                    //     }, $csvRow);
-                    //     $line_of_text[] = $csvRow;
-                    //     //to robi plik caly do zmiennej
-
-                    //     // //to odczytuje wg stationid
-                    //     // $stationId = (int) $csvRow[0];
-                    //     // $year = (int) $csvRow[2];
-                    //     // $month = (int) $csvRow[3];
-
-                    //     // if ($stationId === (int) $this->stationId) {
-                    //     //     $line_of_text[] = $csvRow;
-                    //     // } //to sie zrobi potem jak zczyta z pliku stacje?
-                    //     // moze switch po prostu do csv odczytu z tej listy? albo combined lista? najpierw test z tym aktulanym potem zmiana jezeli bd trzeba na csv albo z pliku aktualnego
-                    // }
-
-                    // fclose($file_handle);
-                    // $this->stationData = $line_of_text;
                     $filtered = [];
                     if ($this->aggregation === 'dobowe') {
-                        while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
-                            // Skip malformed rows or ones with mostly empty cells
-                            if (!is_array($csvRow) || count(array_filter($csvRow)) < 5) continue;
+                        if ($this->doboweType === false) {
+                            while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
+                                // Skip malformed rows or ones with mostly empty cells
+                                if (!is_array($csvRow) || count(array_filter($csvRow)) < 5) continue;
 
-                            $csvRow = array_map(function ($value) {
-                                $value = trim($value);
-                                $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
-                                return $value;
-                            }, $csvRow);
+                                $csvRow = array_map(function ($value) {
+                                    $value = trim($value);
+                                    $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
+                                    return $value;
+                                }, $csvRow);
 
-                            // CSV column mapping based on provided header description
-                            [
-                                $kod_stacji,
-                                $nazwa_stacji,
-                                $rok,
-                                $miesiac,
-                                $dzien,
-                                $tmax,
-                                $tmax_status,
-                                $tmin,
-                                $tmin_status,
-                                $tavg,
-                                $tavg_status,
-                                $temp_grunt_min,
-                                $temp_grunt_min_status,
-                                $suma_opadow,
-                                $suma_opadow_status,
-                                $rodzaj_opadu,
-                                $pokrywa_sniezna_wys,
-                                $pokrywa_sniezna_wys_status
-                            ] = array_pad($csvRow, 18, null); // pad in case fewer than 18 values
+                                // CSV column mapping based on provided header description
+                                [
+                                    $kod_stacji,
+                                    $nazwa_stacji,
+                                    $rok,
+                                    $miesiac,
+                                    $dzien,
+                                    $tmax,
+                                    $tmax_status,
+                                    $tmin,
+                                    $tmin_status,
+                                    $tavg,
+                                    $tavg_status,
+                                    $temp_grunt_min,
+                                    $temp_grunt_min_status,
+                                    $suma_opadow,
+                                    $suma_opadow_status,
+                                    $rodzaj_opadu,
+                                    $pokrywa_sniezna_wys,
+                                    $pokrywa_sniezna_wys_status
+                                ] = array_pad($csvRow, 18, null); // pad in case fewer than 18 values
 
-                            // Validate minimal required fields
-                            if (!is_numeric($kod_stacji) || !is_numeric($rok) || !is_numeric($miesiac) || !is_numeric($dzien)) {
-                                continue;
-                            }
-                            if ((int)$kod_stacji === (int) $this->stationId) {
-                                $filtered[] = [
-                                    "kod_stacji" => $kod_stacji,
-                                    "nazwa_stacji" => $nazwa_stacji,
-                                    "data" => sprintf('%04d-%02d-%02d', $rok, $miesiac, $dzien),
-                                    "max_temp_powietrza_dobowa" => ($tmax_status === '' || is_null($tmax_status)) ? (float) $tmax : null,
-                                    "min_temp_powietrza_dobowa" => ($tmin_status === '' || is_null($tmin_status)) ? (float) $tmin : null,
-                                    "mean_temp_powietrza_dobowa" => ($tavg_status === '' || is_null($tavg_status)) ? (float) $tavg : null,
-                                    "min_temp_gruntu_dobowa" => ($temp_grunt_min_status === '' || is_null($temp_grunt_min_status)) ? (float) $temp_grunt_min : null,
+                                // Validate minimal required fields
+                                if (!is_numeric($kod_stacji) || !is_numeric($rok) || !is_numeric($miesiac) || !is_numeric($dzien)) {
+                                    continue;
+                                }
+                                if ((int)$kod_stacji === (int) $this->stationId) {
+                                    $filtered[] = [
+                                        "kod_stacji" => $kod_stacji,
+                                        "nazwa_stacji" => $nazwa_stacji,
+                                        "data" => sprintf('%04d-%02d-%02d', $rok, $miesiac, $dzien),
+                                        "max_temp_powietrza_dobowa" => ($tmax_status === '' || is_null($tmax_status)) ? (float) $tmax : null,
+                                        "min_temp_powietrza_dobowa" => ($tmin_status === '' || is_null($tmin_status)) ? (float) $tmin : null,
+                                        "mean_temp_powietrza_dobowa" => ($tavg_status === '' || is_null($tavg_status)) ? (float) $tavg : null,
+                                        "min_temp_gruntu_dobowa" => ($temp_grunt_min_status === '' || is_null($temp_grunt_min_status)) ? (float) $temp_grunt_min : null,
 
-                                    "sum_opad_10min" => ($suma_opadow_status === '' || is_null($suma_opadow_status)) ? (float) $suma_opadow : null,
-                                    "pokrywa_sniezna_wys" => ($pokrywa_sniezna_wys_status === '' || is_null($pokrywa_sniezna_wys_status)) ? (float) $pokrywa_sniezna_wys : null,
+                                        "sum_opad_10min" => ($suma_opadow_status === '' || is_null($suma_opadow_status)) ? (float) $suma_opadow : null,
+                                        "pokrywa_sniezna_wys" => ($pokrywa_sniezna_wys_status === '' || is_null($pokrywa_sniezna_wys_status)) ? (float) $pokrywa_sniezna_wys : null,
 
-                                    "rodzaj_opadu" => ($suma_opadow_status === '' || is_null($suma_opadow_status)) ? (string) $rodzaj_opadu : null,
+                                        "rodzaj_opadu" => ($suma_opadow_status === '' || is_null($suma_opadow_status)) ? (string) $rodzaj_opadu : null,
 
-                                ];
+                                    ];
+                                }
                             }
                         }
-                    } else {
+                        if ($this->doboweType === true) {
 
-                        while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
-                            // Skip malformed rows or ones with mostly empty cells
-                            if (!is_array($csvRow) || count(array_filter($csvRow)) < 5) continue;
+                            while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
+                                // Skip malformed rows or ones with mostly empty cells
+                                if (!is_array($csvRow) || count(array_filter($csvRow)) < 5) continue;
 
-                            $csvRow = array_map(function ($value) {
-                                $value = trim($value);
-                                $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
-                                return $value;
-                            }, $csvRow);
+                                $csvRow = array_map(function ($value) {
+                                    $value = trim($value);
+                                    $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
+                                    return $value;
+                                }, $csvRow);
+                                // CSV column mapping based on provided header description
+                                [
+                                    $kod_stacji,
+                                    $nazwa_stacji,
+                                    $rok,
+                                    $miesiac,
+                                    $dzien,
+                                    $temp_pow,
+                                    $temp_pow_status,
+                                    $wilg,
+                                    $wilg_status,
+                                    $wiatr_srednia_predkosc,
+                                    $wiatr_srednia_predkosc_status,
+                                    $zachmurzenie, //Zachmurzenie ogólne [0-10 do dn.31.12.1988/oktanty od dn.01.01.1989]  5
+                                    $zachmurzenie_status,
+                                ] = array_pad($csvRow, 13, null); // pad in case fewer than 18 values
 
-                            // Pad the row to avoid undefined offset warnings
-                            [
-                                $kod_stacji,
-                                $nazwa_stacji,
-                                $rok,
-                                $miesiac,
-                                $tmax_abs,
-                                $tmax_abs_status,
-                                $tmax_avg,
-                                $tmax_avg_status,
-                                $tmin_abs,
-                                $tmin_abs_status,
-                                $tmin_avg,
-                                $tmin_avg_status,
-                                $tavg,
-                                $tavg_status,
-                                $tmng,
-                                $tmng_status,
-                                $suma_opad_mies,
-                                $suma_opad_mies_status,
-                                $opad_max,
-                                $opad_max_status,
-                                $dzien_opad_max_first,
-                                $dzien_opad_max_last,
-                                $pokrywa_max,
-                                $pokrywa_max_status,
-                                $dni_pokrywa_sniezna,
-                                $dni_opad_deszcz,
-                                $dni_opad_snieg
-                            ] = array_pad($csvRow, 27, null); // pad to 27 columns
-
-                            // Validate minimal required fields
-                            if (!is_numeric($kod_stacji) || !is_numeric($rok) || !is_numeric($miesiac)) {
-                                continue;
+                                // Validate minimal required fields
+                                if (!is_numeric($kod_stacji) || !is_numeric($rok) || !is_numeric($miesiac) || !is_numeric($dzien)) {
+                                    continue;
+                                }
+                                if ((int)$kod_stacji === (int) $this->stationId) {
+                                    $filtered[] = [
+                                        "kod_stacji" => $kod_stacji,
+                                        "nazwa_stacji" => $nazwa_stacji,
+                                        "data" => sprintf('%04d-%02d-%02d', $rok, $miesiac, $dzien),
+                                        "temperatura_powietrza" => ($temp_pow_status === '' || is_null($temp_pow_status)) ? (float) $temp_pow : null,
+                                        "wilgotnosc_wzgledna" => ($wilg_status === '' || is_null($wilg_status)) ? (float) $wilg : null,
+                                        "wiatr_srednia_predkosc" => ($wiatr_srednia_predkosc_status === '' || is_null($wiatr_srednia_predkosc_status)) ? (float) $wiatr_srednia_predkosc : null,
+                                        "zachmurzenie" => ($zachmurzenie_status === '' || is_null($zachmurzenie_status)) ? (string) $zachmurzenie : null,
+                                    ];
+                                }
                             }
+                        }
+                    } else if ($this->aggregation === 'miesieczne') {
 
-                            if ((int)$kod_stacji === (int) $this->stationId) {
-                                $filtered[] = [
-                                    "kod_stacji" => $kod_stacji,
-                                    "nazwa_stacji" => $nazwa_stacji,
-                                    "data" => sprintf('%04d-%02d', $rok, $miesiac),
-                                    "max_max_temp_gruntu_mies" => is_numeric($tmax_abs) ? (float) $tmax_abs : null,
-                                    "mean_max_temp_gruntu_mies" => is_numeric($tmax_avg) ? (float) $tmax_avg : null,
-                                    "min_min_temp_gruntu_mies" => is_numeric($tmin_abs) ? (float) $tmin_abs : null,
-                                    "mean_min_temp_gruntu_mies" => is_numeric($tmin_avg) ? (float) $tmin_avg : null,
-                                    "mean_mean_temp_gruntu_mies" => is_numeric($tavg) ? (float) $tavg : null,
-                                    "sum_sum_opad_10min" => is_numeric($suma_opad_mies) ? (float) $suma_opad_mies : 0,
-                                    "max_sum_opad_10min" => is_numeric($opad_max) ? (float) $opad_max : null,
-                                    "max_max_wilgotnosc_wzgledna" => null,
-                                    "min_min_wilgotnosc_wzgledna" => null,
-                                    "mean_max_wilgotnosc_wzgledna" => null,
-                                    "mean_min_wilgotnosc_wzgledna" => null,
-                                    "mean_mean_wilgotnosc_wzgledna" => null,
-                                    "max_max_wiatr_predkosc_maksymalna" => null,
-                                    "mean_mean_wiatr_kierunek" => null,
-                                    "mean_mean_wiatr_srednia_predkosc" => null,
-                                    "max_max_wiatr_poryw_10min" => null,
-                                ];
+                        if ($this->miesieczneType === false) {
+                            while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
+                                // Skip malformed rows or ones with mostly empty cells
+                                if (!is_array($csvRow) || count(array_filter($csvRow)) < 5) continue;
+
+                                $csvRow = array_map(function ($value) {
+                                    $value = trim($value);
+                                    $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
+                                    return $value;
+                                }, $csvRow);
+
+                                // Pad the row to avoid undefined offset warnings
+                                [
+                                    $kod_stacji,
+                                    $nazwa_stacji,
+                                    $rok,
+                                    $miesiac,
+                                    $tmax_abs,
+                                    $tmax_abs_status,
+                                    $tmax_avg,
+                                    $tmax_avg_status,
+                                    $tmin_abs,
+                                    $tmin_abs_status,
+                                    $tmin_avg,
+                                    $tmin_avg_status,
+                                    $tavg,
+                                    $tavg_status,
+                                    $tmng,
+                                    $tmng_status,
+                                    $suma_opad_mies,
+                                    $suma_opad_mies_status,
+                                    $opad_max,
+                                    $opad_max_status,
+                                    $dzien_opad_max_first,
+                                    $dzien_opad_max_last,
+                                    $pokrywa_max,
+                                    $pokrywa_max_status,
+                                    $dni_pokrywa_sniezna,
+                                    $dni_opad_deszcz,
+                                    $dni_opad_snieg
+                                ] = array_pad($csvRow, 27, null); // pad to 27 columns
+
+                                // Validate minimal required fields
+                                if (!is_numeric($kod_stacji) || !is_numeric($rok) || !is_numeric($miesiac)) {
+                                    continue;
+                                }
+                                if ((int)$kod_stacji === (int) $this->stationId) {
+                                    $filtered[] = [
+                                        "kod_stacji" => $kod_stacji,
+                                        "nazwa_stacji" => $nazwa_stacji,
+                                        "data" => sprintf('%04d-%02d', $rok, $miesiac),
+                                        "max_max_temp_powietrza_mies" => ($tmax_avg_status === '' || is_null($tmax_avg_status)) ? (float) $tmax_avg : null,
+                                        "min_min_temp_powietrza_mies" => ($tmin_avg_status === '' || is_null($tmin_avg_status)) ? (float) $tmin_avg : null,
+                                        "abs_max_max_temp_powietrza_mies" => ($tmax_abs_status === '' || is_null($tmax_abs_status)) ? (float) $tmax_abs : null,
+                                        "abs_min_min_temp_powietrza_mies" => ($tmin_abs_status === '' || is_null($tmin_abs_status)) ? (float) $tmin_abs : null,
+
+                                        "mean_mean_temp_powietrza_mies" => ($tavg_status === '' || is_null($tavg_status)) ? (float) $tavg : null,
+                                        "min_min_temp_gruntu_mies" => ($tmng_status === '' || is_null($tmng_status)) ? (float) $tmng : null,
+
+                                        "sum_sum_opad_10min" => ($suma_opad_mies_status === '' || is_null($suma_opad_mies_status)) ? (float) $suma_opad_mies : null,
+                                        "max_sum_opad_10min" => ($opad_max_status === '' || is_null($opad_max_status)) ? (float) $opad_max : null,
+                                        "first_max_sum_opad_10min" => (($opad_max_status === '' || is_null($opad_max_status)) && (!$dzien_opad_max_first === '' || !empty($dzien_opad_max_first))) ? (string) $dzien_opad_max_first : null,
+                                        "last_max_sum_opad_10min" => (($opad_max_status === '' || is_null($opad_max_status)) && (!$dzien_opad_max_last === '' || !empty($dzien_opad_max_last))) ? (string) $dzien_opad_max_last : null,
+                                        "dni_deszcz_opad_10min" => ($suma_opad_mies_status === '' || is_null($suma_opad_mies_status)) ? (int) $dni_opad_deszcz : null,
+                                        "dni_snieg_opad_10min" => ($suma_opad_mies_status === '' || is_null($suma_opad_mies_status)) ? (int) $dni_opad_snieg : null,
+                                        "pokrywa_sniezna_wys" => ($pokrywa_max_status === '' || is_null($pokrywa_max_status)) ? (float) $pokrywa_max : null,
+                                        "dni_pokrywa_sniezna_wys" => ($pokrywa_max_status === '' || is_null($pokrywa_max_status)) ? (int) $dni_pokrywa_sniezna : null,
+
+                                    ];
+                                }
+                            }
+                        }
+                        if ($this->miesieczneType === true) {
+
+
+                            while ($csvRow = fgetcsv($file_handle, null, $this->delimiter)) {
+                                // Skip malformed rows or ones with mostly empty cells
+                                if (!is_array($csvRow) || count(array_filter($csvRow)) < 5) continue;
+
+                                $csvRow = array_map(function ($value) {
+                                    $value = trim($value);
+                                    $value = iconv('Windows-1250', 'UTF-8//IGNORE', $value);
+                                    return $value;
+                                }, $csvRow);
+                                // CSV column mapping based on provided header description
+                                [
+                                    $kod_stacji,
+                                    $nazwa_stacji,
+                                    $rok,
+                                    $miesiac,
+                                    $temp_pow,
+                                    $temp_pow_status,
+                                    $wilg,
+                                    $wilg_status,
+                                    $wiatr_srednia_predkosc,
+                                    $wiatr_srednia_predkosc_status,
+                                    $zachmurzenie, //Zachmurzenie ogólne [0-10 do dn.31.12.1988/oktanty od dn.01.01.1989]  5
+                                    $zachmurzenie_status,
+                                ] = array_pad($csvRow, 12, null); // pad in case fewer than 18 values
+
+                                // Validate minimal required fields
+                                if (!is_numeric($kod_stacji) || !is_numeric($rok) || !is_numeric($miesiac)) {
+                                    continue;
+                                }
+                                if ((int)$kod_stacji === (int) $this->stationId) {
+                                    $filtered[] = [
+                                        "kod_stacji" => $kod_stacji,
+                                        "nazwa_stacji" => $nazwa_stacji,
+                                        "data" => sprintf('%04d-%02d', $rok, $miesiac),
+                                        "temperatura_powietrza" => ($temp_pow_status === '' || is_null($temp_pow_status)) ? (float) $temp_pow : null,
+                                        "wilgotnosc_wzgledna" => ($wilg_status === '' || is_null($wilg_status)) ? (float) $wilg : null,
+                                        "wiatr_srednia_predkosc" => ($wiatr_srednia_predkosc_status === '' || is_null($wiatr_srednia_predkosc_status)) ? (float) $wiatr_srednia_predkosc : null,
+                                        "zachmurzenie" => ($zachmurzenie_status === '' || is_null($zachmurzenie_status)) ? (string) $zachmurzenie : null,
+                                    ];
+                                }
                             }
                         }
                     }
 
                     return array_values($filtered);
-                    // if (empty($this->stationData)) {
-                    //     $this->error = "Nie znaleziono danych dla podanej stacji i daty.";
-                    // }
                 } catch (\Exception $e) {
                     $this->error = "Błąd odczytu pliku CSV: "; //$e->getMessage()
                 }
-
-
-                // if (!Storage::exists($relativeCsvPath)) {
-                //     return [];
-                // }
-
-                // $json = Storage::get($relativeCsvPath);
-                // $data = json_decode($json, true);
-                // if (!$data) {
-                //     return [];
-                // }
-                // $json = null;
-                // // Filter by stationId
-                // $filtered = array_filter($data, function ($record) {
-                //     return isset($record['kod_stacji']) && $record['kod_stacji'] == $this->stationId;
-                // });
-
-                // if (count($filtered) === 0) {
-                //     // fallback: get station name from cached list by stationId key
-                //     $stationName = $this->stations[$this->stationId] ?? null;
-                //     if ($stationName) {
-                //         // filter by nazwa_stacji (case-insensitive match)
-                //         $filtered = array_filter($data, function ($record) use ($stationName) {
-                //             return isset($record['nazwa_stacji'])
-                //                 && strcasecmp(trim($record['nazwa_stacji']), trim($stationName)) === 0;
-                //         });
-                //     }
-                // }
-
-                // $data = null;
-                // return array_values($filtered); // reindex
             }
         } else {
             $date = Carbon::yesterday();
@@ -939,7 +858,7 @@ class StacjaRead extends Component
                         $combined[$id] = $name;
                     } elseif ($combined[$id] !== $name) {
                         // Optional: Log conflict if names differ
-                        Log::channel('laravel')->info("Station ID conflict: $id — API: '{$combined[$id]}' vs CSV: '$name'");
+                        Log::info("Station ID conflict: $id — API: '{$combined[$id]}' vs CSV: '$name'");
                         // Or prefer API version and skip CSV
                     }
                 }
