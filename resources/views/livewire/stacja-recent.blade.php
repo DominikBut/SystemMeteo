@@ -45,7 +45,7 @@
                                         Wybrana stacja ID: <span x-text="`${selectedId} – ${stations[selectedId]}`"></span>
                                     </p>
                                     <p x-cloak x-show="selectedId && !stations[selectedId]" class=" font-bold text-red-500 my-2 w-auto">
-                                        ❌ Nieprawidłowa stacja (ID: {{ $stationId }}) – brak wśród oficjalnych stacji IMGW.
+                                        ❌ Nieprawidłowa stacja (ID: {{ $stationId }}) – Brak wśród oficjalnych stacji IMGW.
                                     </p>
                                     <p  x-show="!selectedId && !stations[selectedId]" class="font-bold text-lime-600 my-2 w-auto">
                                         Wybierz najpierw stację!.
@@ -74,22 +74,22 @@
                                         role="tablist">
 
                                         <!-- Buttons -->
-                                        <button data-tab="30min" x-on:click="selectTab('30min');" wire:loading.attr="disabled" wire:targetr="loadData"
+                                        <button data-tab="30min" x-on:click="selectTab('30min');" wire:loading.attr="disabled" wire:target="loadData"
                                         :class="selectedTab === '30min' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                          class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
                                         type="button" role="tab">30-minutowa</button>
 
-                                        <button data-tab="terminowe" x-on:click="selectTab('terminowe');" wire:loading.attr="disabled" wire:targetr="loadData"
+                                        <button data-tab="terminowe" x-on:click="selectTab('terminowe');" wire:loading.attr="disabled" wire:target="loadData"
                                         :class="selectedTab === 'terminowe' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                         class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
                                         type="button" role="tab">Terminowa</button>
 
-                                        <button data-tab="dobowe" x-on:click="selectTab('dobowe'); " wire:loading.attr="disabled" wire:targetr="loadData"
+                                        <button data-tab="dobowe" x-on:click="selectTab('dobowe'); " wire:loading.attr="disabled" wire:target="loadData"
                                         :class="selectedTab === 'dobowe' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                          class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
                                         type="button" role="tab">Dobowa</button>
 
-                                        <button data-tab="miesieczne" x-on:click="selectTab('miesieczne');" wire:loading.attr="disabled" wire:targetr="loadData"
+                                        <button data-tab="miesieczne" x-on:click="selectTab('miesieczne');" wire:loading.attr="disabled" wire:target="loadData"
                                         :class="selectedTab === 'miesieczne' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                          class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap"
                                         type="button" role="tab">Miesięczna</button>
@@ -100,7 +100,7 @@
                                     <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min">
                                         <p class="py-2 ">Wybierz okres odczytu danych:</p>
                                         <div  class="flex gap-2">
-                                            <button wire:click="$set('dateOption', 'today'); $wire.loadData()" wire:loading.attr="disabled" wire:targetr="loadData"
+                                            <button wire:click="$set('dateOption', 'today'); $wire.loadData()" wire:loading.attr="disabled" wire:target="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -108,7 +108,7 @@
                                                 Dzisiaj
                                             </button>
 
-                                            <button wire:click="$set('dateOption', 'yesterday'); $wire.loadData()" wire:loading.attr="disabled" wire:targetr="loadData"
+                                            <button wire:click="$set('dateOption', 'yesterday'); $wire.loadData()" wire:loading.attr="disabled" wire:target="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -116,7 +116,7 @@
                                                 Wczoraj
                                             </button>
 
-                                            <button wire:click="$set('dateOption', '7days'); $wire.loadData()" wire:loading.attr="disabled" wire:targetr="loadData"
+                                            <button wire:click="$set('dateOption', '7days'); $wire.loadData()" wire:loading.attr="disabled" wire:target="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -187,7 +187,7 @@
                                                         <div class="flex flex-col sm:flex-row items-end gap-4 w-full">
                                                             <div class="flex flex-col w-full">
                                                                 <label for="start" class="sm:text-sm font-medium text-gray-700">Data początkowa:</label>
-                                                                <input type="date" id="start" wire:loading.attr="disabled" wire:targetr="loadData"
+                                                                <input type="date" id="start" wire:loading.attr="disabled" wire:target="loadData"
                                                                     x-model="start" x-on:change="validateRange()"
                                                                     :min="minDate"
                                                                     :max="maxDate"
@@ -199,7 +199,7 @@
 
                                                             <div class="flex flex-col w-full">
                                                                 <label for="end" class="sm:text-sm font-medium text-gray-700">Dzień Końcowy:</label>
-                                                                <input type="date" id="end" wire:loading.attr="disabled" wire:targetr="loadData"
+                                                                <input type="date" id="end" wire:loading.attr="disabled" wire:target="loadData"
                                                                     x-model="end" x-on:change="validateRange()"
                                                                     :min="endMin"
                                                                     :max="endMax"
@@ -208,7 +208,7 @@
                                                                     :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
                                                                     class="w-full border border-gray-300 px-2 py-1 rounded" />
                                                             </div>
-                                                            <button wire:loading.attr="disabled" wire:targetr="loadData"
+                                                            <button wire:loading.attr="disabled" wire:target="loadData"
                                                             wire:click="loadData"
                                                             class="whitespace-nowrap rounded-xl bg-blue-600 border  px-4 py-2  font-medium text-slate-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed"
                                                             :disabled="!selectedId || !stations[selectedId] || !query"
@@ -241,7 +241,7 @@
                                                             <div class="flex flex-col w-full   justify-center">
                                                                 <div class="flex flex-col w-full  justify-center ">
                                                                     <label for="start" class="sm:text-sm font-medium text-gray-700">Miesiąc z roku:</label>
-                                                                    <input type="month" id="start" wire:loading.attr="disabled" wire:targetr="loadData"
+                                                                    <input type="month" id="start" wire:loading.attr="disabled" wire:target="loadData"
                                                                         x-model="start" x-on:change="validateRange(); $wire.loadData()"
                                                                         min="2025-07"
                                                                         :max="maxDate"
@@ -282,7 +282,7 @@
                                                     <div class="flex flex-col w-full">
                                                         <label for="year" class="sm:text-sm font-medium text-gray-700">Rok:</label>
                                                         <select
-                                                            id="year" wire:loading.attr="disabled" wire:targetr="loadData"
+                                                            id="year" wire:loading.attr="disabled" wire:target="loadData"
                                                             :disabled="!selectedId || !stations[selectedId] || !query"
                                                             :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                             :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
@@ -323,7 +323,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['temperatura_powietrza_data']) ? Carbon::parse($stationData['temperatura_powietrza_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['temperatura_powietrza_data']) ? Carbon::parse($stationData['temperatura_powietrza_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -337,7 +337,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['temperatura_gruntu_data']) ? Carbon::parse($stationData['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['temperatura_gruntu_data']) ? Carbon::parse($stationData['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -350,7 +350,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['wilgotnosc_wzgledna_data']) ? Carbon::parse($stationData['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['wilgotnosc_wzgledna_data']) ? Carbon::parse($stationData['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -363,7 +363,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['wiatr_srednia_predkosc_data']) ? Carbon::parse($stationData['wiatr_srednia_predkosc_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['wiatr_srednia_predkosc_data']) ? Carbon::parse($stationData['wiatr_srednia_predkosc_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -376,7 +376,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($stationData['wiatr_predkosc_maksymalna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($stationData['wiatr_predkosc_maksymalna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -404,7 +404,7 @@
                                             </div>
                                         </div>
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['wiatr_kierunek_data']) ? Carbon::parse($stationData['wiatr_kierunek_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['wiatr_kierunek_data']) ? Carbon::parse($stationData['wiatr_kierunek_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -417,7 +417,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['wiatr_poryw_10min_data']) ? Carbon::parse($stationData['wiatr_poryw_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['wiatr_poryw_10min_data']) ? Carbon::parse($stationData['wiatr_poryw_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -430,7 +430,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['opad_10min_data']) ? Carbon::parse($stationData['opad_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'brak pomiaru' }}
+                                            {{ !empty($stationData['opad_10min_data']) ? Carbon::parse($stationData['opad_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                 </ul>
@@ -1364,7 +1364,7 @@
                                                 <tr class="even:bg-blue-600/5 text-wrap text-center text-xs ">
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('temperatura_gruntu_data')">
-                                                        Pomiar <span class="text-nowrap">temp.
+                                                        Pomiar temp.<span class="text-nowrap"> gruntu
                                                         @if($sortBy === 'temperatura_gruntu_data')
                                                             <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                                                         @endif
@@ -2242,7 +2242,7 @@
                     // console.log(weatherData);
                     renderChart(weatherData, aggregation, type);
                 } else {
-                    console.log('Nie ładuję wykresu – brak danych');
+                    console.log('Nie ładuję wykresu – Brak danych');
                 }
             });
         });

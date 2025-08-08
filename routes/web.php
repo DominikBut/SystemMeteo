@@ -10,7 +10,10 @@ Route::get('/', function () {
 
 Route::get(
     '/map',
-    [generalMap::class, 'showMap']
+    function () {
+        // [generalMap::class, 'showMap']
+        return view('general_map');
+    }
 )->name('map');
 
 Route::get('/station/recent', function () {
