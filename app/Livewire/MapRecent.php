@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use DateTime;
+use DateTimeZone;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\Attributes\Validate;
@@ -27,14 +29,12 @@ class MapRecent extends Component
     public $sortedData;
 
     public $minMaxStats = [];
-
+    public $stations = [];
 
     public function mount()
     {
         $date = Carbon::today();
         $this->getStationData();
-        $this->sortedData = $this->stationData;
-        $this->calculateMinMaxStats();
     }
     public function getStationData()
     {
@@ -46,8 +46,6 @@ class MapRecent extends Component
                     Cache::put('DaneStacji', $this->stationData, now()->addMinutes(10));
                     $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
                     Cache::put('AskTime', $this->askTime);
-                    $this->sortedData = $this->stationData;
-                    $this->calculateMinMaxStats();
                 } else {
                     $this->stationData = [];
                 }
@@ -56,12 +54,16 @@ class MapRecent extends Component
                 $this->askTime = Cache::get('AskTime');
             }
             $this->dispatch('station-data-loaded', $this->stationData, $this->askTime);
+            $this->sortedData = $this->stationData;
+            $this->calculateMinMaxStats();
+            $this->getStations();
         } catch (\Throwable $th) {
             $this->stationData = [];
             $this->dispatch('station-data-loaded',  $this->stationData, Carbon::today());
             $this->error = 'Nie udało się pobrać danych z API. ';
             $this->sortedData = $this->stationData;
             $this->calculateMinMaxStats();
+            $this->getStations();
         }
     }
     public function setSort(string $column)
@@ -75,7 +77,7 @@ class MapRecent extends Component
         $this->sortWetherData();
     }
 
-    public function calculateMinMaxStats()
+    protected function calculateMinMaxStats()
     {
         $fields = [
             //terminowe
@@ -99,7 +101,83 @@ class MapRecent extends Component
             ];
         }
     }
-    public function sortWetherData()
+    public function updatedOption()
+    {
+        $this->getStations();
+    }
+    protected function getStations()
+    {
+        // Unique cache key for this option
+        $cacheKey = "stations_list_{$this->option}";
+
+        $this->stations = Cache::remember($cacheKey, now()->addMinutes(5), function () {
+            $tmpStations = [];
+
+            foreach ($this->stationData as $entry) {
+                $id = trim($entry['kod_stacji'] ?? '');
+                $name = trim($entry['nazwa_stacji'] ?? '');
+
+                if (!$id || !$name) {
+                    continue;
+                }
+
+                if ($this->option === 'hum') {
+                    if (
+                        $entry['wilgotnosc_wzgledna'] === null ||
+                        !$this->isRecentEnough($entry['wilgotnosc_wzgledna_data'])
+                    ) {
+                        continue;
+                    }
+                }
+
+                if ($this->option === 'temp') {
+                    if (
+                        $entry['temperatura_powietrza_data'] === null ||
+                        !$this->isRecentEnough($entry['temperatura_powietrza_data'])
+                    ) {
+                        continue;
+                    }
+                }
+
+                if ($this->option === 'rain') {
+                    if (
+                        $entry['opad_10min_data'] === null ||
+                        !$this->isRecentEnough($entry['opad_10min_data'])
+                    ) {
+                        continue;
+                    }
+                }
+
+                if ($this->option === 'tempg') {
+                    if (
+                        $entry['temperatura_gruntu_data'] === null ||
+                        !$this->isRecentEnough($entry['temperatura_gruntu_data'])
+                    ) {
+                        continue;
+                    }
+                }
+
+                if ($this->option === 'wind') {
+                    if (
+                        $entry['wiatr_srednia_predkosc_data'] === null ||
+                        !$this->isRecentEnough($entry['wiatr_srednia_predkosc_data'])
+                    ) {
+                        continue;
+                    }
+                }
+
+                // 'all' means no filtering
+
+                $tmpStations[] = [
+                    'kod_stacji' => $id,
+                    'nazwa_stacji' => $name
+                ];
+            }
+
+            return collect($tmpStations)->sortBy('nazwa_stacji')->values()->all();
+        });
+    }
+    protected function sortWetherData()
     {
         if ($this->sortBy === '') {
             $this->sortedData = $this->stationData;
@@ -155,7 +233,22 @@ class MapRecent extends Component
             $this->error = 'Nie znaleziono danych dla podanej stacji.';
         }
     }
+    protected function isRecentEnough(?string $utcString, int $maxAgeMinutes = 120): bool
+    {
+        if (!$utcString) {
+            return false;
+        }
+        try {
+            $utcDate = new DateTime($utcString, new DateTimeZone('UTC'));
+        } catch (\Exception $e) {
+            return false;
+        }
 
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $diffMinutes = ($now->getTimestamp() - $utcDate->getTimestamp()) / 60;
+
+        return $diffMinutes >= 0 && $diffMinutes <= $maxAgeMinutes;
+    }
 
     // public function getStationDataid($kod)
     // {

@@ -29,8 +29,8 @@
             crossorigin=""></script>
     @endPushOnce
 
-     <div class="py-6">
-        <div class="mx-auto sm:px-2 lg:px-8 max-w-[100rem]">
+     <div class="py-2">
+        <div class="mx-auto sm:px-2 lg:px-2 max-w-[120rem]">
             <div class="overflow-hidden">
                 @livewire('map-recent')
             </div>
@@ -103,12 +103,12 @@
                             const humidityLayerGroup = L.layerGroup();
                             const windLayerGroup = L.layerGroup();
                             const rainLayerGroup = L.layerGroup();
-
+                            const tempgLayerGroup = L.layerGroup();
 
                             //setup
                             var map = L.map('map', {
                                 renderer: L.canvas()
-                            }).setView([52.25, 19.25], 7);
+                            }).setView([52.25, 19.25], 6.5);
                             //credits
                             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                 maxZoom: 19,
@@ -156,9 +156,12 @@
             }
 
             function toggleLayer(typeName) {
-                const layers = [tempLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup, allStationsLayerGroup];
+                const layers = [tempLayerGroup, tempgLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup, allStationsLayerGroup];
 
                 switch (typeName) {
+                    case 'tempg':
+                        activeLayer=tempgLayerGroup;
+                        break;
                     case 'hum':
                         activeLayer=humidityLayerGroup;
                         break;
@@ -282,20 +285,20 @@
                 return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
             }
 
-            function updateStationListAvailability() {
-                const items = document.querySelectorAll('.station-list-item');
+            // function updateStationListAvailability() {
+            //     const items = document.querySelectorAll('.station-list-item');
 
-                items.forEach(item => {
-                    const kod = item.getAttribute('data-kod');
-                    const markerExists = stationMarkers[currentLayerType]?.[kod];
+            //     items.forEach(item => {
+            //         const kod = item.getAttribute('data-kod');
+            //         const markerExists = stationMarkers[currentLayerType]?.[kod];
 
-                    if (!markerExists) {
-                        item.classList.add('station-disabled');
-                    } else {
-                        item.classList.remove('station-disabled');
-                    }
-                });
-            }
+            //         if (!markerExists) {
+            //             item.classList.add('station-disabled');
+            //         } else {
+            //             item.classList.remove('station-disabled');
+            //         }
+            //     });
+            // }
          document.getElementById('stationSearch').addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
                 const items = document.querySelectorAll('#stationList .station-list-item');
@@ -336,7 +339,9 @@
 
                                     allStationsLayerGroup.addLayer(markerc);
                                     stationMarkers.all[stacja.kod_stacji] = markerc;
-
+                                    markerc.on('popupopen', function () {
+                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                        });
                                     markerc.on('mouseover', function () {
                                         this.setStyle({ radius: 8, color: '#333' });
                                     });
@@ -345,7 +350,7 @@
                                     });
 
 
-                                    // === Temperature ===
+                                    // === Temperature gruntu ===
                                     if (stacja.temperatura_gruntu !== null && isRecentEnough(stacja.temperatura_gruntu_data)) {
                                         const temp = parseFloat(stacja.temperatura_gruntu);
                                         const color = getTemperatureColor(temp);
@@ -355,6 +360,27 @@
                                             iconSize: [55, 20],
                                         });
                                         let tempDate = convertToLocalDate(stacja.temperatura_gruntu_data);
+                                        const marker = L.marker([lat, lon], { icon }).bindPopup(`
+                                            <strong>${stacja.nazwa_stacji}</strong><br>
+                                            Temperatura: ${temp.toFixed(1)}°C <br>
+                                            Data zapisu: ${tempDate ?? 'brak'}<br>
+                                        `);
+                                        marker.on('popupopen', function () {
+                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                        });
+                                        tempgLayerGroup.addLayer(marker);
+                                        stationMarkers.temp[stacja.kod_stacji] = marker; // save reference
+                                    }
+                                    // === Temperature powietrza ===
+                                    if (stacja.temperatura_powietrza !== null && isRecentEnough(stacja.temperatura_powietrza_data)) {
+                                        const temp = parseFloat(stacja.temperatura_powietrza);
+                                        const color = getTemperatureColor(temp);
+                                        const icon = L.divIcon({
+                                            className: 'custom-temp-icon',
+                                            html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${temp.toFixed(1)} °C</div>`,
+                                            iconSize: [55, 20],
+                                        });
+                                        let tempDate = convertToLocalDate(stacja.temperatura_powietrza_data);
                                         const marker = L.marker([lat, lon], { icon }).bindPopup(`
                                             <strong>${stacja.nazwa_stacji}</strong><br>
                                             Temperatura: ${temp.toFixed(1)}°C <br>
@@ -394,7 +420,7 @@
                                         const color = getWindColor(wind);
                                         const icon = L.divIcon({
                                             className: 'custom-temp-icon',
-                                            html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${wind.toFixed(1)} km/h</div>`,
+                                            html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${wind.toFixed(1)} m/s</div>`,
                                             iconSize: [70, 20],
                                         });
                                         let windDate = convertToLocalDate(stacja.wiatr_srednia_predkosc_data);
@@ -423,7 +449,7 @@
                                         let rainDate = convertToLocalDate(stacja.opad_10min_data);
                                         const marker = L.marker([lat, lon], { icon }).bindPopup(`
                                             <strong>${stacja.nazwa_stacji}</strong><br>
-                                            Opad: ${rain.toFixed(1)} mm / 10min <br>
+                                            Opad 10 min: ${rain.toFixed(1)} mm<br>
                                             Data zapisu: ${rainDate ?? 'brak'}<br>
                                         `);
                                         marker.on('popupopen', function () {
@@ -521,7 +547,7 @@
 
 
 
-            updateStationListAvailability();
+            //updateStationListAvailability();
             // document.getElementById('clearStationSearch').addEventListener('click', function () {
             //     const searchInput = document.getElementById('stationSearch');
             //     const items = document.querySelectorAll('#stationList .station-list-item');
