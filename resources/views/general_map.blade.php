@@ -534,8 +534,7 @@
                 const searchInput = document.getElementById('stationSearch');
                 searchInput.value = ''; // Clear the input
 
-                // Trigger input event so the search resets
-                searchInput.dispatchEvent(new Event('input'));
+
             }
             document.addEventListener('livewire:init', () => {
                 Livewire.on('layer-updated', (newData) => {

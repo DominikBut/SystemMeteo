@@ -301,27 +301,16 @@
                 );
             @endphp
             @if(empty($stationData) || $allNull)
-            <div class="relative w-full h-[32rem] flex justify-center p-4 bg-white rounded-md shadow-sm border">
-                        <div wire:loading.remove wire:target.except="setSort" class="absolute left-0 top-0 w-full h-full flex flex-col justify-center text-center ">
 
-                                 <p class="text-sm sm:text-xl font-bold animate-pulse">Oczekiwanie na wybór stacji...</p>
-
-                        </div>
-                    <div wire:loading wire:target.except="setSort" class="absolute top-0 left-0 w-full h-full z-20 animate-pulse border">
-                        <div class="w-full h-full flex flex-col justify-center animate-pulse text-center">
-                            <p class="text-sm sm:text-xl font-bold animate-pulse">Ładowanie...</p>
-                        </div>
-                    </div>
-            </div>
             <div>
-                <div  class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-white flex flex-row justify-between">
+                <div  class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold  flex flex-row justify-between">
                 Brak danych...
                 </div>
                 <div class="h-44 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
 
                 </div>
             </div>
-            <div class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-white flex flex-row justify-between">
+            <div class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold  flex flex-row justify-between">
                 Brak danych...
             </div>
             <div class="bg-white rounded-md shadow-sm border border-gray-300 min-h-32 w-full">
