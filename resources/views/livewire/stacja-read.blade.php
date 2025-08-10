@@ -409,11 +409,10 @@
                                                 </strong>
                                             </div>
                                             <div class="flex items-end sm:items-center gap-1">
+                                                <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation+90 }}deg;">
+                                                    ➤
+                                                </div>
                                                 {{ $stationData['wiatr_kierunek'] ?? '-' }} °
-                                                [
-                                                <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation }}deg;">
-                                                    ↓
-                                                </div>]
                                             </div>
                                         </div>
                                         <div class="text-xs text-gray-500">

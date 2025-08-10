@@ -396,11 +396,10 @@
                                                 </strong>
                                             </div>
                                             <div class="flex items-end sm:items-center gap-1">
+                                                 <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation+90 }}deg;">
+                                                    ➤
+                                                </div>
                                                 {{ $stationData['wiatr_kierunek'] ?? '-' }} °
-                                                [
-                                                <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation }}deg;">
-                                                    ↓
-                                                </div>]
                                             </div>
                                         </div>
                                         <div class="text-xs text-gray-500">
@@ -1543,16 +1542,15 @@
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wiatr_kierunek' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             @if(!is_null($data['wiatr_kierunek']))
+                                                                {{ $data['wiatr_kierunek'] ?? '-' }}
                                                                 @php
                                                                     $rotation = is_numeric($data['wiatr_kierunek']) ? $data['wiatr_kierunek'] : 0;
                                                                 @endphp
                                                                 <span class="w-10">
-                                                                    [
-                                                                    <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
-                                                                        ↓
-                                                                    </div>]
+                                                                    <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation+90 }}deg;">
+                                                                        ➤
+                                                                    </div>
                                                                 </span>
-
                                                                 {{ $data['wiatr_kierunek'] ?? '-' }}
                                                             @else
                                                                 <span>{{ $data['wiatr_kierunek'] ?? '-' }}</span>

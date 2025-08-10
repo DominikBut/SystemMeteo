@@ -5,6 +5,20 @@
             integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
             crossorigin=""/>
             <style>
+                #customAlert {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ffefc5;
+                color: #333;
+                padding: 12px 18px;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                font-family: sans-serif;
+                font-size: 14px;
+                display: none;
+                z-index: 9999;
+            }
             .custom-temp-icon .marker-label {
                 background-color: green;
                 color: white;
@@ -30,72 +44,26 @@
     @endPushOnce
 
      <div class="py-2">
-        <div class="mx-auto sm:px-2 lg:px-2 max-w-[120rem]">
+        <div class="mx-auto px-4 sm:px-2 lg:px-2 max-w-[120rem]">
             <div class="overflow-hidden">
                 @livewire('map-recent')
             </div>
         </div>
     </div>
+    <div id="customAlert"></div>
 
+    <script>
+        function showAlert(message, duration = 3000) {
+            const alertBox = document.getElementById('customAlert');
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
 
-    <div class="p-6">{{--  py-12 max-w-7xl mx-auto sm:px-6 lg:px-8--}}
-        <div class=" ">
-            <div class="bg-lime-100 overflow-hidden shadow-xl sm:rounded-lg">
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, duration);
+        }
+                            var stacjeData = null;
 
-                {{-- {{ $status .': '. $AskedAt . ' (nowe dane co 10 min (najswiezsze z 20min przed))'}} --}}
-                <div class="flex flex-row p-2 bg-white">
-
-                    <div id="stationListWrapper" class="w-1/6  border-r border-gray-300 p-2 bg-white text-sm">
-                        <div class="flex items-center gap-2 mb-2">
-
-                            <div  class="relative my-4 flex w-full max-w-xs flex-col gap-1 text-slate-700 ">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="absolute left-2 top-7 size-5 -translate-y-1/2 text-slate-700/50 " aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
-                                </svg>
-                                <input id="stationSearch"  type="search" placeholder="Szukaj stacji..." class="w-full border border-slate-300 rounded-xl bg-white px-2 py-1.5 pl-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-75 " name="search" aria-label="Search" placeholder="Search"/>
-                            </div>
-                            <button
-                                id="clearStationSearch"
-                                class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded"
-                            >
-                                X
-                            </button>
-                        </div>
-                            <h4>to laguje ładowanie</h4>
-                            <div id="stationList" class="h-[40rem] overflow-y-auto">
-                                {{-- @if (!empty($stationData))
-
-                                    @foreach (collect($stationData)->sortBy('nazwa_stacji') as $stacja)
-
-                                                                    <div
-                                                                        class="station-list-item cursor-pointer hover:bg-gray-200 px-2 py-1 border-b"
-                                                                        data-kod="{{ $stacja->kod_stacji }}" onclick="focusStation('{{ $stacja->kod_stacji }}')"
-                                                                    >
-                                                                        {{ $stacja->nazwa_stacji }}
-                                                                    </div>
-                                    @endforeach
-                                @endif --}}
-                            </div>
-                    </div>
-
-                </div>
-
-
-            </div>
-        </div>
-    </div>
-
-        <script>
-
-
-                         var stacjeData = null;
-                            const stationMarkers = {
-                                            temp: {},
-                                            humidity: {},
-                                            wind: {},
-                                            rain: {},
-                                            all: {}
-                                        };
                             let currentLayerType = 'temp'; // default visible
 
                             const allStationsLayerGroup = L.layerGroup();
@@ -104,6 +72,7 @@
                             const windLayerGroup = L.layerGroup();
                             const rainLayerGroup = L.layerGroup();
                             const tempgLayerGroup = L.layerGroup();
+                            const clickedLayerGroup = L.layerGroup();
 
                             //setup
                             var map = L.map('map', {
@@ -115,87 +84,136 @@
                                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             }).addTo(map);
 
+                             //console.log(Data);
+                            map.addLayer(clickedLayerGroup);
 
+            // function convertToLocalDate(dateStr) {
+            //     if (!dateStr) return null;
 
-            function convertToLocalDate(dateStr) {
-                if (!dateStr) return null;
+            //     // Fix format: replace " " with "T" and mark as UTC with "Z"
+            //     const isoStr = dateStr.replace(" ", "T") + "Z";
 
-                // Fix format: replace " " with "T" and mark as UTC with "Z"
-                const isoStr = dateStr.replace(" ", "T") + "Z";
+            //     const utcDate = new Date(isoStr);
 
-                const utcDate = new Date(isoStr);
+            //     if (isNaN(utcDate.getTime())) return null;
 
-                if (isNaN(utcDate.getTime())) return null;
+            //     // Return local date and time (with seconds)
+            //     return utcDate.toLocaleString('pl-PL', {
+            //         hour: '2-digit',
+            //         minute: '2-digit',
+            //         second: '2-digit',
+            //         year: 'numeric',
+            //         month: '2-digit',
+            //         day: '2-digit',
+            //         hour12: false
+            //     });
+            // }
 
-                // Return local date and time (with seconds)
-                return utcDate.toLocaleString('pl-PL', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour12: false
-                });
-            }
+            // function isRecentEnough(localString, maxAgeMinutes = 120) {
+            //     if (!localString) return false;
 
-            function isRecentEnough(utcString, maxAgeMinutes = 120) {
-                if (!utcString) return false;
-                const utcDate = new Date(utcString.replace(" ", "T") + "Z"); // zapewnia UTC
-                const now = new Date(); // lokalny czas
-                const diffMinutes = (now - utcDate) / (1000 * 60);
-                return diffMinutes >= 0 && diffMinutes <= maxAgeMinutes;
-            }
+            //     // Create a Date from the given string without forcing UTC
+            //     const dateObj = new Date(localString.replace(" ", "T"));
+
+            //     if (isNaN(dateObj)) return false; // Invalid date safeguard
+
+            //     const now = new Date();
+            //     const diffMinutes = (now - dateObj) / (1000 * 60);
+
+            //     return diffMinutes >= 0 && diffMinutes <= maxAgeMinutes;
+            // }
 
             function focusStation(kod) {
-                const marker = stationMarkers[currentLayerType]?.[kod];
-                if (marker) {
-                    map.setView(marker.getLatLng(), 12);
-                    marker.openPopup();
+                // const marker = stationMarkers[currentLayerType]?.[kod];
+
+                var staccjacur = null;
+                 stacjeData.forEach(stacja => {
+                    if(stacja.kod_stacji===kod)
+                    {
+                        staccjacur=stacja;
+                    }
+                 });
+                 if(staccjacur)
+                 {
+                    let marker = L.circleMarker([staccjacur['lat'], staccjacur['lon']], {
+                                            radius: 0,
+                                        });
+                    clickedLayerGroup.addLayer(marker);
+                    Livewire.first().call('getStationDataid', staccjacur['kod_stacji']);
+                    if (marker) {
+                        marker.bindPopup(`<div style="font-size: 14px; color: blue;" class="font-bold pb-2">${staccjacur['nazwa_stacji']} <span class="!font-normal text-gray-500">[${staccjacur['kod_stacji']}]</span></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Temp. powietrza: ${staccjacur['temperatura_powietrza'] ?? '- '} °C</b>&nbsp&nbsp<sub>${staccjacur['temperatura_powietrza_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Temp. gruntu: ${staccjacur['temperatura_gruntu'] ?? '- '} °C</b>&nbsp&nbsp<sub>${staccjacur['temperatura_gruntu_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Opad 10 min: ${staccjacur['opad_10min'] ?? '-'} mm</b>&nbsp&nbsp<sub>${staccjacur['opad_10min_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Wilgotność: ${staccjacur['wilgotnosc_wzgledna'] ?? '- '} %</b>&nbsp&nbsp<sub>${staccjacur['wilgotnosc_wzgledna_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Wiatr śr.: ${staccjacur['wiatr_srednia_predkosc'] ?? '- '} m/s</b>&nbsp&nbsp<sub>${staccjacur['wiatr_srednia_predkosc_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Wiatr maks.: ${staccjacur['wiatr_predkosc_maksymalna'] ?? '- '} m/s</b>&nbsp&nbsp<sub>${staccjacur['wiatr_predkosc_maksymalna_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Wiatr poryw: ${staccjacur['wiatr_poryw_10min'] ?? '- '} m/s</b>&nbsp&nbsp<sub>${staccjacur['wiatr_poryw_10min_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Wiatr kieruenk: ${renderWindDirection(staccjacur['wiatr_kierunek']) ?? '-'} ${staccjacur['wiatr_kierunek'] ?? '-'} °</b>&nbsp&nbsp<sub>${staccjacur['wiatr_kierunek_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="pt-2 text-end flex flex-col justify-end ">
+                                                    <div class="text-xs flex flex-row gap-2 justify-end">
+                                                        <a class="hover:underline text-gray-500 text-nowrap"
+                                                        href="{{ route('stacja_archive').'/?id='}}${staccjacur['kod_stacji']}">
+                                                            Dane archiwalne
+                                                        </a>
+                                                        <a class="hover:underline text-blue-500 text-nowrap"
+                                                        href="{{ route('stacja_recent').'/?id='}}${staccjacur['kod_stacji']}">
+                                                            Dane bieżące
+                                                        </a>
+                                                    </div>
+                                            </div>
+                                                `);
+                        marker.on('popupclose', function () {
+                                                // Livewire.first().call('getStationDataid',null);
+                                                clickedLayerGroup.removeLayer(marker);
+                                            });
+                        map.setView(marker.getLatLng(), 10);
+                        marker.openPopup();
+                    }
+                }else{
+                     showAlert('Przełącz wyświetlane dane na mapie!');
                 }
             }
 
-            function toggleLayer(typeName) {
-                const layers = [tempLayerGroup, tempgLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup, allStationsLayerGroup];
+            // function toggleLayer(typeName) {
+            //     const layers = [tempLayerGroup, tempgLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup, allStationsLayerGroup,clickedLayerGroup];
 
-                switch (typeName) {
-                    case 'tempg':
-                        activeLayer=tempgLayerGroup;
-                        break;
-                    case 'hum':
-                        activeLayer=humidityLayerGroup;
-                        break;
-                    case 'wind':
-                        activeLayer=windLayerGroup;
-                        break;
-                    case 'rain':
-                        activeLayer=rainLayerGroup;
-                        break;
-                    case 'all':
-                        activeLayer=allStationsLayerGroup;
-                        break;
-                    default:
-                        activeLayer=tempLayerGroup;
-                        break;
-                }
+            //     switch (typeName) {
+            //         case 'tempg':
+            //             activeLayer=tempgLayerGroup;
+            //             break;
+            //         case 'hum':
+            //             activeLayer=humidityLayerGroup;
+            //             break;
+            //         case 'wind':
+            //             activeLayer=windLayerGroup;
+            //             break;
+            //         case 'rain':
+            //             activeLayer=rainLayerGroup;
+            //             break;
+            //         case 'all':
+            //             activeLayer=allStationsLayerGroup;
+            //             break;
+            //         default:
+            //             activeLayer=tempLayerGroup;
+            //             break;
+            //     }
 
-                // Remove all layers
-                layers.forEach(layer => map.removeLayer(layer));
+            //     // Remove all layers
+            //     layers.forEach(layer => map.removeLayer(layer));
 
-                // Add chosen layer
-                if (!map.hasLayer(activeLayer)) {
-                    map.addLayer(activeLayer);
-                    currentLayerType = typeName;
-                    updateStationListAvailability();
-                }
-            }
+            //     // Add chosen layer
+            //     if (!map.hasLayer(activeLayer)) {
+            //         map.addLayer(activeLayer);
+            //          map.addLayer(clickedLayerGroup);
+            //         currentLayerType = typeName;
+            //         //updateStationListAvailability();
+            //     }
+            // }
 
             function getTemperatureColor(temp) {
                 // // Normalize temperature between -20 and 40 (adjust to your real range)
-                // const minTemp = -20;
-                // const maxTemp = 40;
-                // const clamped = Math.max(minTemp, Math.min(maxTemp, temp));
-                // const percent = (clamped - minTemp) / (maxTemp - minTemp);
+
 
                 // // Convert percent to a hue value (240 = blue, 0 = red)
                 //  // Hue: 240 (cold/blue) to 0 (hot/red)
@@ -285,305 +303,260 @@
                 return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
             }
 
-            // function updateStationListAvailability() {
-            //     const items = document.querySelectorAll('.station-list-item');
-
-            //     items.forEach(item => {
-            //         const kod = item.getAttribute('data-kod');
-            //         const markerExists = stationMarkers[currentLayerType]?.[kod];
-
-            //         if (!markerExists) {
-            //             item.classList.add('station-disabled');
-            //         } else {
-            //             item.classList.remove('station-disabled');
-            //         }
-            //     });
-            // }
-         document.getElementById('stationSearch').addEventListener('input', function () {
+            document.getElementById('stationSearch').addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
                 const items = document.querySelectorAll('#stationList .station-list-item');
+                let visibleCount = 0;
 
                 items.forEach(item => {
                     const text = item.textContent.toLowerCase();
                     const matches = text.includes(searchTerm);
 
                     item.style.display = matches ? 'block' : 'none';
+
+                    if (matches) {
+                        visibleCount++;
+                    }
                 });
+
+                let noResultsEl = document.getElementById('noResultsMessage');
+                if (!noResultsEl) {
+                    noResultsEl = document.createElement('div');
+                    noResultsEl.id = 'noResultsMessage';
+                    noResultsEl.textContent = 'Brak wyników wyszukiwania';
+                    noResultsEl.style.display = 'none';
+                    noResultsEl.style.padding = '10px';
+                    noResultsEl.style.color = 'gray';
+                     noResultsEl.style.textAlign = 'center';
+                    document.getElementById('stationList').appendChild(noResultsEl);
+                }
+
+                noResultsEl.style.display = visibleCount === 0 ? 'block' : 'none';
             });
 
 
+            let allStacjicon = {
+                                        radius: 5,
+                                        color: '#666',
+                                        fillColor: 'lightblue',
+                                        fillOpacity: 0.8,
+                                        weight: 1
+                                    };
 
-            document.addEventListener('livewire:init', () => {
-                Livewire.on('station-data-loaded', (newData) => {
-                    Alpine.nextTick(() => {
-                        const Data = newData[0];
-                        const Time = newData[1];
-                        //console.log(Data);
 
-                        if (Array.isArray(Data) && Data.length > 0) {
-                             stacjeData = Data;
+        function renderWindDirection(wiatr_kierunek) {
+            if (wiatr_kierunek === null || wiatr_kierunek === undefined) {
+                return `<span>-</span>`;
+            }
 
-                                // Loop through Laravel data passed to JS
+            const rotation = isNaN(Number(wiatr_kierunek)) ? 0 : Number(wiatr_kierunek);
+
+            return `
+                <span>
+                    <div class="inline-block transform text-sm px-1" style="font-weight: 900; rotate: ${rotation+90}deg;">
+                        ➤
+                    </div>
+                </span>
+            `;
+        }
+         const layers = [tempLayerGroup, tempgLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup, allStationsLayerGroup];
+
+         function updateMarkers(stacjeData,Option){
+                // map.setView([52.25, 19.25], 6.5);
+
+                                    // Loop through Laravel data passed to JS
                                 stacjeData.forEach(stacja => {
 
                                     const lat = parseFloat(stacja.lat);
                                     const lon = parseFloat(stacja.lon);
 
-                                    const markerc = L.circleMarker([lat, lon], {
-                                        radius: 6,
-                                        color: '#666',
-                                        fillColor: 'cyan',
-                                        fillOpacity: 0.8,
-                                        weight: 1
-                                    }).bindPopup(`<strong>${stacja.nazwa_stacji}</strong><br>Kod: ${stacja.kod_stacji}`);
-
-                                    allStationsLayerGroup.addLayer(markerc);
-                                    stationMarkers.all[stacja.kod_stacji] = markerc;
-                                    markerc.on('popupopen', function () {
-                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                    // // === Temperature gruntu ===
+                                    if(Option==='all'){
+                                        let allStationsmarkers = [];
+                                        const markerc = L.circleMarker([lat, lon], allStacjicon);
+                                        markerc.on('click', function () {
+                                                focusStation(stacja.kod_stacji);
+                                                Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                            });
+                                        markerc.on('mouseover', function () {
+                                            this.setStyle({ radius: 8, color: '#333' });
                                         });
-                                    markerc.on('mouseover', function () {
-                                        this.setStyle({ radius: 8, color: '#333' });
-                                    });
-                                    markerc.on('mouseout', function () {
-                                        this.setStyle({ radius: 6, color: '#666' });
-                                    });
-
-
-                                    // === Temperature gruntu ===
-                                    if (stacja.temperatura_gruntu !== null && isRecentEnough(stacja.temperatura_gruntu_data)) {
-                                        const temp = parseFloat(stacja.temperatura_gruntu);
-                                        const color = getTemperatureColor(temp);
-                                        const icon = L.divIcon({
-                                            className: 'custom-temp-icon',
-                                            html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${temp.toFixed(1)} °C</div>`,
-                                            iconSize: [55, 20],
+                                        markerc.on('mouseout', function () {
+                                            this.setStyle({ radius: 6, color: '#666' });
                                         });
-                                        let tempDate = convertToLocalDate(stacja.temperatura_gruntu_data);
-                                        const marker = L.marker([lat, lon], { icon }).bindPopup(`
-                                            <strong>${stacja.nazwa_stacji}</strong><br>
-                                            Temperatura: ${temp.toFixed(1)}°C <br>
-                                            Data zapisu: ${tempDate ?? 'brak'}<br>
-                                        `);
-                                        marker.on('popupopen', function () {
-                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
-                                        });
-                                        tempgLayerGroup.addLayer(marker);
-                                        stationMarkers.temp[stacja.kod_stacji] = marker; // save reference
+                                        allStationsmarkers.push(markerc);
+                                         allStationsLayerGroup.addLayer(L.layerGroup(allStationsmarkers));
+                                            allStationsmarkers =null;
+                                            allStationsLayerGroup.addTo(map); // show by default
+
                                     }
-                                    // === Temperature powietrza ===
-                                    if (stacja.temperatura_powietrza !== null && isRecentEnough(stacja.temperatura_powietrza_data)) {
-                                        const temp = parseFloat(stacja.temperatura_powietrza);
-                                        const color = getTemperatureColor(temp);
-                                        const icon = L.divIcon({
-                                            className: 'custom-temp-icon',
-                                            html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${temp.toFixed(1)} °C</div>`,
-                                            iconSize: [55, 20],
-                                        });
-                                        let tempDate = convertToLocalDate(stacja.temperatura_powietrza_data);
-                                        const marker = L.marker([lat, lon], { icon }).bindPopup(`
-                                            <strong>${stacja.nazwa_stacji}</strong><br>
-                                            Temperatura: ${temp.toFixed(1)}°C <br>
-                                            Data zapisu: ${tempDate ?? 'brak'}<br>
-                                        `);
-                                        marker.on('popupopen', function () {
-                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
-                                        });
-                                        tempLayerGroup.addLayer(marker);
-                                        stationMarkers.temp[stacja.kod_stacji] = marker; // save reference
-                                    }
-                                    // === Humidity ===
-                                    if (stacja.wilgotnosc_wzgledna !== null && isRecentEnough(stacja.wilgotnosc_wzgledna_data)) {
-                                        const hum = parseFloat(stacja.wilgotnosc_wzgledna);
-                                        const color = getHumidityColor(hum);
-                                        const icon = L.divIcon({
-                                            className: 'custom-temp-icon',
-                                            html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${hum.toFixed(0)} %</div>`,
-                                            iconSize: [55, 20],
-                                        });
-                                        let humDate = convertToLocalDate(stacja.wilgotnosc_wzgledna_data);
-                                        const marker = L.marker([lat, lon], { icon }).bindPopup(`
-                                            <strong>${stacja.nazwa_stacji}</strong><br>
-                                            Wilgotność: ${hum.toFixed(0)}% <br>
-                                            Data zapisu: ${humDate ?? 'brak'}<br>
-                                        `);
-                                        marker.on('popupopen', function () {
-                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
-                                        });
-                                        humidityLayerGroup.addLayer(marker);
-                                        stationMarkers.humidity[stacja.kod_stacji] = marker; // save reference
-                                    }
+                                    // // === Temperature gruntu ===
+                                    if(Option==='tempg'){
+                                        let tempgmarkers = [];
 
-                                    // === Wind ===
-                                    if (stacja.wiatr_srednia_predkosc !== null && isRecentEnough(stacja.wiatr_srednia_predkosc_data) && stacja.wiatr_srednia_predkosc != 0) {
-                                        const wind = parseFloat(stacja.wiatr_srednia_predkosc);
-                                        const color = getWindColor(wind);
-                                        const icon = L.divIcon({
-                                            className: 'custom-temp-icon',
-                                            html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${wind.toFixed(1)} m/s</div>`,
-                                            iconSize: [70, 20],
-                                        });
-                                        let windDate = convertToLocalDate(stacja.wiatr_srednia_predkosc_data);
-                                        const marker = L.marker([lat, lon], { icon }).bindPopup(`
-                                            <strong>${stacja.nazwa_stacji}</strong><br>
-                                            Wiatr: ${wind.toFixed(1)} m/s <br>
-                                            Data zapisu: ${windDate ?? 'brak'}<br>
-                                        `);
-                                        marker.on('popupopen', function () {
-                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
-                                        });
-                                        windLayerGroup.addLayer(marker);
-                                        stationMarkers.wind[stacja.kod_stacji] = marker; // save reference
-                                    }
+                                            let temp = parseFloat(stacja.temperatura_gruntu);
+                                            let color = getTemperatureColor(temp);
+                                            let icon = L.divIcon({
+                                                className: 'custom-temp-icon',
+                                                html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${temp.toFixed(1)} °C</div>`,
+                                                iconSize: [55, 20],
+                                            });
+                                            let marker = L.marker([lat, lon], { icon });
 
-                                    // === Rainfall ===
-                                    if (stacja.opad_10min !== null && isRecentEnough(stacja.opad_10min_data) && stacja.opad_10min != 0) {
-                                        const rain = parseFloat(stacja.opad_10min);
-                                        const color = getRainColor(rain);
-                                        const icon = L.divIcon({
-                                            className: 'custom-temp-icon',
-                                            html: `<div class="marker-label" style="border-color: lightblue; border-width: 1px; opacity: 0.8; color: blue; background-color:${color}">${rain.toFixed(1)} mm</div>`,
-                                            iconSize: [55, 20],
-                                        });
-                                        console.log(stacja.nazwa_stacji);
-                                        let rainDate = convertToLocalDate(stacja.opad_10min_data);
-                                        const marker = L.marker([lat, lon], { icon }).bindPopup(`
-                                            <strong>${stacja.nazwa_stacji}</strong><br>
-                                            Opad 10 min: ${rain.toFixed(1)} mm<br>
-                                            Data zapisu: ${rainDate ?? 'brak'}<br>
-                                        `);
-                                        marker.on('popupopen', function () {
-                                            Livewire.first().call('getStationDataid', stacja.kod_stacji);
-                                        });
-                                        rainLayerGroup.addLayer(marker);
-                                        stationMarkers.rain[stacja.kod_stacji] = marker;
+                                            marker.on('click', function () {
+                                                focusStation(stacja.kod_stacji);
+                                                Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                            });
+                                            tempgmarkers.push(marker);
+
+                                            tempgLayerGroup.addLayer(L.layerGroup(tempgmarkers));
+                                            tempgmarkers =null;
+                                            tempgLayerGroup.addTo(map); // show by default
                                     }
 
 
-                                    tempLayerGroup.addTo(map); // show by default
+                                    if(Option==='temp'){
+                                        let tempmarkers = [];
+                                        // === Temperature powietrza ===
 
+                                            let temp = parseFloat(stacja.temperatura_powietrza);
+                                            let color = getTemperatureColor(temp);
+                                            let icon = L.divIcon({
+                                                className: 'custom-temp-icon',
+                                                html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${temp.toFixed(1)} °C</div>`,
+                                                iconSize: [55, 20],
+                                            });
 
-                                    // if (stacja.lat && stacja.lon) {
-                                    //     const hasTemp = stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu && stacja.temperatura_gruntu_data;
-                                    //     const tempDateStr = stacja.temperatura_gruntu_data;
-                                    //      // Skip if temp date is missing or invalid
-                                    //     if (!tempDateStr || isNaN(new Date(tempDateStr))) return;
+                                            let marker = L.marker([lat, lon], { icon });
 
-                                    //     if (!hasTemp) return; // Skip if no temperature
+                                            marker.on('click', function () {
+                                                focusStation(stacja.kod_stacji);
+                                                Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                            });
+                                            tempmarkers.push(marker);
 
-                                    //     // Get only the date part (YYYY-MM-DD)
-                                    //     const tempDate = new Date(tempDateStr).toISOString().slice(0, 10);
-                                    //     const today = new Date().toISOString().slice(0, 10);
+                                            tempLayerGroup.addLayer(L.layerGroup(tempmarkers));
+                                            tempmarkers =null;
+                                            tempLayerGroup.addTo(map); // show by default
+                                    }
 
-                                    //     // Skip if the temp data is before today
-                                    //      if (tempDate < today) return;
+                                    // // === Humidity ===
+                                    if(Option==='hum'){
+                                        let humiditymarkers =[];
 
-                                    //     const temp = parseFloat(stacja.temperatura_gruntu);
-                                    //     const tempText = `${temp.toFixed(1)}°C`;
-                                    //     const bgColor = getTemperatureColor(temp);
+                                            let hum = parseFloat(stacja.wilgotnosc_wzgledna);
+                                            let color = getHumidityColor(hum);
+                                            let icon = L.divIcon({
+                                                className: 'custom-temp-icon',
+                                                html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${hum.toFixed(0)} %</div>`,
+                                                iconSize: [55, 20],
+                                            });
+                                            let marker = L.marker([lat, lon], { icon });
 
-                                    //     const tempIcon = L.divIcon({
-                                    //         className: 'custom-temp-icon',
-                                    //         html: `<div class="marker-label" style="background-color:${bgColor}">${tempText}</div>`,
-                                    //         iconSize: [50, 20],
-                                    //     });
+                                            marker.on('click', function () {
+                                                focusStation(stacja.kod_stacji);
+                                                Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                            });
+                                            humiditymarkers.push(marker);
 
-                                    //     const marker = L.marker(
-                                    //         [parseFloat(stacja.lat), parseFloat(stacja.lon)],
-                                    //         { icon: tempIcon }
-                                    //     );
+                                            humidityLayerGroup.addLayer(L.layerGroup(humiditymarkers));
+                                            humiditymarkers =null;
+                                            humidityLayerGroup.addTo(map); // show by default
+                                }
 
-                                    //     marker.bindPopup(`
-                                    //         <strong>${stacja.nazwa_stacji}</strong><br>
-                                    //         Data: ${stacja.temperatura_gruntu_data ?? 'brak'}<br>
-                                    //         Temp: ${tempText}<br>
-                                    //         Wiatr: ${stacja.wiatr_srednia_predkosc ?? 'brak'} m/s<br>
-                                    //         Wilgotność: ${stacja.wilgotnosc_wzgledna ?? 'brak'}%
-                                    //     `);
-                                    //     tempLayerGroup.addLayer(marker); // add to group
-                                    // }
-                                });
+                                    // // === Wind ===
+                                    if(Option==='wind'){
+                                        let windmarkers =[];
 
-            // tempLayerGroup.addTo(map);
-            // humidityLayerGroup.addTo(map);
-            // windLayerGroup.addTo(map);
-            // rainLayerGroup.addTo(map);
-            // stacjeData.forEach(stacja => {
-            //     if (stacja.lat && stacja.lon) {
-            //         const hasTemp = stacja.temperatura_gruntu !== null && stacja.temperatura_gruntu !== '';
+                                            let marker;
+                                            if(stacja.wiatr_srednia_predkosc != 0){
+                                            let wind = parseFloat(stacja.wiatr_srednia_predkosc);
+                                            let color = getWindColor(wind);
+                                            let icon = L.divIcon({
+                                                className: 'custom-temp-icon',
+                                                html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${renderWindDirection(stacja.wiatr_kierunek)} ${wind.toFixed(1)} m/s</div>`,
+                                                iconSize: [80, 20],
+                                            });
+                                             marker = L.marker([lat, lon], { icon });
+                                            }else{
+                                                marker = L.circleMarker([lat, lon], allStacjicon);
+                                            }
+                                            marker.on('click', function () {
+                                                focusStation(stacja.kod_stacji);
+                                                Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                            });
+                                            windmarkers.push(marker);
 
-            //         if (!hasTemp) return; //  Skip stations with no temperature
+                                            windLayerGroup.addLayer(L.layerGroup(windmarkers));
+                                            windmarkers =null;
+                                            windLayerGroup.addTo(map); // show by default
+                                    }
 
-            //         const marker = L.marker(
-            //             [parseFloat(stacja.lat), parseFloat(stacja.lon)],
-            //             { icon: redIcon } // Only red icon, since gray is skipped { icon: hasTemp ? redIcon : grayIcon }
-            //         ).addTo(map);
+                                    // // === Rainfall ===
+                                    if(Option==='rain'){
+                                        let rainmarkers =[];
 
-            //         marker.bindPopup(`
-            //             <strong>${stacja.nazwa_stacji}</strong><br>
-            //             Temp: ${stacja.temperatura_gruntu}°C<br>
-            //             Wiatr: ${stacja.wiatr_srednia_predkosc ?? 'brak'} km/h<br>
-            //             Wilgotność: ${stacja.wilgotnosc_wzgledna ?? 'brak'}%
-            //         `);
-            //     }
-            // });
+                                            let marker;
+                                            if(stacja.opad_10min != 0){
+                                            let rain = parseFloat(stacja.opad_10min);
+                                            let color = getRainColor(rain);
+                                            let icon = L.divIcon({
+                                                className: 'custom-temp-icon',
+                                                html: `<div class="marker-label" style="border-color: lightblue; border-width: 1px; opacity: 0.8; color: blue; background-color:${color}">${rain.toFixed(1)} mm</div>`,
+                                                iconSize: [55, 20],
+                                            });
 
-            // //klikalny marker
-            // var marker_click = null; // initialize
+                                                marker = L.marker([lat, lon], { icon });
+                                            }else{
+                                                marker = L.circleMarker([lat, lon], allStacjicon);
+                                            }
 
-            // function onMapClick(e) {
-            //     if (marker_click) {
-            //         map.removeLayer(marker_click); // remove previous marker
-            //     }
-            //     var data = new Date().toISOString().slice(0, 10);
-            //     marker_click = L.marker(e.latlng).addTo(map);
-            //     marker_click.bindPopup(
-            //         `<b>You clicked the map at</b><br>
-            //             ${e.latlng.lat.toFixed(5)} ${e.latlng.lat.toFixed(5)}<br>
-            //             Data: ${data ?? 'brak'}<br>
-            //         `).openPopup();
-            // }
-            // map.on('click', onMapClick);
+                                            marker.on('click', function () {
+                                                focusStation(stacja.kod_stacji);
+                                                Livewire.first().call('getStationDataid', stacja.kod_stacji);
+                                            });
+                                            rainmarkers.push(marker);
 
+                                            rainLayerGroup.addLayer(L.layerGroup(rainmarkers));
+                                            rainmarkers =null;
+                                            rainLayerGroup.addTo(map); // show by default
+                                }
 
+                    });
+            }
+            function clearSearch() {
+                const searchInput = document.getElementById('stationSearch');
+                searchInput.value = ''; // Clear the input
 
-            //updateStationListAvailability();
-            // document.getElementById('clearStationSearch').addEventListener('click', function () {
-            //     const searchInput = document.getElementById('stationSearch');
-            //     const items = document.querySelectorAll('#stationList .station-list-item');
+                // Trigger input event so the search resets
+                searchInput.dispatchEvent(new Event('input'));
+            }
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('layer-updated', (newData) => {
+                    Alpine.nextTick(() => {
+                        clearSearch();
+                        let Data = newData[0];
+                        let Time = newData[1];
+                        let Option = newData[2];
+                        tempLayerGroup.clearLayers();
+                                humidityLayerGroup.clearLayers();
+                                windLayerGroup.clearLayers();
+                                rainLayerGroup.clearLayers();
+                                tempgLayerGroup.clearLayers();
+                                allStationsLayerGroup.clearLayers();
+                                clickedLayerGroup.clearLayers();
+                                layers.forEach(layer => map.removeLayer(layer));
+                        if (Array.isArray(Data) && Data.length > 0) {
+                                stacjeData = Data;
+                                updateMarkers(stacjeData, Option);
 
-            //     searchInput.value = '';
-            //     searchInput.dispatchEvent(new Event('input'));
-            // });
-
-
-                } else {
-                    console.log('Nie ładuję  – brak danych');
-                }
+                        } else {
+                            console.log('Nie ładuję  – brak danych');
+                        }
+                         Data=null;
             });
         });
     })
         </script>
-
-
-     {{-- +"kod_stacji": "352220385"
-    +"nazwa_stacji": "SIEDLCE"
-    +"lon": "22.244722"
-    +"lat": "52.181111"
-    +"temperatura_gruntu": "8.7"
-    +"temperatura_gruntu_data": "2025-07-17 00:10:00"
-    +"wiatr_kierunek": "248"
-    +"wiatr_kierunek_data": "2025-07-17 00:10:00"
-    +"wiatr_srednia_predkosc": "0.2"
-    +"wiatr_srednia_predkosc_data": "2025-07-17 00:10:00"
-    +"wiatr_predkosc_maksymalna": "0.5"
-    +"wiatr_predkosc_maksymalna_data": "2025-07-17 00:10:00"
-    +"wilgotnosc_wzgledna": "94"
-    +"wilgotnosc_wzgledna_data": "2025-07-17 00:10:00"
-    +"wiatr_poryw_10min": "10"
-    +"wiatr_poryw_10min_data": "2025-07-16 18:00:00"
-    +"opad_10min": "0"
-    +"opad_10min_data": "2025-07-17 00:00:00" --}}
-
    <!-- Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead -->
 </x-guest-layout>

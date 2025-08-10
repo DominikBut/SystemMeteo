@@ -30,7 +30,7 @@ class MapRecent extends Component
 
     public $minMaxStats = [];
     public $stations = [];
-
+    // public $matchingRecords = [];
     public function mount()
     {
         $date = Carbon::today();
@@ -43,7 +43,19 @@ class MapRecent extends Component
                 $response = Http::timeout(5)->connectTimeout(5)->retry(3, 100)->get("https://danepubliczne.imgw.pl/api/data/meteo/");
                 if ($response->successful()) {
                     $this->stationData = (array) json_decode($response->body(), true);
-                    Cache::put('DaneStacji', $this->stationData, now()->addMinutes(10));
+                    // Example: adjust all *_data fields to current timezone
+                    $this->stationData = collect($this->stationData)->map(function ($record) {
+                        foreach ($record as $key => $value) {
+                            if (str_ends_with($key, '_data') && !empty($value)) {
+                                // Convert from UTC to your app's timezone
+                                $record[$key] = Carbon::parse($value, 'UTC')
+                                    ->setTimezone(config('app.timezone'))
+                                    ->toDateTimeString();
+                            }
+                        }
+                        return $record;
+                    })->toArray();
+                    Cache::put('DaneStacji', $this->stationData, now()->addMinutes(5));
                     $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
                     Cache::put('AskTime', $this->askTime);
                 } else {
@@ -53,13 +65,13 @@ class MapRecent extends Component
                 $this->stationData = Cache::get('DaneStacji');
                 $this->askTime = Cache::get('AskTime');
             }
-            $this->dispatch('station-data-loaded', $this->stationData, $this->askTime);
+
             $this->sortedData = $this->stationData;
             $this->calculateMinMaxStats();
             $this->getStations();
         } catch (\Throwable $th) {
             $this->stationData = [];
-            $this->dispatch('station-data-loaded',  $this->stationData, Carbon::today());
+            $this->askTime = Carbon::today();
             $this->error = 'Nie udało się pobrać danych z API. ';
             $this->sortedData = $this->stationData;
             $this->calculateMinMaxStats();
@@ -80,7 +92,6 @@ class MapRecent extends Component
     protected function calculateMinMaxStats()
     {
         $fields = [
-            //terminowe
             'temperatura_gruntu',
             'wiatr_kierunek',
             'wiatr_srednia_predkosc',
@@ -89,29 +100,50 @@ class MapRecent extends Component
             'wilgotnosc_wzgledna',
             'opad_10min',
             'temperatura_powietrza',
-
         ];
 
         foreach ($fields as $field) {
-            $values = collect($this->stationData)->pluck($field)->filter(fn($val) => is_numeric($val));
+            $numericRecords = collect($this->stationData)
+                ->filter(function ($entry) use ($field) {
+                    return is_numeric($entry[$field] ?? null)
+                        && $this->isRecentEnough($entry[$field . '_data'] ?? null);
+                });
+
+            $minValue = $numericRecords->min($field);
+            $maxValue = $numericRecords->max($field);
+
+            $minStation    = $numericRecords->firstWhere($field, $minValue)['nazwa_stacji'] ?? null;
+            $minidStation  = $numericRecords->firstWhere($field, $minValue)['kod_stacji'] ?? null;
+            $maxStation    = $numericRecords->firstWhere($field, $maxValue)['nazwa_stacji'] ?? null;
+            $maxidStation  = $numericRecords->firstWhere($field, $maxValue)['kod_stacji'] ?? null;
+
             $this->minMaxStats[$field] = [
-                'min' => $values->isEmpty() ? null : $values->min(),
-                'max' => $values->isEmpty() ? null : $values->max(),
-                'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+                'min'             => $numericRecords->isEmpty() ? null : $minValue,
+                'min_station'     => $numericRecords->isEmpty() ? null : $minStation,
+                'min_station_id'  => $numericRecords->isEmpty() ? null : $minidStation,
+                'max'             => $numericRecords->isEmpty() ? null : $maxValue,
+                'max_station'     => $numericRecords->isEmpty() ? null : $maxStation,
+                'max_station_id'  => $numericRecords->isEmpty() ? null : $maxidStation,
+                'avg'             => $numericRecords->isEmpty() ? null : round($numericRecords->avg($field), 1),
             ];
         }
     }
+
+
     public function updatedOption()
     {
         $this->getStations();
+        $this->getStationDataid(null);
     }
     protected function getStations()
     {
         // Unique cache key for this option
         $cacheKey = "stations_list_{$this->option}";
+        $tmpmatchingRecords = [];
 
-        $this->stations = Cache::remember($cacheKey, now()->addMinutes(5), function () {
+        [$this->stations, $tmpmatchingRecords] = Cache::remember($cacheKey, now()->addMinutes(5), function () {
             $tmpStations = [];
+            $matchingRecords = [];
 
             foreach ($this->stationData as $entry) {
                 $id = trim($entry['kod_stacji'] ?? '');
@@ -166,17 +198,22 @@ class MapRecent extends Component
                     }
                 }
 
-                // 'all' means no filtering
-
+                // Passed filter → add to both arrays
                 $tmpStations[] = [
                     'kod_stacji' => $id,
                     'nazwa_stacji' => $name
                 ];
+                $matchingRecords[] = $entry;
             }
 
-            return collect($tmpStations)->sortBy('nazwa_stacji')->values()->all();
+            return [
+                collect($tmpStations)->sortBy('nazwa_stacji')->values()->all(),
+                $matchingRecords
+            ];
         });
+        $this->dispatch('layer-updated', $tmpmatchingRecords, $this->askTime, $this->option);
     }
+
     protected function sortWetherData()
     {
         if ($this->sortBy === '') {
@@ -230,7 +267,9 @@ class MapRecent extends Component
             // Cache::put('DaneStacjiL' . $kod, $this->stationDataId, now()->addMinutes(5));
         } else {
             $this->stationDataId = [];
-            $this->error = 'Nie znaleziono danych dla podanej stacji.';
+            if ($kod !== null) {
+                $this->error = 'Nie znaleziono danych dla podanej stacji.';
+            }
         }
     }
     protected function isRecentEnough(?string $utcString, int $maxAgeMinutes = 120): bool
@@ -239,42 +278,16 @@ class MapRecent extends Component
             return false;
         }
         try {
-            $utcDate = new DateTime($utcString, new DateTimeZone('UTC'));
+            $utcDate = new DateTime($utcString);
         } catch (\Exception $e) {
             return false;
         }
 
-        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $now = new DateTime('now');
         $diffMinutes = ($now->getTimestamp() - $utcDate->getTimestamp()) / 60;
 
         return $diffMinutes >= 0 && $diffMinutes <= $maxAgeMinutes;
     }
-
-    // public function getStationDataid($kod)
-    // {
-    //     $this->stationId = $kod;
-    //     $this->stationData;
-    //     try {
-    //         if (!Cache::has('DaneStacji' . $this->stationId)) {
-    //             $response = Http::timeout(5)->connectTimeout(5)->retry(3, 100)->get("https://danepubliczne.imgw.pl/api/data/meteo/id/{$this->stationId}");
-    //             if ($response->successful()) {
-    //                 $this->stationDataId =  (array) json_decode($response->body(), true)[0];
-    //                 Cache::put('DaneStacji' . $this->stationId, $this->stationDataId, now()->addMinutes(5));
-    //                 $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
-    //                 Cache::put('AskTime' . $this->stationId, $this->askTime);
-    //             } else {
-    //                 $this->stationDataId = [];
-    //             }
-    //         } else {
-    //             $this->stationDataId = Cache::get('DaneStacji' . $this->stationId);
-    //             $this->askTime = Cache::get('AskTime' . $this->stationId);
-    //         }
-    //     } catch (\Throwable $th) {
-    //         $this->stationDataId = [];
-    //         $this->error = 'Nie udało się pobrać danych z API. ';
-    //     }
-    // }
-
 
     public function render()
     {

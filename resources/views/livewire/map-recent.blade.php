@@ -1,28 +1,9 @@
 <div>
-    {{-- To attain knowledge, add things every day; To attain wisdom, subtract things every day. --}}
-    {{-- @section('list')
-        <div>
-            @if (!empty($stationData))
-
-                @foreach (collect($stationData)->sortBy('nazwa_stacji') as $stacja)
-
-                                                <div
-                                                    class="station-list-item cursor-pointer hover:bg-gray-200 px-2 py-1 border-b"
-                                                    data-kod="{{ $stacja->kod_stacji }}" onclick="focusStation('{{ $stacja->kod_stacji }}')"
-                                                >
-                                                    {{ $stacja->nazwa_stacji }}
-                                                </div>
-                @endforeach
-            @endif
-        </div>
-    @endsection --}}
 
     @php
          use Carbon\Carbon;
     @endphp
-    <div class="p-2 space-y-4 w-full">
-
-
+    <div class="p-4 space-y-4 w-full">
         <div class="bg-white rounded-md shadow-sm border">
 
             <h1 class=" pt-3 px-2 sm:px-3 pb-2 text-center text-sm sm:text-xl font-bold tracking-wider">Przeglądasz najnowsze dane meteorologiczne stacji pogodowych dostępne przez API IMGW</h1>
@@ -36,10 +17,6 @@
                                         }
 
                                     }"
-                                    x-init="$watch('$wire.option', value => {
-                                        toggleLayer(value);
-                                    })"
-
                                     class="w-full p-1 pb-2 flex flex-col justify-between border-b">
 
                                         {{-- <p class="ms-2 text-sm text-gray-500 font-medium">Wybierz rodzaj danych wyświetlanych na mapie:</p> --}}
@@ -48,32 +25,32 @@
                                             role="tablist">
 
                                             <!-- Buttons -->
-                                            <button data-tab="temp" x-on:click="selectTab('temp');" wire:loading.attr="disabled" wire:target="getStationData"
+                                            <button data-tab="temp" x-on:click="selectTab('temp');" wire:loading.attr="disabled" wire:target="getStationData, getStations, getStationDataid"
                                             :class="selectedTab === 'temp' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                             class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3  transition-all rounded-md cursor-pointer whitespace-nowrap"
                                             type="button" role="tab">Temp. powietrza [°C]</button>
 
-                                            <button data-tab="tempg" x-on:click="selectTab('tempg');" wire:loading.attr="disabled" wire:target="getStationData"
+                                            <button data-tab="tempg" x-on:click="selectTab('tempg');" wire:loading.attr="disabled" wire:target="getStationData, getStations, getStationDataid"
                                             :class="selectedTab === 'tempg' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                             class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-7 px-3  transition-all rounded-md cursor-pointer whitespace-nowrap"
                                             type="button" role="tab">Temp. gruntu [°C]</button>
 
-                                            <button data-tab="hum" x-on:click="selectTab('hum');" wire:loading.attr="disabled" wire:target="getStationData"
+                                            <button data-tab="hum" x-on:click="selectTab('hum');" wire:loading.attr="disabled" wire:target="getStationData, getStations, getStationDataid"
                                             :class="selectedTab === 'hum' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                             class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3  transition-all rounded-md cursor-pointer whitespace-nowrap"
                                             type="button" role="tab">Wilg. względna [%]</button>
 
-                                            <button data-tab="wind" x-on:click="selectTab('wind'); " wire:loading.attr="disabled" wire:target="getStationData"
+                                            <button data-tab="wind" x-on:click="selectTab('wind'); " wire:loading.attr="disabled" wire:target="getStationData, getStations, getStationDataid"
                                             :class="selectedTab === 'wind' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                             class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3  transition-all rounded-md cursor-pointer whitespace-nowrap"
                                             type="button" role="tab">Wiatr śr. prędkość [m/s]</button>
 
-                                            <button data-tab="rain" x-on:click="selectTab('rain'); " wire:loading.attr="disabled" wire:target="getStationData"
+                                            <button data-tab="rain" x-on:click="selectTab('rain'); " wire:loading.attr="disabled" wire:target="getStationData, getStations, getStationDataid"
                                             :class="selectedTab === 'rain' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                             class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3 transition-all rounded-md cursor-pointer whitespace-nowrap"
                                             type="button" role="tab">Opad deszczu (10 min) [mm]</button>
 
-                                            <button data-tab="all" x-on:click="selectTab('all');" wire:loading.attr="disabled" wire:target="getStationData"
+                                            <button data-tab="all" x-on:click="selectTab('all');" wire:loading.attr="disabled" wire:target="getStationData, getStations, getStationDataid"
                                             :class="selectedTab === 'all' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                             class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3  transition-all rounded-md cursor-pointer whitespace-nowrap"
                                             type="button" role="tab">Lokalizacje stacji</button>
@@ -86,37 +63,48 @@
                     <div wire:ignore class="relative w-auto h-[48rem]  flex justify-center p-4   shadow-sm border">
                         <!-- Map (initially hidden or placed underneath) -->
                         <div class="absolute top-0 left-0 w-full h-full z-10 animate-pulse bg-gray-300  shadow-sm  "></div>
-                        <div wire:ignore id="map" class="absolute top-0 left-0 w-full h-full z-20  shadow-sm "></div>
+                        <div wire:ignore id="map" class="absolute top-0 left-0 w-full h-full z-10  shadow-sm "></div>
+                        <div wire:loading wire:target.except="setSort, getStationDataid" class="absolute top-0 left-0 w-full h-full z-30 flex flex-col justify-center">
+                            <div class="w-full h-full flex flex-col justify-center text-center items-center text-gray-500">
+                                <p class="w-min text-sm sm:text-xl font-bold  p-3 bg-white rounded-md ">Ładowanie...</p>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
-                <div class="sm:col-span-1 border-b max-h-[20rem] sm:max-h-[48rem] flex flex-col ">
-                    <div class="text-sm ps-2  py-1 font-medium bg-blue-50">Dostępne stacje:</div>
-                    <hr>
-                    <div
+                <div class="sm:col-span-1 border-t max-h-[20rem] sm:max-h-[48rem] flex flex-col bg-blue-50 border-gray-300">
+                    <div  class="bg-blue-100 relative pt-2 px-2 flex w-full max-w-full flex-col gap-1 text-slate-700 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="absolute left-4 top-9 size-5 -translate-y-1/2 text-slate-700/50 " aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                                </svg>
+                                <input id="stationSearch"  type="search" placeholder="Szukaj stacji..." class="w-full border border-slate-300 rounded-xl bg-white px-2 py-1.5 pl-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-75 " name="search" aria-label="Search" placeholder="Search"/>
+                    </div>
+                    <div class="text-xs ps-4 text-gray-500 py-1 font-medium bg-blue-100 border-b border-gray-300">Dostępne stacje pomiarowe  [{{ collect($stations)->count(0)  }}]:</div>
+
+                    <div id="stationList"
                         x-data="{ stationId: $wire.entangle('stationId') }"
-                        class=" text-xs overflow-y-auto  w-full max-h-full bg-slate-50">
+                        class=" text-xs overflow-y-auto  w-full min-h-[18rem] max-h-full h-full bg-slate-50 relative">
 
                         @if (!empty($stations))
                             @foreach (collect($stations)->sortBy('nazwa_stacji') as $stacja)
                                 <div
-                                    class="station-list-item cursor-pointer hover:bg-gray-200 px-2 py-1 border"
+                                    class="station-list-item cursor-pointer hover:bg-gray-200 px-2 py-1 border z-20"
                                     :class="{ 'bg-slate-100 font-bold border-2': stationId === '{{ $stacja['kod_stacji'] }}' }"
                                     data-kod="{{ $stacja['kod_stacji'] }}"
                                     x-on:click="stationId = '{{ $stacja['kod_stacji'] }}'; focusStation('{{ $stacja['kod_stacji'] }}')"
                                 >
-                                    <p class=" truncate  hover:underline" :class="{ 'py-1 text-sm text-blue-500': stationId === '{{ $stacja['kod_stacji'] }}' }">{{ $stacja['nazwa_stacji'].' ['. $stacja['kod_stacji'] .']' }}</p>
+                                    <p class=" truncate  hover:underline ps-2" :class="{ 'py-1 text-sm text-blue-500': stationId === '{{ $stacja['kod_stacji'] }}' }">{{ $stacja['nazwa_stacji'].' ['. $stacja['kod_stacji'] .']' }}</p>
                                     <!-- Show links if this is the selected station -->
                                     <template x-if="stationId === '{{ $stacja['kod_stacji'] }}'">
                                         <div class="ps-2 text-end flex flex-col justify-end ">
                                             <div class="pb-1 w-full text-end"> Zobacz dane:</div>
 
                                             <div class="text-xs flex flex-row gap-2 justify-end">
-                                                <a class="hover:underline text-gray-500 text-nowrap"
+                                                <a class="underline text-gray-500 text-nowrap"
                                                 href="{{ route('stacja_archive').'/?id='.$stacja['kod_stacji'] }}">
                                                     Dane archiwalne
                                                 </a>
-                                                <a class="hover:underline text-blue-500 text-nowrap"
+                                                <a class="underline text-blue-500 text-nowrap"
                                                 href="{{ route('stacja_recent').'/?id='.$stacja['kod_stacji'] }}">
                                                     Dane bieżące
                                                 </a>
@@ -126,10 +114,12 @@
                                     </template>
                                 </div>
                             @endforeach
+                        @else
+                                <div class="text-wrap text-center text-base bg-white">Brak stacji wykonujących pomiary.</div>
                         @endif
                     </div>
-                    <hr>
-                    <div  class="text-sm ps-2   py-1 font-medium bg-blue-50">Stacje z odczytami: {{ collect($stations)->count(0)  }}</div>
+
+                    <div  class="text-sm ps-2 min-h-2  py-1 font-medium bg-blue-100 border-y border-gray-300"></div>
                 </div>
 
             </div>
@@ -144,16 +134,17 @@
                 <p wire:loading wire:target.except="setSort, getStationDataid" class="hidden md:block text-sm ps-2 px-4 py-1 font-medium  animate-pulse">Aktualizowanie...</p>
             </div>
         </div>
-        <div class="p-4 bg-white rounded-md shadow-sm text-xs sm:text-sm min-h-72 w-full">
+        <div class="p-4 bg-white rounded-md shadow-sm text-xs sm:text-sm min-h-32 h-auto w-full">
                         @if (!empty($stationId))
                             <div wire:loading.remove wire:target="getStationData">
-                                <p class="font-bold  text-sm sm:text-base text-lime-600">
-                                    Najnowsze dane meteo dla stacji ID: <span class="text-nowrap">{{ $stationDataId['kod_stacji'] }} ({{ $stationDataId['nazwa_stacji'] ?? '-' }})</span>
-                                </p>
-                                <p class="text-xs text-gray-500 mb-2">
+                                <div class="flex flex-col sm:flex-row  justify-between w-full mb-4">
+                                    <p class="truncate font-bold  text-sm sm:text-base text-gray-500 w-auto">Najnowsze dane meteo dla stacji <span class="text-nowrap text-lime-600">{{ $stationDataId['nazwa_stacji'] ?? '-' }} [{{  $stationDataId['kod_stacji'] }}] </span></p>
+                                    <p class="text-xs text-gray-500  w-auto">
                                     Dane pobrano: {{ $askTime ?? '–' }}
-                                </p>
-                                <ul class="grid grid-cols-2 gap-4 sm:text-sm">
+                                    </p>
+                                </div>
+
+                                <ul class="flex flex-row gap-4 sm:text-sm overflow-x-auto text-nowrap">
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
                                             <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -165,7 +156,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationDataId['temperatura_powietrza_data']) ? Carbon::parse($stationDataId['temperatura_powietrza_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationDataId['temperatura_powietrza_data']) ? Carbon::parse($stationDataId['temperatura_powietrza_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -179,7 +170,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationDataId['temperatura_gruntu_data']) ? Carbon::parse($stationDataId['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationDataId['temperatura_gruntu_data']) ? Carbon::parse($stationDataId['temperatura_gruntu_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -192,7 +183,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationDataId['wilgotnosc_wzgledna_data']) ? Carbon::parse($stationDataId['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationDataId['wilgotnosc_wzgledna_data']) ? Carbon::parse($stationDataId['wilgotnosc_wzgledna_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -205,7 +196,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationData['wiatr_srednia_predkosc_data']) ? Carbon::parse($stationDataId['wiatr_srednia_predkosc_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationData['wiatr_srednia_predkosc_data']) ? Carbon::parse($stationDataId['wiatr_srednia_predkosc_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -218,7 +209,7 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationDataId['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($stationDataId['wiatr_predkosc_maksymalna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationDataId['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($stationDataId['wiatr_predkosc_maksymalna_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -236,15 +227,14 @@
                                                 </strong>
                                             </div>
                                             <div class="flex items-end sm:items-center gap-1">
+                                                <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation+90 }}deg;">
+                                                    ➤
+                                                </div>
                                                 {{ $stationDataId['wiatr_kierunek'] ?? '-' }} °
-                                                [
-                                                <div class="inline-block transform font-extrabold px-1" style="rotate: {{ $rotation }}deg;">
-                                                    ↓
-                                                </div>]
                                             </div>
                                         </div>
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationDataId['wiatr_kierunek_data']) ? Carbon::parse($stationDataId['wiatr_kierunek_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationDataId['wiatr_kierunek_data']) ? Carbon::parse($stationDataId['wiatr_kierunek_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -253,11 +243,11 @@
                                                 viewBox="0 0 24 24">
                                                 <path d="M4 4l16 16" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                            <strong class=" w-min sm:w-auto">Wiatr poryw <span class="text-nowrap">(10 min):</span></strong> {{ $stationDataId['wiatr_poryw_10min'] ?? '-' }} m/s
+                                            <strong class=" w-min sm:w-auto">Wiatr poryw:</strong> {{ $stationDataId['wiatr_poryw_10min'] ?? '-' }} m/s
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationDataId['wiatr_poryw_10min_data']) ? Carbon::parse($stationDataId['wiatr_poryw_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationDataId['wiatr_poryw_10min_data']) ? Carbon::parse($stationDataId['wiatr_poryw_10min_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                     <li>
@@ -270,14 +260,14 @@
                                         </p>
 
                                         <div class="text-xs text-gray-500">
-                                            {{ !empty($stationDataId['opad_10min_data']) ? Carbon::parse($stationDataId['opad_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak pomiaru' }}
+                                            {{ !empty($stationDataId['opad_10min_data']) ? Carbon::parse($stationDataId['opad_10min_data'])->format('Y-m-d H:i') : 'Brak pomiaru' }}
                                         </div>
                                     </li>
                                 </ul>
                             </div>
                         @elseif(!empty($error))
-                            <div wire:loading.remove wire:target="getStationDataid"  class="relative h-full w-full flex flex-col justify-center text-center ">
-                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center">
+                            <div wire:loading.remove wire:target="getStationDataid"  class="min-h-20 items-center w-full flex flex-col justify-center text-center ">
+                                <div class=" font-bold  w-full flex flex-col justify-center">
                                     <div class="text-sm font-bold text-red-500">W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
                                     <div class="font-bold text-gray-600 text-sm mt-2">
                                         Wybierz inną stację lub spróbuj innej z tego samego regionu.
@@ -289,15 +279,15 @@
                                 </div>
                             </div>
                         @else
-                            <div wire:loading.remove wire:target="getStationDataid"  class="relative h-full w-full flex flex-col justify-center text-center ">
-                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center">
-                                    <p class="w-full h-full m-auto animate-pulse">Oczekiwanie na wybór stacji...</p>
+                            <div wire:loading.remove  wire:target="getStationDataid"  class="min-h-20 items-center  w-full flex flex-col justify-center text-center ">
+                                <div class="font-bold w-full flex flex-col items-center justify-center">
+                                    <p class="w-full  m-auto animate-pulse">Oczekiwanie na wybór stacji...</p>
                                 </div>
                             </div>
                         @endif
-                        <div wire:loading wire:target="getStationDataid"  class="relative h-full text-center ">
-                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center">
-                                    <p class="w-full h-full m-auto animate-pulse">Pobieranie danych...</p>
+                        <div wire:loading  wire:target="getStationDataid"  class="pt-2 min-h-20 items-center w-full flex flex-col justify-center text-center ">
+                                <div class="font-bold items-center w-full flex flex-col justify-center">
+                                    <p class="w-full  m-auto animate-pulse">Pobieranie danych...</p>
                                 </div>
                         </div>
         </div>
@@ -346,7 +336,7 @@
                 <div wire:loading.remove wire:target="getStationData"  class="ms-2 text-xs sm:text-sm pb-4 font-semibold text-gray-500 flex flex-row justify-between">
                 Statystyki odczytanych danych:
                 </div>
-                <div class="h-44 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
+                <div class="h-64 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
                     <table wire:loading.remove wire:target="getStationData"  class="w-full text-left h-full">
 
                                 <thead class="border-b-2 border-gray-300  text-black text-center h-auto">
@@ -354,10 +344,10 @@
                                         <span class="text-nowrap">Typ wartości</span>
                                     </th>
                                     <th class="p-2  text-gray-600">
-                                        Temp. <span class="text-nowrap">gruntu [°C]</span>
+                                        Temp. <span class="text-nowrap">powietrza [°C]</span>
                                     </th>
                                     <th class="p-2  text-gray-600">
-                                        Temp. <span class="text-nowrap">powietrza [°C]</span>
+                                        Temp. <span class="text-nowrap">gruntu [°C]</span>
                                     </th>
                                     <th class="p-2  text-gray-600">
                                         Wilg. <span class="text-nowrap">względna [%]</span>
@@ -378,18 +368,83 @@
                                 <tbody class="divide-y divide-slate-100  text-xs h-full">
                                     <tr class="bg-red-50 text-center font-semibold h-auto">
                                         <td class="p-2 text-gray-700">MAKS.</td>
-                                        <td>{{ $minMaxStats['temperatura_gruntu']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['temperatura_powietrza']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['opad_10min']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['max'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['max'] ?? '-' }}</td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['temperatura_powietrza']['max'] ?? '-' }}
+                                                @if ($minMaxStats['temperatura_powietrza']['max']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['temperatura_powietrza']['max_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['temperatura_powietrza']['max_station'] ?? '-' }} {{ $minMaxStats['temperatura_powietrza']['max_station_id'] ?? '-' }}</a>
+                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['temperatura_gruntu']['max'] ?? '-' }}
+                                                @if ($minMaxStats['temperatura_gruntu']['max']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['temperatura_gruntu']['max_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['temperatura_gruntu']['max_station'] ?? '-' }} {{ $minMaxStats['temperatura_gruntu']['max_station_id'] ?? '-' }}</a>
+                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wilgotnosc_wzgledna']['max'] ?? '-' }}
+                                                @if ($minMaxStats['wilgotnosc_wzgledna']['max']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wilgotnosc_wzgledna']['max_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['wilgotnosc_wzgledna']['max_station'] ?? '-' }} {{ $minMaxStats['wilgotnosc_wzgledna']['max_station_id'] ?? '-' }}</a>
+                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['opad_10min']['max'] ?? '-' }}
+                                                @if ($minMaxStats['opad_10min']['max']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['opad_10min']['max_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                    <span class="text-nowrap"> {{ $minMaxStats['opad_10min']['max_station'] ?? '-' }} {{ $minMaxStats['opad_10min']['max_station_id'] ?? '-' }}</span> </a>
+                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wiatr_srednia_predkosc']['max'] ?? '-' }}
+                                                @if ($minMaxStats['wiatr_srednia_predkosc']['max']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wiatr_srednia_predkosc']['max_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['wiatr_srednia_predkosc']['max_station'] ?? '-' }} {{ $minMaxStats['wiatr_srednia_predkosc']['max_station_id'] ?? '-' }}</a>
+                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wiatr_predkosc_maksymalna']['max'] ?? '-' }}
+                                                @if ($minMaxStats['wiatr_predkosc_maksymalna']['max']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wiatr_predkosc_maksymalna']['max_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['wiatr_predkosc_maksymalna']['max_station'] ?? '-' }} {{ $minMaxStats['wiatr_predkosc_maksymalna']['max_station_id'] ?? '-' }}</a>
+                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wiatr_poryw_10min']['max'] ?? '-' }}
+                                                @if ($minMaxStats['wiatr_poryw_10min']['max']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wiatr_poryw_10min']['max_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['wiatr_poryw_10min']['max_station'] ?? '-' }} {{ $minMaxStats['wiatr_poryw_10min']['max_station_id'] ?? '-' }}</a>
+                                                 @endif
+                                            </div>
+                                        </td>
+
                                     </tr>
                                     <tr class="bg-green-50 text-center h-auto">
                                         <td class="p-2 text-gray-700">ŚR.</td>
-                                        <td>{{ $minMaxStats['temperatura_gruntu']['avg'] ?? '-' }}</td>
+
                                         <td>{{ $minMaxStats['temperatura_powietrza']['avg'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temperatura_gruntu']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['opad_10min']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
@@ -398,13 +453,76 @@
                                     </tr>
                                     <tr class="bg-blue-50 text-center font-semibold h-auto">
                                         <td class="p-2 text-gray-700">MIN.</td>
-                                        <td>{{ $minMaxStats['temperatura_gruntu']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['temperatura_powietrza']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['opad_10min']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
-                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['min'] ?? '-' }}</td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['temperatura_powietrza']['min'] ?? '-' }}
+                                                @if ($minMaxStats['temperatura_powietrza']['min']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['temperatura_powietrza']['min_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['temperatura_powietrza']['min_station'] ?? '-' }} {{ $minMaxStats['temperatura_powietrza']['min_station_id'] ?? '-' }}</a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['temperatura_gruntu']['min'] ?? '-' }}
+                                                @if ($minMaxStats['temperatura_gruntu']['min']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['temperatura_gruntu']['min_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['temperatura_gruntu']['min_station'] ?? '-' }} {{ $minMaxStats['temperatura_gruntu']['min_station_id'] ?? '-' }}</a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wilgotnosc_wzgledna']['min'] ?? '-' }}
+                                                @if ($minMaxStats['wilgotnosc_wzgledna']['min']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wilgotnosc_wzgledna']['min_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['wilgotnosc_wzgledna']['min_station'] ?? '-' }} {{ $minMaxStats['wilgotnosc_wzgledna']['min_station_id'] ?? '-' }}</a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['opad_10min']['min'] ?? '-' }}
+                                                @if ($minMaxStats['opad_10min']['min']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['opad_10min']['min_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['opad_10min']['min_station'] ?? '-' }} {{ $minMaxStats['opad_10min']['min_station_id'] ?? '-' }}</a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}
+                                                @if ($minMaxStats['wiatr_srednia_predkosc']['min']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wiatr_srednia_predkosc']['min_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['wiatr_srednia_predkosc']['min_station'] ?? '-' }} {{ $minMaxStats['wiatr_srednia_predkosc']['min_station_id'] ?? '-' }}</a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wiatr_predkosc_maksymalna']['min'] ?? '-' }}
+                                                @if ($minMaxStats['wiatr_predkosc_maksymalna']['min']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wiatr_predkosc_maksymalna']['min_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                {{ $minMaxStats['wiatr_predkosc_maksymalna']['min_station'] ?? '-' }} {{ $minMaxStats['wiatr_predkosc_maksymalna']['min_station_id'] ?? '-' }}</a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-1 sm:px-2">
+                                            <div class="flex flex-col mt-2">
+                                                {{ $minMaxStats['wiatr_poryw_10min']['min'] ?? '-' }}
+                                                @if ($minMaxStats['wiatr_poryw_10min']['min']!=null)
+                                                <a style="font-size: 0.6rem;" x-on:click="focusStation('{{ $minMaxStats['wiatr_poryw_10min']['min_station_id'] ?? null }}')"
+                                                class=" cursor-pointer text-xs text-gray-500 truncate underline text-nowrap">
+                                                    {{ $minMaxStats['wiatr_poryw_10min']['min_station'] ?? '-' }} {{ $minMaxStats['wiatr_poryw_10min']['min_station_id'] ?? '-' }}</a>
+                                                @endif
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
 
@@ -597,50 +715,50 @@
                                                             {{ $data['nazwa_stacji'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'temperatura_powietrza_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['temperatura_powietrza_data']) ? Carbon::parse($data['temperatura_powietrza_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['temperatura_powietrza_data']) ? Carbon::parse($data['temperatura_powietrza_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'temperatura_powietrza' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['temperatura_powietrza'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['temperatura_gruntu_data']) ? Carbon::parse($data['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['temperatura_gruntu_data']) ? Carbon::parse($data['temperatura_gruntu_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'temperatura_gruntu' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['temperatura_gruntu'] ?? '-' }}
                                                         </td>
 
                                                         <td class="p-2 text-nowrap {{$sortBy === 'wilgotnosc_wzgledna_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wilgotnosc_wzgledna_data']) ? Carbon::parse($data['wilgotnosc_wzgledna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['wilgotnosc_wzgledna_data']) ? Carbon::parse($data['wilgotnosc_wzgledna_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wilgotnosc_wzgledna' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['wilgotnosc_wzgledna'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'opad_10min_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['opad_10min_data']) ? Carbon::parse($data['opad_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['opad_10min_data']) ? Carbon::parse($data['opad_10min_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'opad_10min' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['opad_10min'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'wiatr_srednia_predkosc_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_srednia_predkosc_data']) ? Carbon::parse($data['wiatr_srednia_predkosc_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['wiatr_srednia_predkosc_data']) ? Carbon::parse($data['wiatr_srednia_predkosc_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wiatr_srednia_predkosc' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['wiatr_srednia_predkosc'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'wiatr_predkosc_maksymalna_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($data['wiatr_predkosc_maksymalna_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['wiatr_predkosc_maksymalna_data']) ? Carbon::parse($data['wiatr_predkosc_maksymalna_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wiatr_predkosc_maksymalna' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['wiatr_predkosc_maksymalna'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'wiatr_poryw_10min_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_poryw_10min_data']) ? Carbon::parse($data['wiatr_poryw_10min_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['wiatr_poryw_10min_data']) ? Carbon::parse($data['wiatr_poryw_10min_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wiatr_poryw_10min' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             {{ $data['wiatr_poryw_10min'] ?? '-' }}
                                                         </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'wiatr_kierunek_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
-                                                            {{ !empty($data['wiatr_kierunek_data']) ? Carbon::parse($data['wiatr_kierunek_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
+                                                            {{ !empty($data['wiatr_kierunek_data']) ? Carbon::parse($data['wiatr_kierunek_data'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wiatr_kierunek' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             @if(!is_null($data['wiatr_kierunek']))
@@ -648,12 +766,10 @@
                                                                     $rotation = is_numeric($data['wiatr_kierunek']) ? $data['wiatr_kierunek'] : 0;
                                                                 @endphp
                                                                 <span class="w-10">
-                                                                    [
-                                                                    <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation }}deg;">
-                                                                        ↓
-                                                                    </div>]
+                                                                    <div class="inline-block transform font-extrabold text-lg px-1" style="rotate: {{ $rotation+90 }}deg;">
+                                                                        ➤
+                                                                    </div>
                                                                 </span>
-
                                                                 {{ $data['wiatr_kierunek'] ?? '-' }}
                                                             @else
                                                                 <span>{{ $data['wiatr_kierunek'] ?? '-' }}</span>
