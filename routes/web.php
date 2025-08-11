@@ -8,13 +8,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::get(
-    '/map',
-    function () {
-        // [generalMap::class, 'showMap']
-        return view('general_map');
-    }
-)->name('map');
+Route::get('/map', function () {
+    return view('general_map');
+})->name('map');
 
 Route::get('/station/recent', function () {
     return view('stacja_recent');
