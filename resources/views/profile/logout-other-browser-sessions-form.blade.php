@@ -8,7 +8,7 @@
     </x-slot>
 
     <x-slot name="content">
-        <div class="max-w-xl text-sm text-gray-600">
+        <div class="max-w-xl text-xs sm:text-sm text-gray-600">
             {{ __('Jeżeli istnieje potrzeba, możesz się wylogować z wszystkich aktywnych sesji w innych przeglądarkach. Najnowsze sesje są wyświetlone poniżej, ale mogą to nie być wszystkie, jeżeli istnieje więcej.') }}
         </div>
 
@@ -53,7 +53,7 @@
 
         <div class="flex items-center mt-5 flex-row justify-end">
             <x-button wire:click="confirmLogout" wire:loading.attr="disabled">
-                {{ __('Wyloguj wszystkie sesje w innych przeglądarkach') }}
+                {{ __('Wyloguj sesje w innych przeglądarkach') }}
             </x-button>
 
             <x-action-message class="ms-3" on="loggedOut">
@@ -64,7 +64,7 @@
         <!-- Log Out Other Devices Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmingLogout">
             <x-slot name="title">
-                {{ __('Wyloguj wszystkie sesje w innych przeglądarkach') }}
+                {{ __('Wyloguj sesje w innych przeglądarkach') }}
             </x-slot>
 
             <x-slot name="content">

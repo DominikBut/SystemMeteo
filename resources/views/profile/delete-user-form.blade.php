@@ -8,7 +8,7 @@
     </x-slot>
 
     <x-slot name="content">
-        <div class="max-w-xl text-sm text-gray-600">
+        <div class="max-w-xl text-xs sm:text-sm text-gray-600">
             {{ __('Jeżeli usuniesz konto, wszystkie stacje i dane powiązane z nimi zostaną usunięte!') }}
         </div>
 
