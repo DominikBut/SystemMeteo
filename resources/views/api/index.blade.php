@@ -1,13 +1,13 @@
 <x-guest-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('API Tokens') }}
-        </h2>
+            {{ __('Moje tokeny API') }}
     </x-slot>
 
-    <div>
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+    <div class="py-6">
+        <div class="mx-auto sm:px-2 lg:px-8 max-w-[100rem]">
+            <div class="overflow-hidden">
             @livewire('api.api-token-manager')
+            </div>
         </div>
     </div>
 </x-guest-layout>

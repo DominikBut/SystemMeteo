@@ -196,13 +196,30 @@
 
                                     </div>
                                 </div>
-                                <a href="{{ url('/dashboard') }}" class="flex items-center rounded-xl gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                {{ request()->routeIs('xd') ? 'bg-blue-700/10 text-black' : 'hover:bg-blue-700/5 hover:text-black text-slate-700' }}">
+                                <a href="{{ route('profile.show')}}" class="flex items-center rounded-xl gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                {{ request()->routeIs('profile.show') ? 'bg-blue-700/10 text-black' : 'hover:bg-blue-700/5 hover:text-black text-slate-700' }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
                                     </svg>
-                                    <span>Dashboard</span>
+                                    <span>Moje konto</span>
                                 </a>
+                                <a href="{{ url('/dashboard') }}" class="flex items-center rounded-xl gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                {{ request()->routeIs('dashboard') ? 'bg-blue-700/10 text-black' : 'hover:bg-blue-700/5 hover:text-black text-slate-700' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Moje stacje pogodowe</span>
+                                </a>
+                                 @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                                <a href="{{ route('api-tokens.index') }}" class="flex items-center rounded-xl gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                {{ request()->routeIs('api-tokens.index') ? 'bg-blue-700/10 text-black' : 'hover:bg-blue-700/5 hover:text-black text-slate-700' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Moje tokeny API</span>
+                                </a>
+                                @endif
+
                                 @else
 
                                     <a  href="{{ route('login') }}" class="flex items-center rounded-xl gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
@@ -230,14 +247,14 @@
                     </nav>
 
                     <!-- main content  -->
-                    <div  class="h-svh w-full overflow-y-auto  bg-gray-100 ">
+                    <div  class="h-svh w-full overflow-y-auto ">
                                 <!-- Page Heading -->
                         @if (isset($header))
                             <header class="bg-white shadow-sm">
-                                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                                    <h2 class=" px-2 mx-2 text-center sm:text-start text-sm sm:text-2xl font-bold tracking-wider">
+                                <div class="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
+                                    <h1 class=" px-2 mx-2 sm:text-start text-base sm:text-2xl font-bold tracking-wider">
                                     {{ $header }}
-                                    </h2>
+                                    </h1>
                                 </div>
                             </header>
                         @endif

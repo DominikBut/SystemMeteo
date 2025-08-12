@@ -10,27 +10,32 @@ use Filament\Tables\Table;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\HtmlString;
+use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Forms\Components\ToggleButtons;
@@ -41,13 +46,6 @@ class PersonalStations extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
-    // public $stations = null;
-    // public $stationId = null;
-    // public function mount()
-    // {
-    //     $this->stations = Stations::where('user_id', Auth::id())->get() ?? null;
-    //     $this->stationId = Stations::where('user_id', Auth::id())->orderBy('created_at', 'desc')->first()->id ?? null;
-    // }
     public function table(Table $table): Table
     {
         return $table
@@ -61,9 +59,8 @@ class PersonalStations extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('index')->label('Lp.')
                     ->rowIndex(),
-                TextColumn::make('id')->label('ID')->url(fn($record) => route('stacja_recent', ['id' => $record->id]))
-                    ->openUrlInNewTab()->weight(FontWeight::Medium)->color(Color::Blue) // optional if you want it to open in a new tab
-                    ->extraAttributes(['class' => 'text-blue-500 underline cursor-pointer']),
+                TextColumn::make('id')->label('ID')->copyable()
+                    ->copyMessage('Skopiowano ID')->tooltip('Skopiuj ID'),
                 TextColumn::make('name')->sortable()->searchable()->color('gray')->label('Nazwa stacji')->limit(30)->icon('heroicon-m-wifi')->weight(FontWeight::Medium),
                 ImageColumn::make('photo')->label('Zdjęcie'),
                 TextColumn::make('created_at')->sortable()->searchable()->color('gray')->label('Utworzono')->wrapHeader(),
@@ -529,10 +526,10 @@ class PersonalStations extends Component implements HasForms, HasTable
                             ])->columns(4),
                         Section::make()
                             ->schema([
-                                Checkbox::make('temperature')->default(true)->inline(true)->label('Odczyt temperatury powietrza'),
-                                Checkbox::make('humidity')->default(true)->inline(true)->label('Odczyt wilgotności względnej'),
-                                Checkbox::make('wind')->default(true)->inline(true)->label('Odczyt prędkości i kierunku wiatru'),
-                                Checkbox::make('rain')->default(true)->inline(true)->label('Odczyt opadu deszczu (10 min)'),
+                                Checkbox::make('temperature')->default(true)->inline(true)->label('Odczyt temperatury powietrza')->columnSpan(2),
+                                Checkbox::make('humidity')->default(true)->inline(true)->label('Odczyt wilgotności względnej')->columnSpan(2),
+                                Checkbox::make('wind')->default(true)->inline(true)->label('Odczyt prędkości i kierunku wiatru')->columnSpan(2),
+                                Checkbox::make('rain')->default(true)->inline(true)->label('Odczyt opadu deszczu (10 min)')->columnSpan(2),
                                 ToggleButtons::make('active')->boolean()->grouped()->default(true)->inline(true)->label('Archiwizacja danych')->helperText(
                                     fn() => new HtmlString('Czy archiwizować/zapisywać dane na serwerze? <br/> [Zaleca się wyłączyć podczas konserwacji stacji]')
                                 )->columnSpan(2),
@@ -543,7 +540,7 @@ class PersonalStations extends Component implements HasForms, HasTable
                                 Textarea::make('description')->disableGrammarly()->autosize()->nullable()->columnSpanFull()->label('Krótki dodatkowy opis stacji.'),
                                 FileUpload::make('photo')->image()->imageEditor()->visibility('public')->directory('stacje')->nullable()->columnSpanFull()->label('Wybierz dodatkowe zdjęcie dla stacji'),
 
-                            ])
+                            ])->columns(4)
                     ])->mutateFormDataUsing(function (array $data): array {
                         $data['user_id'] = Auth::id();
                         return $data;
@@ -555,7 +552,11 @@ class PersonalStations extends Component implements HasForms, HasTable
                     ),
             ])
             ->actions([
-                EditAction::make()->label('Edytuj')->button()
+                ViewAction::make('Dane')->label("Dane")
+                    ->openUrlInNewTab()->url(fn($record) => route('stacja_recent', ['id' => $record->id]))->openUrlInNewTab()->color(Color::Blue)->extraAttributes(['class' => 'text-blue-500 underline cursor-pointer']),
+
+
+                EditAction::make()->label('Edytuj')
                     ->form([
                         Section::make()
                             ->schema([
@@ -590,8 +591,9 @@ class PersonalStations extends Component implements HasForms, HasTable
                             ->title('Usunięto stację')
                             ->color('success'),
                     )
-
             ])
+
+
             ->bulkActions([
                 // ...
             ])->paginated([10]);
