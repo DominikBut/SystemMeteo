@@ -13,7 +13,7 @@
 
         <!-- Scripts -->
         @stack('css')
-        @filamentStyles
+         @filamentStyles
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -277,10 +277,10 @@
 
             </main>
         </div>
-        @livewire('notifications')
+
         @stack('modals')
         @stack('scripts2')
-        @filamentScripts
+
         @livewireScripts
 
     </body>

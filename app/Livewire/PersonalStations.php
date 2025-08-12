@@ -106,7 +106,7 @@ class PersonalStations extends Component implements HasForms, HasTable
                                         $set('lat', $state['lat']);
                                         $set('lon', $state['lng']);
                                     })
-                                    ->tilesUrl('https://tile.openstreetmap.de/{z}/{x}/{y}.png'),
+                                    ->tilesUrl('https://tile.openstreetmap.de/{z}/{x}/{y}.png')->hint('MIT License © Dotswan'),
                                 Hidden::make('lat')->default(52.2297),
                                 // ->hiddenLabel()
                                 // ->hidden(),

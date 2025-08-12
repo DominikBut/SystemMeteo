@@ -7,6 +7,13 @@
             </div>
         </div>
     </div> --}}
+
+     @pushOnce('scripts2')
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+        @livewire('notifications')
+        @filamentScripts
+    @endPushOnce
+
     <x-slot name="header">
             {{ __('Moje stacje pogodowe') }}
     </x-slot>
