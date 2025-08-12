@@ -82,7 +82,22 @@
                     <div class="text-xs ps-4 text-gray-500 py-1 font-medium bg-blue-100 border-b border-gray-300">Dostępne stacje pomiarowe  [{{ collect($stations)->count(0)  }}]:</div>
 
                     <div id="stationList"
-                        x-data="{ stationId: $wire.entangle('stationId') }"
+                        x-data="{ stationId: $wire.entangle('stationId'),
+                        scrollToStation(id) {
+                                this.$nextTick(() => {
+                                    const el = this.$el.querySelector(`[data-kod='${id}']`);
+                                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                });
+                                }
+                            }"
+                            x-init="
+                            // Watch for changes on stationId and scroll
+                            $watch('stationId', value => {
+                                if (value) {
+                                scrollToStation(value);
+                                }
+                            });
+                            "
                         class=" text-xs overflow-y-auto  w-full min-h-[18rem] max-h-full h-full bg-slate-50 relative">
 
                         @if (!empty($stations))

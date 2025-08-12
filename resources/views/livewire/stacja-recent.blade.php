@@ -11,7 +11,7 @@
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
                     <h1 class="col-span-2 bg-white rounded-md shadow-sm py-4 px-2 mx-2 text-center text-sm sm:text-2xl font-bold tracking-wider">Przeglądasz gromadzone przez system dane meteorologiczne API IMGW</h1>
                     <div class="flex flex-col justify-between p-2">
-                         @if (!empty($stations))
+                         @if (!empty($stations) && (count($stations)!=0))
                         <div>
                             <p class="p-1 font-bold text-gray-600">Wybierz jedną z {{ count($stations) }} oficjalnych stacji IMGW:</p>
                             <div class="relative w-full">

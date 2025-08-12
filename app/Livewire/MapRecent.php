@@ -133,7 +133,7 @@ class MapRecent extends Component
     public function updatedOption()
     {
         $this->getStations();
-        $this->getStationDataid(null);
+        $this->getStationDataid(null); /// hm?
     }
     protected function getStations()
     {

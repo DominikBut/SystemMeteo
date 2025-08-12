@@ -33,6 +33,7 @@ class Stations extends Model
         'voivodeship',
         'district',
         'photo',
+        'user_id',
         'description',
         'temperature',
         'humidity',

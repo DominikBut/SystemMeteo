@@ -13,10 +13,12 @@
 
         <!-- Scripts -->
         @stack('css')
+        @filamentStyles
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <!-- Styles -->
+
         @stack('scripts')
         @livewireStyles
     </head>
@@ -83,6 +85,57 @@
                             @if (Route::has('login'))
                                 @auth
                                 <!-- Profile Menu  -->
+                                <!-- Settings Dropdown -->
+                <div class="ms-3 relative">
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                                <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                                    <img class="size-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                                </button>
+                            @else
+                                <span class="inline-flex rounded-md">
+                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                        {{ Auth::user()->name }}
+
+                                        <svg class="ms-2 -me-0.5 size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </button>
+                                </span>
+                            @endif
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <!-- Account Management -->
+                            <div class="block px-4 py-2 text-xs text-gray-400">
+                                {{ __('Manage Account') }}
+                            </div>
+
+                            <x-dropdown-link href="{{ route('profile.show') }}">
+                                {{ __('Profile') }}
+                            </x-dropdown-link>
+
+                            @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                                <x-dropdown-link href="{{ route('api-tokens.index') }}">
+                                    {{ __('API Tokens') }}
+                                </x-dropdown-link>
+                            @endif
+
+                            <div class="border-t border-gray-200"></div>
+
+                            <!-- Authentication -->
+                            <form method="POST" action="{{ route('logout') }}" x-data>
+                                @csrf
+
+                                <x-dropdown-link href="{{ route('logout') }}"
+                                         @click.prevent="$root.submit();">
+                                    {{ __('Log Out') }}
+                                </x-dropdown-link>
+                            </form>
+                        </x-slot>
+                    </x-dropdown>
+                </div>
                                 <div  x-data="{ menuIsOpen: false }" class="mt-auto" x-on:keydown.esc.window="menuIsOpen = false">
                                     <button type="button" class="flex w-full items-center rounded-xl gap-2 p-2 text-left text-slate-700 hover:bg-blue-700/5 hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700  " x-bind:class="menuIsOpen ? 'bg-blue-700/10 ' : ''" aria-haspopup="true" x-on:click="menuIsOpen = ! menuIsOpen" x-bind:aria-expanded="menuIsOpen">
                                         <img src="https://penguinui.s3.amazonaws.com/component-assets/avatar-7.webp" class="size-8 object-cover rounded-xl" alt="avatar" aria-hidden="true"/>
@@ -180,9 +233,11 @@
                     <div  class="h-svh w-full overflow-y-auto  bg-gray-100 ">
                                 <!-- Page Heading -->
                         @if (isset($header))
-                            <header class="bg-white shadow">
+                            <header class="bg-white shadow-sm">
                                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                                    <h2 class=" px-2 mx-2 text-center sm:text-start text-sm sm:text-2xl font-bold tracking-wider">
                                     {{ $header }}
+                                    </h2>
                                 </div>
                             </header>
                         @endif
@@ -205,9 +260,10 @@
 
             </main>
         </div>
-
+        @livewire('notifications')
         @stack('modals')
         @stack('scripts2')
+        @filamentScripts
         @livewireScripts
 
     </body>
