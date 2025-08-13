@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class Data extends Model
@@ -16,6 +17,6 @@ class Data extends Model
     ];
     public function getStation()
     {
-        return $this->belongsTo(Stations::class, 'station_id')->where('user_id', auth()->id());
+        return $this->belongsTo(Stations::class, 'station_id')->where('user_id', Auth::id());
     }
 }
