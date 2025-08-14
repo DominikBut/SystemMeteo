@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Stations extends Model
 {
+    use HasFactory;
     public $incrementing = false; // disable auto increment
     protected $keyType = 'string'; // primary key is a string
 

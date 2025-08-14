@@ -15,7 +15,7 @@
                         <div>
                             <p class="p-1 font-bold text-gray-600">Wybierz jedną z {{ count($stations) }} oficjalnych stacji IMGW:</p>
                             <div class="relative w-full">
-                                <input
+                                <input  wire:loading.attr="disabled" wire:target="loadData"
                                     type="search"
                                     class="bg-white rounded-md shadow-sm border-2 border-gray-300 p-2 w-full"
                                     :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')"
@@ -436,7 +436,7 @@
                             </div>
                         @elseif(!empty($error))
                             <div class="relative p-4 bg-white rounded-md shadow-sm text-sm min-h-72 text-center ">
-                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center">
+                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center p-4">
                                     <div class="text-sm font-bold text-red-500">W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
                                     <div class="font-bold text-gray-600 text-sm mt-2">
                                         Wybierz inną stację lub spróbuj innej z tego samego regionu.
@@ -1542,7 +1542,6 @@
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'wiatr_kierunek' ? 'text-blue-500 font-semibold' : ''  }}">
                                                             @if(!is_null($data['wiatr_kierunek']))
-                                                                {{ $data['wiatr_kierunek'] ?? '-' }}
                                                                 @php
                                                                     $rotation = is_numeric($data['wiatr_kierunek']) ? $data['wiatr_kierunek'] : 0;
                                                                 @endphp

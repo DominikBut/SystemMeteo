@@ -186,6 +186,7 @@ class StacjaRead extends Component
             } else {
                 $this->miesieczneDate = $date2->subYears(2)->format('Y');
             }
+            $this->error = null;
             $this->doboweType = false;
             $this->miesieczneType = false;
             $this->sortBy = 'kod_stacji';

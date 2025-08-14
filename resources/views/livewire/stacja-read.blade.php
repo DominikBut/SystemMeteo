@@ -449,7 +449,7 @@
                             </div>
                         @elseif(!empty($error))
                             <div class="relative p-4 bg-white rounded-md shadow-sm text-sm min-h-72 text-center ">
-                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center">
+                                <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center p-4">
                                     <div class="text-sm font-bold text-red-500">W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
                                     <div class="font-bold text-gray-600 text-sm mt-2">
                                         Wybierz inną stację lub spróbuj innej z tego samego regionu.

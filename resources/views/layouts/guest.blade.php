@@ -78,7 +78,14 @@
                                     <span>Archive dane stacji</span>
 
                                 </a>
+                                <a href="{{ route('stacja_community') }}" class="flex items-center rounded-xl gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                {{ request()->routeIs('stacja_community') ? 'bg-blue-700/10 text-black' : 'hover:bg-blue-700/5 hover:text-black text-slate-700' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
+                                        <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"/>
+                                    </svg>
+                                    <span>Społecznościowe dane stacji</span>
 
+                                </a>
                             </div>
                         </div>
                         <div class="flex flex-col gap-2 overflow-y-auto">

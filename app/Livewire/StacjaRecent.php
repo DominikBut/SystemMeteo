@@ -144,6 +144,7 @@ class StacjaRecent extends Component
             $this->doboweDate = $date->format('Y-m');
             $this->miesieczneDate = $date->format('Y');
             $this->sortBy = 'kod_stacji';
+            $this->error = null;
             $this->sortDirection = 'desc';
             $this->stationData = [];
             $this->sortedData = $this->weatherData;
