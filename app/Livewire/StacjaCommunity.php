@@ -96,8 +96,8 @@ class StacjaCommunity extends Component
     {
         if ($this->validate()) {
             $date = Carbon::yesterday();
-            $this->terminoweEndDate = $date;
-            $this->terminoweStartDate = $date->firstOfMonth();
+            $this->terminoweEndDate = $date->format('Y-m-d');
+            $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
             $this->error = null;
             $this->sortBy = 'id';
             $this->sortDirection = 'desc';
@@ -251,12 +251,14 @@ class StacjaCommunity extends Component
         }
 
         $tmp_stations = [];
+        $owned = [];
         foreach ($stations as $entry) {
             $id = $entry->id;
             $name = $entry->name;
 
             if ($id && $name) {
                 $tmp_stations[$id] = $name;
+                $owned[$entry->id] = $user ? $entry->user_id === $user : false; // extra array
             }
         }
 

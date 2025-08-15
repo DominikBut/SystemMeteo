@@ -23,11 +23,11 @@ class StoreDataRequest extends FormRequest
     {
         return [
             'station_id'     => 'required|string|exists:stations,id',
-            'temp_air'       => 'required|numeric|min:-100|max:100',
-            'humidity'       => 'required|numeric|min:0|max:100',
-            'wind_speed'     => 'required|numeric|min:0|max:1000',
-            'wind_direction' => 'required|integer|min:0|max:360',
-            'rain_10min'     => 'required|numeric|min:0|max:10000',
+            'temp_air'       => 'sometimes|nullable|numeric|min:-100|max:100',
+            'humidity'       => 'sometimes|nullable|numeric|min:0|max:100',
+            'wind_speed'     => 'sometimes|nullable|numeric|min:0|max:1000',
+            'wind_direction' => 'sometimes|nullable|integer|min:0|max:360',
+            'rain_10min'     => 'sometimes|nullable|numeric|min:0|max:10000',
         ];
     }
 }

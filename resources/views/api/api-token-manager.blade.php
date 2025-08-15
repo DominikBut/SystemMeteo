@@ -212,7 +212,10 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
+                <div class="text-xs">Jeżeli stacja nie posiada urządzeń pomiarowych powiązanych z parametrem można pominąć całkowicie parametr lub przesyłać wartość "null".</div>
+
 
             </div>
         </div>

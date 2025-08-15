@@ -553,7 +553,7 @@ class PersonalStations extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ViewAction::make('Dane')->label("Dane")
-                    ->openUrlInNewTab()->url(fn($record) => route('stacja_recent', ['id' => $record->id]))->openUrlInNewTab()->color(Color::Blue)->extraAttributes(['class' => 'text-blue-500 underline cursor-pointer']),
+                    ->openUrlInNewTab()->url(fn($record) => route('stacja_community', ['id' => $record->id]))->openUrlInNewTab()->color(Color::Blue)->extraAttributes(['class' => 'text-blue-500 underline cursor-pointer']),
 
 
                 EditAction::make()->label('Edytuj')

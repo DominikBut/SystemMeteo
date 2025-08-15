@@ -30,12 +30,12 @@ class DataController extends Controller
         }
         // // Store
         Data::create([
-            'station_id'     => $station->id, // FK to stations table
-            'temp_air'       => $request->temp_air,
-            'humidity'       => $request->humidity,
-            'wind_speed'     => $request->wind_speed,
-            'wind_direction' => $request->wind_direction,
-            'rain_10min'     => $request->rain_10min,
+            'station_id'     => $station->id,
+            'temp_air'       => ($station->temperature == true ? $request->temp_air : null),
+            'humidity'       => ($station->humidity == true ? $request->humidity : null),
+            'wind_speed'     => ($station->wind == true ? $request->wind_speed : null),
+            'wind_direction' => ($station->wind == true ? $request->wind_direction : null),
+            'rain_10min'     => ($station->rain == true ? $request->rain_10min : null),
         ]);
 
         // Save or process data linked to $user
