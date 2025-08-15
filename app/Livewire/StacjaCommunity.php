@@ -40,16 +40,15 @@ class StacjaCommunity extends Component
     #[Validate('string|in:today,yesterday,7days,interval', message: 'Zły format wyboru!')]
     public string $dateOption = 'today'; // 'dzis', 'wczoraj', '7 dni'
 
-
+    public $stationInfo = null;
     public $terminoweStartDate;
     public $terminoweEndDate;
-    protected $user;
     public $station_name;
 
 
     public function mount()
     {
-        $this->user = Auth::id();
+
         $date = Carbon::yesterday();
         $this->terminoweEndDate = $date->format('Y-m-d');
         $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
@@ -104,29 +103,40 @@ class StacjaCommunity extends Component
             $this->stationData = null;
             $this->sortedData = $this->weatherData;
             $this->getStationData();
+        } else {
+            $date = Carbon::yesterday();
+            $this->terminoweEndDate = $date->format('Y-m-d');
+            $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
+            $this->error = null;
+            $this->sortBy = 'id';
+            $this->sortDirection = 'desc';
+            $this->stationData = null;
+            $this->sortedData = $this->weatherData;
         }
     }
     public function getStationData()
     {
 
-        $station_tmp = Stations::where('id', $this->stationId)->select('name', 'id', 'public', 'user_id')->first();
+        $station_tmp = Stations::where('id', $this->stationId)->first();
 
         if ($station_tmp) {
-            if ($station_tmp->public == true || $station_tmp->user_id === $this->user) {
+            if ($station_tmp->public == true || $station_tmp->user_id === Auth::id()) {
                 $this->station_name = $station_tmp->name;
                 $response = Data::where('station_id', $this->stationId)
                     ->whereDate('created_at', Carbon::today())
                     ->orderBy('created_at', 'desc')
                     ->first();
-
+                $this->stationInfo = $station_tmp;
                 $this->stationData = $response;
                 $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
             } else {
+                $this->stationInfo = null;
                 $this->station_name = null;
                 $this->stationData = null;
                 $this->error = 'Stacja nie jest publiczna. ';
             }
         } else {
+            $this->stationInfo = null;
             $this->station_name = null;
             $this->stationData = null;
             $this->error = 'Nie udało się pobrać danych dla tej stacji. ';
@@ -238,16 +248,16 @@ class StacjaCommunity extends Component
     {
         //done? wrzuca all public and all usera do listy
 
-        $user = $this->user;
+        $user = Auth::id();
         if ($user) {
             $stations = Stations::where(function ($query) use ($user) {
                 $query->where('public', true)
                     ->orWhere('user_id', $user);
             })->orderBy('name', 'asc')
-                ->select('name', 'id')
+                ->select('name', 'id', 'user_id')
                 ->get();
         } else {
-            $stations = Stations::where('public', true)->orderBy('name', 'asc')->select('name', 'id')->get();
+            $stations = Stations::where('public', true)->orderBy('name', 'asc')->select('name', 'id', 'user_id')->get();
         }
 
         $tmp_stations = [];
@@ -258,11 +268,14 @@ class StacjaCommunity extends Component
 
             if ($id && $name) {
                 $tmp_stations[$id] = $name;
-                $owned[$entry->id] = $user ? $entry->user_id === $user : false; // extra array
+                $owned[$entry->id] = $entry->user_id === $user  ?  true : false; // extra array
             }
         }
-
-        return $tmp_stations;
+        return [
+            'names' => $tmp_stations,
+            'owned' => $owned,
+        ];
+        // return $tmp_stations;
     }
     public function render()
     {

@@ -8,22 +8,28 @@
     </div>
     @pushOnce('scripts2')
                 <script>
-                function stationSelect({ initialId, stations }) {
+                function stationSelect({ initialId, stations, ownedMap }) {
                     return {
                         open: false,
                         query: '',
                         selectedId: initialId,
                         stations,
+                        ownedMap,
+                        onlyOwned: false,
                         filtered() {
-                            const q = this.query.toLowerCase();
-                            return Object.entries(this.stations).filter(([id, name]) =>
-                                id.includes(q) || name.toLowerCase().includes(q)
-                            );
+                            const q = this.query.toLowerCase().trim();
+                            return Object.entries(this.stations)
+                                .filter(([id, name]) => {
+                                    if (this.onlyOwned && !this.ownedMap[id]) return false;
+                                    return id.includes(q) || name.toLowerCase().includes(q);
+                                });
                         },
                         select(id) {
                             this.selectedId = id;
+                            // Force repopulate input even if same ID
                             this.query = this.stations[id] ? `${this.stations[id]}` : id;
                             this.open = false;
+                            // Call Livewire to update backend
                              this.$wire.set('stationId', id).then(() => {
                                 if (this.stations[id]) {
                                    this.$wire.call('loadData');
@@ -34,7 +40,6 @@
                                 }
                             });
                             this.$wire.set('stop', false);
-
                             console.log(id);
                         },
                         init() {

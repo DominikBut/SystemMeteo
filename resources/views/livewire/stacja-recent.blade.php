@@ -18,7 +18,8 @@
                                 <input  wire:loading.attr="disabled" wire:target="loadData"
                                     type="search"
                                     class="bg-white rounded-md shadow-sm border-2 border-gray-300 p-2 w-full"
-                                    :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')"
+                                    {{-- :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')" --}}
+                                     x-model="query"
                                     @input="query = $event.target.value"
                                     {{-- to wyzej powoduje ze jak wpisuje to szuka a jak dostaje z url to nie szuka auto jak jest zle dodatkowy czek 2 kroki zamiast 1 --}}
                                     @focus="open = true"
@@ -45,10 +46,10 @@
                                         Wybrana stacja ID: <span x-text="`${selectedId} – ${stations[selectedId]}`"></span>
                                     </p>
                                     <p x-cloak x-show="selectedId && !stations[selectedId]" class=" font-bold text-red-500 my-2 w-auto">
-                                        ❌ Nieprawidłowa stacja (ID: {{ $stationId }}) – Brak wśród oficjalnych stacji IMGW.
+                                        Nieprawidłowa stacja (ID: {{ $stationId }}) – Brak wśród oficjalnych stacji IMGW.
                                     </p>
                                     <p  x-show="!selectedId && !stations[selectedId]" class="font-bold text-lime-600 my-2 w-auto">
-                                        Wybierz najpierw stację!.
+                                        Wybierz najpierw stację!
                                     </p>
                                 </div>
                             </div>

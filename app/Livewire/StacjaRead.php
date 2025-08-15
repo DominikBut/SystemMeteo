@@ -187,6 +187,26 @@ class StacjaRead extends Component
                 $this->miesieczneDate = $date2->subYears(2)->format('Y');
             }
             $this->error = null;
+            $this->sortBy = 'kod_stacji';
+            $this->sortDirection = 'desc';
+            $this->stationData = [];
+            $this->sortedData = $this->weatherData;
+            $this->sortBy = 'kod_stacji';
+            $this->getStationData();
+        } else {
+            $today = Carbon::today();
+            $monthsAgo = $today->day > 10 ? 2 : 3;
+            $date = $today->copy()->subMonthsNoOverflow($monthsAgo)->endOfMonth();
+            $this->terminoweEndDate = $date->format('Y-m-d');
+            $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
+            $this->doboweDate = $date->format('Y-m');
+            $date2 = now(); // or Carbon::now()
+            if ($date2->month > 2 || ($date2->month === 2 && $date2->day >= 10)) {
+                $this->miesieczneDate = $date2->subYear()->format('Y');
+            } else {
+                $this->miesieczneDate = $date2->subYears(2)->format('Y');
+            }
+            $this->error = null;
             $this->doboweType = false;
             $this->miesieczneType = false;
             $this->sortBy = 'kod_stacji';
@@ -194,7 +214,6 @@ class StacjaRead extends Component
             $this->stationData = [];
             $this->sortedData = $this->weatherData;
             $this->sortBy = 'kod_stacji';
-            $this->getStationData();
         }
     }
 

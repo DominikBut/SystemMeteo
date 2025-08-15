@@ -22,8 +22,10 @@
                         },
                         select(id) {
                             this.selectedId = id;
+                            // Force repopulate input even if same ID
                             this.query = this.stations[id] ? `${this.stations[id]}` : id;
                             this.open = false;
+                            // Call Livewire to update backend
                              this.$wire.set('stationId', id).then(() => {
                                 if (this.stations[id]) {
                                     this.$wire.call('loadData');

@@ -9,19 +9,34 @@
         <div class="flex flex-row align-content-center w-full text-xs sm:text-base">
             <div x-data="stationSelect({
                         initialId: @entangle('stationId'),
-                        stations: {{ Js::from($this->stations) }},
+                        stations: @js($this->stations['names']),
+                        ownedMap: @js($this->stations['owned']),
+
                     })"
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
                     <div class="flex flex-col justify-between p-2">
-                         @if (!empty($stations) && (count($stations)!=0))
+                         @if (!empty($stations['names']) && (count($stations['names'])!=0))
                         <div>
-                            <p class="p-1 font-bold text-gray-600">Wybierz jedną z {{ count($stations) }} stacji założonych przez społeczność:</p>
+                            {{-- {{ dd($stations['names']) }} --}}
+                            {{-- Checkbox to filter only owned --}}
+
+
+                            <p class="p-1 font-bold text-gray-600">
+                                Wybierz jedną z
+                                <span
+                                    x-text="onlyOwned
+                                        ? `{{ collect($stations['owned'])->filter()->count() }} twoich stacji:`
+                                        : `{{ count($stations['names']) }} stacji założonych przez społeczność:`">
+                                </span>
+
+                                </p>
                             <div class="relative w-full">
                                 <input  wire:loading.attr="disabled" wire:target="loadData"
                                     type="search"
                                     class="bg-white rounded-md shadow-sm border-2 border-gray-300 p-2 w-full"
-                                    :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')"
+                                    {{-- :value="stations[selectedId] ? `${stations[selectedId]}` : (selectedId ?? '')" --}}
                                     @input="query = $event.target.value"
+                                    x-model="query"
                                     {{-- to wyzej powoduje ze jak wpisuje to szuka a jak dostaje z url to nie szuka auto jak jest zle dodatkowy czek 2 kroki zamiast 1 --}}
                                     @focus="open = true"
                                     @blur="setTimeout(() => open = false, 200)"
@@ -41,18 +56,24 @@
                                 </ul>
                             </div>
 
-                            <div class="flex flex-row ms-2 text-xs">
-                                <div>
-                                    <p x-cloak class="my-2  w-auto ms-2 font-bold text-lime-600" x-show="selectedId && stations[selectedId]">
-                                        Wybrana stacja ID: <span x-text="`${selectedId} – ${stations[selectedId]}`"></span>
+                            <div class="flex flex-row  ms-2 text-xs truncate">
+                                    @if (Auth::id())
+                                    <label class="my-2 text-xs w-min ps-1 pe-2 font-bold text-blue-500 text-nowrap border-e-2 border-gray-500 content-center">
+                                        <input type="checkbox" x-model="onlyOwned" class="form-checkbox">
+                                        <span >Tylko moje stacje</span>
+                                    </label>
+
+                                    @endif
+                                    <p x-cloak class="my-2  w-min ms-2 font-bold text-lime-600 text-wrap " x-show="selectedId && stations[selectedId]">
+                                        Wybrana stacja ID: <span class="truncate" x-text="`${selectedId} – ${stations[selectedId]}`"></span>
                                     </p>
-                                    <p x-cloak x-show="selectedId && !stations[selectedId]" class=" font-bold text-red-500 my-2 w-auto">
-                                        ❌ Nieprawidłowa stacja (ID: {{ $stationId }}) – Brak wśród stacji społeczności.
+                                    <p x-cloak x-show="selectedId && !stations[selectedId]" class=" font-bold text-red-500 my-2  ms-2 w-auto text-wrap">
+                                        Nieprawidłowa stacja (ID: {{ $stationId }})  –<span class="text-nowrap"> Brak wśród stacji społeczności.</span>
                                     </p>
-                                    <p  x-show="!selectedId && !stations[selectedId]" class="font-bold text-lime-600 my-2 w-auto">
-                                        Wybierz najpierw stację!.
+                                    <p  x-show="!selectedId && !stations[selectedId]" class="font-bold text-lime-600 my-2  w-min ms-2 ">
+                                        Wybierz najpierw stację!
                                     </p>
-                                </div>
+
                             </div>
                         </div>
                         @else
@@ -192,10 +213,12 @@
                         </div>
                     </div>
                     <div class="p-2 flex flex-col justify-end">
+
                         @if (!empty($stationData) && !is_null($stationData))
+
                             <div class=" p-4 bg-white rounded-md shadow-sm sm:text-sm min-h-72">
                                 <p class="font-bold  text-sm sm:text-base text-gray-700 ">
-                                    Najnowsze dane meteo z dnia dzisiejszgo  dla stacji ID: <span class="text-nowrap text-lime-600">{{ $stationId.' - '.$stations[$stationId] }}</span>
+                                    Najnowsze dane meteo z dnia dzisiejszgo  dla stacji ID: <span class="text-nowrap text-lime-600">{{ $stationId.' - '.$stations['names'][$stationId] }}</span>
                                 </p>
                                 <p class="text-xs text-gray-500 pt-1">
                                     Dane pobrano: {{ $askTime ?? '–' }}
@@ -287,7 +310,7 @@
                         @elseif(!empty($stationId))
                             <div class="relative p-4 bg-white rounded-md shadow-sm text-sm min-h-72 text-center ">
                                 <div class="absolute top-0 left-0 font-bold h-full w-full flex flex-col justify-center">
-                                    <p class="w-full h-auto m-auto text-lg text-red-500 font-medium">Brak danych dla tej stacji z dnia dzisiejszego</p>
+                                    <p class="w-full h-auto m-auto px-4 text-lg text-red-500 font-medium">Brak danych dla tej stacji z dnia dzisiejszego</p>
                                 </div>
                             </div>
                         @else
@@ -301,9 +324,68 @@
             </div>
         </div>
 
+        <div class=" m-2 p-4 bg-white rounded-md shadow-sm min-h-32 h-auto">
+                            @if (!empty($stations['names'][$stationId]) )
+                                <div wire:loading.remove wire:target="getStationData">
+                                    <div class="flex flex-col sm:flex-row  justify-between w-full mb-4">
+                                        <div class="truncate font-bold  text-sm sm:text-base text-gray-500  w-auto">
+                                            <span class=" font-bold  text-sm sm:text-xl text-black">Informacje o stacji pogodowej:</span>
+                                            <br> ID: <span class="text-nowrap text-lime-600 border-e-2 border-black pe-1 me-2">{{ $stationId }} </span>
+                                            Nazwa: <span class="text-nowrap text-lime-600">{{ $stations['names'][$stationId] }} </span>
+                                        </div>
+                                        <div class="flex flex-col items-end">
+
+                                            @if ($this->stationInfo->active === false)
+                                                <p class="text-sm sm:text-base text-red-500 font-medium">Stacja nieaktywna</p>
+                                            @else
+                                                 <p class="text-sm sm:text-base text-lime-500 font-medium">Stacja aktywna</p>
+
+                                            @endif
+
+                                            <p class="text-xs text-gray-500  w-auto">
+                                            Ostatni pomiar: {{ App\Models\Data::where('station_id',$stationId)->select('created_at')->orderBy('created_at', 'desc')->first()->created_at ?? '–' }}
+                                            </p>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            @elseif(!empty($error))
+                                <div wire:loading.remove wire:target="getStationDataid"  class="min-h-20 items-center w-full flex flex-col justify-center text-center ">
+                                    <div class=" font-bold  w-full flex flex-col justify-center">
+                                        <div class="text-sm font-bold text-red-500">Wśród stacji społeczności nie znaleziono publicznych danych dla stacji o wybranym ID.</div>
+                                        <div class="font-bold text-gray-600 text-sm mt-2">
+                                            Wybierz inną stację, spróbuj innej z tego samego regionu lub zaloguj się jeżeli to twoja stacja.
+
+                                        </div>
+                                        <br>
+                                        @if ($error)
+                                            <p class="font-bold text-red-500">{{ $error }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @else
+                                <div wire:loading.remove  wire:target="getStationDataid"  class="min-h-20 items-center  w-full flex flex-col justify-center text-center ">
+                                    <div class="font-bold w-full flex flex-col items-center justify-center">
+                                        <p class="w-full  m-auto animate-pulse">Oczekiwanie na wybór stacji...</p>
+                                    </div>
+                                </div>
+                            @endif
+                            <div wire:loading  wire:target="getStationDataid"  class="pt-2 min-h-20 items-center w-full flex flex-col justify-center text-center ">
+                                    <div class="font-bold items-center w-full flex flex-col justify-center">
+                                        <p class="w-full  m-auto animate-pulse">Pobieranie danych...</p>
+                                    </div>
+                            </div>
+
+
+
+
+
+                        </div>
         <div class=" m-2 p-4 bg-white rounded-md shadow-sm">
-            @if (!empty($stations[$stationId]) )
-                <h1 class="text-sm sm:text-xl pb-2 font-bold">Wyszukano dane meteorologiczne dla stacji: <span class="text-lime-600">{{ $stationId.' - '.$stations[$stationId] }}</span></h1>
+            @if (!empty($stations['names'][$stationId]) )
+                <h1 class="text-sm sm:text-xl pb-2 font-bold">Wyszukano dane meteorologiczne dla stacji: <span class="text-lime-600">{{ $stationId.' - '.$stations['names'][$stationId] }}</span></h1>
                 <div wire:loading.remove wire:target.except="setSort" class="ms-2 text-xs sm:text-sm py-2 font-semibold text-gray-500 flex flex-row justify-between">
                     <span>Wyświetlono na wykresie dane z okresu:
                         <b class="text-nowrap">
@@ -346,8 +428,8 @@
 
                 <div class="relative w-full h-[32rem] flex justify-center p-4 bg-white rounded-md shadow-sm border">
                         <div wire:loading.remove wire:target.except="setSort" class="absolute left-0 top-0 w-full h-full flex flex-col justify-center text-center ">
-                            @if (!empty($stations[$stationId]))
-                                <p class="text-sm sm:text-xl font-bold text-red-500">Brak aktualnych danych z tego okresu dla stacji {{ $stationId.' - '.$stations[$stationId] }}</p>
+                            @if (!empty($stations['names'][$stationId]))
+                                <p class="text-sm sm:text-xl font-bold text-red-500">Brak aktualnych danych z tego okresu dla stacji {{ $stationId.' - '.$stations['names'][$stationId] }}</p>
                             @else
                                  <p class="text-sm sm:text-xl font-bold animate-pulse">Oczekiwanie na wybór stacji...</p>
                             @endif

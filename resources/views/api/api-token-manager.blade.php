@@ -287,14 +287,14 @@
                     <div class="">
                         @foreach ($this->user->tokens->sortBy('name') as $token)
                             <div class="flex items-center justify-between p-2 sm:p-4 border">
-                                <div class="break-all text-blue-500 font-bold ms-4 ">
+                                <div class="break-all text-blue-500 font-bold ms-4 text-xs sm:text-sm">
                                     {{ $token->name }}
                                 </div>
 
                                 <div class="flex items-center ms-2">
                                     @if ($token->last_used_at)
-                                        <div class="text-sm text-gray-400">
-                                            {{ __('Last used') }} {{ $token->last_used_at->diffForHumans() }}
+                                        <div class="text-xs sm:text-sm text-gray-400 pe-1 sm:pe-4">
+                                            {{ __('Użyto ostatnio') }} {{ $token->last_used_at->diffForHumans() }}
                                         </div>
                                     @endif
 
