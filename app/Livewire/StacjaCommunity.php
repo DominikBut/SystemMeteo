@@ -49,7 +49,7 @@ class StacjaCommunity extends Component
     public function mount()
     {
 
-        $date = Carbon::yesterday();
+        $date = Carbon::today();
         $this->terminoweEndDate = $date->format('Y-m-d');
         $this->terminoweStartDate = $date->firstOfMonth()->format('Y-m-d');
 
@@ -149,11 +149,17 @@ class StacjaCommunity extends Component
 
         if ($this->sortBy !== '') {
             $data = $this->sortedData->sortBy(function ($item) {
-                $item[$this->sortBy] ?? $this->sortBy = 'id';
-                return is_null($item[$this->sortBy]) ? PHP_INT_MAX : $item[$this->sortBy];
+                $value = $item[$this->sortBy] ?? null;
+
+                if (is_null($value)) {
+                    return $this->sortDirection === 'desc' ? -PHP_INT_MAX : PHP_INT_MAX;
+                }
+
+                return $value;
             }, SORT_REGULAR, $this->sortDirection === 'desc');
+
+            $this->sortedData = $data->values()->all();
         }
-        $this->sortedData = $data->values()->all();
     }
     public function loadData()
     {

@@ -307,7 +307,20 @@
                         @if (!empty($stationData))
                             <div class=" p-4 bg-white rounded-md shadow-sm sm:text-sm min-h-72">
                                 <p class="font-bold  text-sm sm:text-base text-lime-600">
-                                    Najnowsze dane meteo dla stacji ID: <span class="text-nowrap">{{ $stationData['kod_stacji'] }} ({{ $stationData['nazwa_stacji'] ?? '-' }})</span>
+                                    Najnowsze dane meteo dla stacji ID:
+                                    <span class="text-nowrap flex flex-row items-center">
+                                        <a title="Sprawdź na mapie!"href="{{ route('map') . '?id=' . $stationId }}" class="text-blue-500 hover:text-blue-900 transition duration-100 hover:font-bold underline size-6 flex flex-row justify-center items-center content-center" title="Sprawdź na mapie">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 hover:font-bold hover:size-6 ">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                                        </svg>
+
+                                        </a>
+                                                        <span class="text-nowrap flex flex-row ">
+                                                         {{ $stationData['kod_stacji'] }} ({{ $stationData['nazwa_stacji'] ?? '-' }})
+
+                                                        </span>
+                                    </span>
                                 </p>
                                 <p class="text-xs text-gray-500 mb-2">
                                     Dane pobrano: {{ $askTime ?? '–' }}

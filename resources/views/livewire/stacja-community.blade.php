@@ -60,11 +60,11 @@
                                     @if (Auth::id())
                                     <label class="my-2 text-xs w-min ps-1 pe-2 font-bold text-blue-500 text-nowrap border-e-2 border-gray-500 content-center">
                                         <input type="checkbox" x-model="onlyOwned" class="form-checkbox">
-                                        <span >Tylko moje stacje</span>
+                                        <span class="ps-1">Tylko moje stacje</span>
                                     </label>
 
                                     @endif
-                                    <p x-cloak class="my-2  w-min ms-2 font-bold text-lime-600 text-wrap " x-show="selectedId && stations[selectedId]">
+                                    <p x-cloak class="my-2  w-min ms-2 font-bold text-lime-600 truncate" x-show="selectedId && stations[selectedId]">
                                         Wybrana stacja ID: <span class="truncate" x-text="`${selectedId} – ${stations[selectedId]}`"></span>
                                     </p>
                                     <p x-cloak x-show="selectedId && !stations[selectedId]" class=" font-bold text-red-500 my-2  ms-2 w-auto text-wrap">
@@ -122,7 +122,6 @@
                                                             validateRange() {
                                                                 const today = new Date();
                                                                 const yesterday = new Date(today);
-                                                                yesterday.setDate(today.getDate() - 1);
                                                                 const yesterdayStr = yesterday.toLocaleDateString('sv-SE');
 
                                                                 // Set global max date to yesterday
@@ -324,27 +323,115 @@
             </div>
         </div>
 
-        <div class=" m-2 p-4 bg-white rounded-md shadow-sm min-h-32 h-auto">
+        <div class=" m-2 p-4 bg-white rounded-md shadow-sm min-h-80 h-auto">
                             @if (!empty($stations['names'][$stationId]) )
-                                <div wire:loading.remove wire:target="getStationData">
-                                    <div class="flex flex-col sm:flex-row  justify-between w-full mb-4">
-                                        <div class="truncate font-bold  text-sm sm:text-base text-gray-500  w-auto">
-                                            <span class=" font-bold  text-sm sm:text-xl text-black">Informacje o stacji pogodowej:</span>
-                                            <br> ID: <span class="text-nowrap text-lime-600 border-e-2 border-black pe-1 me-2">{{ $stationId }} </span>
-                                            Nazwa: <span class="text-nowrap text-lime-600">{{ $stations['names'][$stationId] }} </span>
+                                <div wire:loading.remove wire:target.except="loadData, setSort">
+                                    <div class="flex flex-col sm:flex-row  justify-between w-full">
+                                        <div class="truncate font-medium text-xs sm:text-sm   w-auto flex flex-col justify-between">
+                                            <div class="flex flex-row font-bold  text-black text-base sm:text-xl pb-2 text-center sm:text-start w-full">
+                                                <div class="flex flex-col w-full">Informacje o stacji pogodowej
+                                                    <div class="flex flex-row w-full justify-center sm:justify-start ">
+                                                        użytkownika&nbsp
+                                                        <div class="w-min font-medium text-nowrap text-lime-600">
+                                                            @php
+                                                                $owner = App\Models\User::where('id',$stationInfo->user_id)->select('name','profile_photo_url')->first()
+                                                            @endphp
+
+                                                        {{ $owner->name }}
+                                                        </div>
+                                                    :
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="ps-1 truncate font-medium text-xs sm:text-sm   w-auto flex flex-col gap-2">
+                                                <div>ID: <span class="text-nowrap font-medium text-lime-600 ">{{ $stationId }} </span></div>
+                                                <div>Nazwa: <span class="text-nowrap font-medium text-lime-600">{{ $stations['names'][$stationId] }} </span></div>
+                                                <div>
+                                                    <div>Lokalizacja:</div>
+                                                    <div class="flex flex-row items-center">
+
+                                                        <a title="Sprawdź na mapie!"href="{{ route('map') . '?id=' . $stationId }}" class="text-blue-500 hover:text-blue-900 transition duration-100 hover:font-bold underline size-7 flex flex-row justify-center items-center content-center" title="Sprawdź na mapie">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 hover:font-bold hover:size-7 ">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                                        </svg>
+
+                                                        </a>
+                                                        <div>
+                                                            <div class="ps-1 text-gray-500">Województwo: <span class="text-nowrap font-medium text-lime-600">{{ Str::ucfirst($this->stationInfo->voivodeship)}}</span></div>
+                                                            <div class="ps-1 text-gray-500">Powiat grodzki/miejski: <span class=" font-medium text-nowrap text-lime-600 ">{{ Str::ucfirst($this->stationInfo->district) }}</span></div>
+
+                                                        </div>
+
+                                                    </div>
+                                                   </div>
+                                                @if ($this->stationInfo->description != null)
+                                                <div> Opis stacji: <div class="font-medium text-lime-600 max-w-100 text-wrap ps-1">{{Str::ucfirst( $this->stationInfo->description)  }}</div></div>
+                                                @endif
+                                                @php
+                                                $measurements = [
+                                                    'temperature' => 'Temp. powietrza',
+                                                    'humidity' => 'Wilg. względna',
+                                                    'wind' => 'Wiatr',
+                                                    'rain' => 'Opad 10 min',
+                                                ];
+                                                @endphp
+                                                </div>
+                                                 <div class="ps-1 truncate font-medium text-xs sm:text-sm   w-auto flex flex-col">
+                                                    <div class="pt-2">
+                                                    Aktualnie wykonywane pomiary:
+                                                    </div>
+                                                    <div class="flex flex-row flex-wrap gap-2 items-center pt-1">
+                                                        @foreach ($measurements as $field => $label)
+                                                            @if ($this->stationInfo->$field == true)
+                                                                <span class="w-fit inline-flex overflow-hidden rounded-xl border border-lime-600 bg-white text-xs font-normal sm:font-medium text-lime-600">
+                                                                    <span class="flex items-center gap-1 bg-lime-600/10 px-1 sm:px-2 sm:py-1">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-4">
+                                                                            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365 9.75 9.75 9.75s9.75-4.365 9.75-9.75S17.385 2.25 12 2.25 2.25 6.615 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/>
+                                                                        </svg>
+                                                                        {{ $label }}
+                                                                    </span>
+                                                                </span>
+                                                            @else
+                                                                <span class="w-fit inline-flex overflow-hidden rounded-xl border font-normal sm:font-medium border-gray-700 bg-white text-xs text-gray-700">
+                                                                    <span class="flex items-center gap-1 bg-indigo-700/10 px-1 sm:px-2 sm:py-1">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="1.4" class="size-4">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                                                        </svg>
+                                                                        {{ $label }}
+                                                                    </span>
+                                                                </span>
+                                                            @endif
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+
+
                                         </div>
-                                        <div class="flex flex-col items-end">
+                                        <div class="flex flex-col items-end ">
+                                            <div class=" flex flex-col items-center w-full sm:items-end pb-1 pe-1">
 
-                                            @if ($this->stationInfo->active === false)
-                                                <p class="text-sm sm:text-base text-red-500 font-medium">Stacja nieaktywna</p>
-                                            @else
-                                                 <p class="text-sm sm:text-base text-lime-500 font-medium">Stacja aktywna</p>
 
-                                            @endif
+                                                @if ($this->stationInfo->active === false)
+                                                    <p class="text-sm sm:text-base text-red-500 font-bold">Stacja nieaktywna</p>
+                                                @else
+                                                    <p class="text-sm sm:text-base text-lime-500 font-bold">Stacja aktywna</p>
+                                                @endif
+                                                <p class="text-xs text-gray-500  w-auto ">
+                                                Ostatni pomiar: {{ App\Models\Data::where('station_id',$stationId)->select('created_at')->orderBy('created_at', 'desc')->first()->created_at ?? '–' }}
+                                                </p>
+                                            </div>
+                                            @if(Storage::url($stationInfo->photo))
+                                             <div class="flex bg-gray-100 border-2 border-gray-500 rounded-md m-auto size-64 sm:size-72">
+                                                <img class="size-64 sm:size-72 rounded-sm object-cover " src="{{ Storage::url($stationInfo->photo) }}" alt="{{ $stationInfo->name }}" title="Zdjęcie stacji"/>
+                                             </div>
 
-                                            <p class="text-xs text-gray-500  w-auto">
-                                            Ostatni pomiar: {{ App\Models\Data::where('station_id',$stationId)->select('created_at')->orderBy('created_at', 'desc')->first()->created_at ?? '–' }}
-                                            </p>
+                                             @else
+                                             <div class="flex flex-col items-center font-medium bg-gray-100 text-gray-500 justify-center border-2 border-gray-300 rounded-md m-auto size-64 sm:size-72">
+                                                <p>Brak zdjęcia stacji</p>
+                                             </div>
+                                             @endif
+
                                         </div>
 
                                     </div>
@@ -352,7 +439,7 @@
 
                                 </div>
                             @elseif(!empty($error))
-                                <div wire:loading.remove wire:target="getStationDataid"  class="min-h-20 items-center w-full flex flex-col justify-center text-center ">
+                                <div wire:loading.remove wire:target.except="loadData, setSort"  class="min-h-80 items-center w-full flex flex-col justify-center text-center ">
                                     <div class=" font-bold  w-full flex flex-col justify-center">
                                         <div class="text-sm font-bold text-red-500">Wśród stacji społeczności nie znaleziono publicznych danych dla stacji o wybranym ID.</div>
                                         <div class="font-bold text-gray-600 text-sm mt-2">
@@ -366,21 +453,17 @@
                                     </div>
                                 </div>
                             @else
-                                <div wire:loading.remove  wire:target="getStationDataid"  class="min-h-20 items-center  w-full flex flex-col justify-center text-center ">
+                                <div wire:loading.remove wire:target.except="loadData, setSort"  class="min-h-80 items-center  w-full flex flex-col justify-center text-center ">
                                     <div class="font-bold w-full flex flex-col items-center justify-center">
                                         <p class="w-full  m-auto animate-pulse">Oczekiwanie na wybór stacji...</p>
                                     </div>
                                 </div>
                             @endif
-                            <div wire:loading  wire:target="getStationDataid"  class="pt-2 min-h-20 items-center w-full flex flex-col justify-center text-center ">
-                                    <div class="font-bold items-center w-full flex flex-col justify-center">
-                                        <p class="w-full  m-auto animate-pulse">Pobieranie danych...</p>
+                           <div wire:loading wire:target.except="loadData, setSort"  class="min-h-80 w-full flex flex-col justify-center items-center  ">
+                                    <div class="font-bold w-full flex flex-col justify-center items-center h-full min-h-64">
+                                        <p class=" animate-pulse">Pobieranie danych...</p>
                                     </div>
                             </div>
-
-
-
-
 
                         </div>
         <div class=" m-2 p-4 bg-white rounded-md shadow-sm">

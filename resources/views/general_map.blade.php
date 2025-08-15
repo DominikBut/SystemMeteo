@@ -9,9 +9,10 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: #ffefc5;
-                color: #333;
+                background: #db6435;
+                color: #ffffff;
                 padding: 12px 18px;
+                border-color: white;
                 border-radius: 8px;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.2);
                 font-family: sans-serif;
@@ -177,7 +178,7 @@
                         marker.openPopup();
                     }
                 }else{
-                     showAlert('Przełącz wyświetlane dane na mapie!');
+                     showAlert('Przełącz wyświetlane dane na mapie lub wybierz istniejącą stację!');
                 }
             }
 
@@ -537,6 +538,14 @@
 
             }
             document.addEventListener('livewire:init', () => {
+                Livewire.on('open', data => {
+                    setTimeout(() => {
+                        Alpine.nextTick(() => {
+                            console.log(`${data.id}`);
+                            focusStation(`${data.id}`);
+                        });
+                    }, 1000); // delay in milliseconds (500ms = half a second)
+                });
                 Livewire.on('layer-updated', (newData) => {
                     Alpine.nextTick(() => {
                         clearSearch();

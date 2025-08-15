@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
@@ -14,6 +15,8 @@ class MapRecent extends Component
 {
     public $error = null;
     public $info;
+    #[Url(except: null, as: 'id', history: true)]
+    #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
     public $stationDataId = [];
     public $stationData = [];
@@ -35,6 +38,10 @@ class MapRecent extends Component
     {
         $date = Carbon::today();
         $this->getStationData();
+        if ($this->stationId != null) {
+            $this->getStationDataid($this->stationId);
+            $this->dispatch('open', id: $this->stationId);
+        }
     }
     public function getStationData()
     {
@@ -259,14 +266,23 @@ class MapRecent extends Component
         // }
 
         // Not in cache, search locally
-        $record = collect($this->stationData)->firstWhere('kod_stacji', $kod);
+        try {
+            $record = collect($this->stationData)->firstWhere('kod_stacji', $kod);
 
-        if ($record) {
-            $this->stationDataId = (array) $record;
-            // Cache the result for 5 minutes
-            // Cache::put('DaneStacjiL' . $kod, $this->stationDataId, now()->addMinutes(5));
-        } else {
+            if ($record) {
+                $this->stationDataId = (array) $record;
+                // Cache the result for 5 minutes
+                // Cache::put('DaneStacjiL' . $kod, $this->stationDataId, now()->addMinutes(5));
+            } else {
+                $this->stationDataId = [];
+                $this->stationId = null;
+                if ($kod !== null) {
+                    $this->error = 'Nie znaleziono danych dla podanej stacji.';
+                }
+            }
+        } catch (\Throwable $th) {
             $this->stationDataId = [];
+            $this->stationId = null;
             if ($kod !== null) {
                 $this->error = 'Nie znaleziono danych dla podanej stacji.';
             }
