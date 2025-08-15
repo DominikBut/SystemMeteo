@@ -330,7 +330,7 @@
                                         <div class="truncate font-medium text-xs sm:text-sm   w-auto flex flex-col justify-between">
                                             <div class="flex flex-row font-bold  text-black text-base sm:text-xl pb-2 text-center sm:text-start w-full">
                                                 <div class="flex flex-col w-full">Informacje o stacji pogodowej
-                                                    <div class="flex flex-row w-full justify-center sm:justify-start ">
+                                                    <div class="flex flex-row w-full justify-center sm:justify-start sm:ps-2">
                                                         użytkownika&nbsp
                                                         <div class="w-min font-medium text-nowrap text-lime-600">
                                                             @php
@@ -343,7 +343,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="ps-1 truncate font-medium text-xs sm:text-sm   w-auto flex flex-col gap-2">
+                                            <div class="ps-3 truncate font-medium text-xs sm:text-sm   w-auto flex flex-col gap-2">
                                                 <div>ID: <span class="text-nowrap font-medium text-lime-600 ">{{ $stationId }} </span></div>
                                                 <div>Nazwa: <span class="text-nowrap font-medium text-lime-600">{{ $stations['names'][$stationId] }} </span></div>
                                                 <div>
@@ -377,7 +377,7 @@
                                                 ];
                                                 @endphp
                                                 </div>
-                                                 <div class="ps-1 truncate font-medium text-xs sm:text-sm   w-auto flex flex-col">
+                                                 <div class="ps-3 truncate font-medium text-xs sm:text-sm   w-auto flex flex-col">
                                                     <div class="pt-2">
                                                     Aktualnie wykonywane pomiary:
                                                     </div>
@@ -386,18 +386,22 @@
                                                             @if ($this->stationInfo->$field == true)
                                                                 <span class="w-fit inline-flex overflow-hidden rounded-xl border border-lime-600 bg-white text-xs font-normal sm:font-medium text-lime-600">
                                                                     <span class="flex items-center gap-1 bg-lime-600/10 px-1 sm:px-2 sm:py-1">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-4">
-                                                                            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365 9.75 9.75 9.75s9.75-4.365 9.75-9.75S17.385 2.25 12 2.25 2.25 6.615 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/>
+
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                                         </svg>
+
                                                                         {{ $label }}
                                                                     </span>
                                                                 </span>
                                                             @else
                                                                 <span class="w-fit inline-flex overflow-hidden rounded-xl border font-normal sm:font-medium border-gray-700 bg-white text-xs text-gray-700">
                                                                     <span class="flex items-center gap-1 bg-indigo-700/10 px-1 sm:px-2 sm:py-1">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="1.4" class="size-4">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                                         </svg>
+
                                                                         {{ $label }}
                                                                     </span>
                                                                 </span>
