@@ -482,7 +482,7 @@
                                             let icon = L.divIcon({
                                                 className: 'custom-temp-icon',
                                                 html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${renderWindDirection(stacja.wiatr_kierunek)} ${wind.toFixed(1)} m/s</div>`,
-                                                iconSize: [80, 20],
+                                                iconSize: [90, 20],
                                             });
                                              marker = L.marker([lat, lon], { icon });
                                             }else{

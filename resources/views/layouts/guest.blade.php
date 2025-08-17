@@ -52,15 +52,15 @@
                             </div>
                             <!-- sidebar links  -->
                             <div class="flex flex-col gap-2 overflow-y-auto py-4 border-t border-gray-200 ">
-                                <div class=" gap-2 flex flex-col  uppercase font-semibold text-sm ">
-                                        <a href="{{ route('map')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                <div class=" gap-2 flex flex-col  uppercase font-semibold text-xs ">
+                                        <a href="{{ route('map')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
                                             {{ request()->routeIs('map') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
                                                 </svg>
                                                 <span>Bieżąca mapa meteo</span>
                                             </a>
-                                            <a href="{{ route('stacja_recent') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                            <a href="{{ route('stacja_recent') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
                                             {{ request()->routeIs('stacja_recent') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
@@ -68,14 +68,14 @@
                                                 <span>Bieżące dane stacji</span>
                                             </a>
 
-                                            <a href="{{ route('stacja_archive') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                            <a href="{{ route('stacja_archive') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
                                             {{ request()->routeIs('stacja_archive') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
                                                 </svg>
                                                 <span>Oficjalne archiwum danych IMGW stacji</span>
                                             </a>
-                                            <a href="{{ route('stacja_community') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                            <a href="{{ route('stacja_community') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
                                             {{ request()->routeIs('stacja_community') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
@@ -85,20 +85,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-col gap-2 overflow-y-auto">
+                        <div class="flex flex-col gap-2 overflow-y-auto  text-xs">
                             @if (Route::has('login'))
                                 @auth
                                  <div>
                                 <div  x-data="{ menuIsOpen: false }" class="mt-auto " x-on:keydown.esc.window="menuIsOpen = false">
-                                    <div class=" gap-2 flex flex-col py-4  uppercase font-bold  ">
-                                        <a href="{{ route('profile.show')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                    <div class=" gap-2 flex flex-col py-4  uppercase font-bold ">
+                                        <a href="{{ route('profile.show')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
                                             {{ request()->routeIs('profile.show') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
                                                 </svg>
                                                 <span>Moje konto</span>
                                             </a>
-                                            <a href="{{ url('/dashboard') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                            <a href="{{ url('/dashboard') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
                                             {{ request()->routeIs('dashboard') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
@@ -106,7 +106,7 @@
                                                 <span>Moje stacje pogodowe</span>
                                             </a>
                                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                                            <a href="{{ route('api-tokens.index') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 text-sm font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
+                                            <a href="{{ route('api-tokens.index') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
                                             {{ request()->routeIs('api-tokens.index') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
@@ -141,7 +141,7 @@
                                         </button>
 
                                         <!-- menu -->
-                                        <div x-cloak x-show="menuIsOpen" class=" absolute bottom-50 right-6 md:-right-[11.5rem] md:bottom-[3.25rem] z-20 -mr-1 w-48 border divide-y divide-slate-300 border-gray-200 bg-white   rounded-xl " role="menu" x-on:click.outside="menuIsOpen = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition="" x-trap="menuIsOpen">
+                                        <div x-cloak x-show="menuIsOpen" class=" absolute bottom-50 right-6 md:-right-[11.5rem] md:bottom-[4.5rem] z-20 -mr-1 w-48 border divide-y divide-slate-300 border-gray-200 bg-white   rounded-xl " role="menu" x-on:click.outside="menuIsOpen = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition="" x-trap="menuIsOpen">
 
                                                 <form method="POST" action="{{ route('logout') }}" x-data>
                                                     @csrf
@@ -165,7 +165,7 @@
 
                                     @else
 
-                                            <a  href="{{ route('login') }}" class="uppercase font-bold flex w-full items-center rounded-xl gap-2 p-2 text-left border-2 border-gray-300 border-md text-gray-600 hover:bg-blue-100 hover:text-black transition duration-100
+                                            <a  href="{{ route('login') }}" class=" uppercase font-bold flex w-full items-center rounded-xl gap-2 p-2 text-left border-2 border-gray-300 border-md text-gray-600 hover:bg-blue-100 hover:text-black transition duration-100
                                             {{ request()->routeIs('login') ? 'bg-blue-500 text-white' : 'bg-blue-200 hover:bg-blue-100 hover:text-black text-sky-950'}}">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                         <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
@@ -175,7 +175,7 @@
 
                                                 @if (Route::has('register'))
 
-                                                    <a  href="{{ route('register') }}" class="uppercase font-bold flex w-full items-center rounded-xl gap-2 p-2 text-left border-2 border-gray-300 border-md text-gray-600 hover:bg-blue-100 hover:text-black transition duration-100
+                                                    <a  href="{{ route('register') }}" class=" uppercase font-bold flex w-full items-center rounded-xl gap-2 p-2 text-left border-2 border-gray-300 border-md text-gray-600 hover:bg-blue-100 hover:text-black transition duration-100
                                                     {{ request()->routeIs('register') ? 'bg-blue-500 text-white' : 'bg-blue-200 hover:bg-blue-100 hover:text-black text-sky-950'}}">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
                                                         <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
@@ -187,10 +187,10 @@
                                     @endauth
                                 @endif
                             <div>
-                                <a href="{{ route('about') }}" class="underline uppercase font-semibold flex flex-row justify-center text-center text-sm text-blue-400 border-t-2 border-gray-200 rounded-md py-2">
+                                <a href="{{ route('about') }}" class="text-xs underline uppercase font-semibold flex flex-row justify-center text-center  text-blue-400 border-t-2 border-gray-200 rounded-md py-1 sm:py-2">
                                 Informacje o systemie
                                 </a>
-                                <div class="flex flex-row justify-center text-center text-sm text-gray-500 ">
+                                <div class="text-xs flex flex-row justify-center text-center  text-gray-500 ">
                                 &copy; 2025-2026 | Dominik But
                                 </div>
                             </div>

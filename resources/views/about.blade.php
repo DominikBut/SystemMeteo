@@ -14,13 +14,13 @@
                                                     </a>
                                                 </div>
 
-                        <p class="text-gray-500 sm:ps-6 sm:leading-relaxed sm:max-w-4xl  sm:text-balance text-xs sm:text-sm lg:text-base font-bold">
+                        <p class="text-gray-500 ps-2 sm:ps-4 sm:leading-relaxed sm:max-w-4xl  sm:text-balance text-xs sm:text-sm lg:text-base font-bold">
                         System służący do archiwizacji i wizualizacji danych meteorologicznych oparty o technologię Laravel 12</p>
                     </div>
 
                     <div class="max-w-full my-auto px-2 xl:px-0 h-full !text-wrap truncate">
                         <div class="overflow-hidden rounded-lg !text-wrap truncate">
-                            <div class="p-6 sm:p-8 bg-white !text-wrap truncate" >
+                            <div class="p-6 sm:px-10 sm:pt-4 bg-white !text-wrap truncate" >
                                 <h1 class="text-sm lg:text-2xl font-bold text-left text-sky-950 place-content-center tracking-wider">
                                     Informacje o systemie
                                 </h1>
