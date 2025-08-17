@@ -84,7 +84,7 @@
                                 <div class="w-full">
                                     <p class=""><b>Wybierz zakres odczytu danych:</b></p>
                                 </div>
-                                        <div  class="flex gap-2 px-2 py-3 ">
+                                        <div  class="flex flex-row flex-wrap gap-2 px-2 py-3 ">
                                             <button wire:click="$set('dateOption', 'today'); $wire.loadData()" wire:loading.attr="disabled" wire:target="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
@@ -165,7 +165,7 @@
                                                             }
                                                         }"
                                                         x-init="validateRange()">
-                                                        <div class="flex flex-col sm:flex-row items-end gap-4 w-full ">
+                                                        <div class="flex flex-col sm:flex-row flex-wrap  items-end gap-4 w-full ">
                                                             <div class="flex flex-col w-full">
                                                                 <label for="start" class="sm:text-sm font-medium text-gray-700">Data początkowa:</label>
                                                                 <input type="date" id="start" wire:loading.attr="disabled" wire:target="loadData"
@@ -350,7 +350,7 @@
                                                     <div>Lokalizacja:</div>
                                                     <div class="flex flex-row items-center">
 
-                                                        <a title="Sprawdź na mapie!"href="{{ route('map') . '?id=' . $stationId }}" class="text-blue-500 hover:text-blue-900 transition duration-100 hover:font-bold underline size-7 flex flex-row justify-center items-center content-center" title="Sprawdź na mapie">
+                                                        <a title="Sprawdź na mapie!"href="{{ route('map_community') . '?id=' . $stationId }}" class="text-blue-500 hover:text-blue-900 transition duration-100 hover:font-bold underline size-7 flex flex-row justify-center items-center content-center" title="Sprawdź na mapie">
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 hover:font-bold hover:size-7 ">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />

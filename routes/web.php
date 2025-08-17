@@ -12,6 +12,10 @@ Route::get('/map', function () {
     return view('general_map');
 })->name('map');
 
+Route::get('/map/community', function () {
+    return view('community_map');
+})->name('map_community');
+
 Route::get('/stations/recent', function () {
     return view('stacja_recent');
 })->name('stacja_recent');

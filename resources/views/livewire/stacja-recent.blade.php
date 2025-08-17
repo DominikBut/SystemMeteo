@@ -71,7 +71,7 @@
                                 <div class="w-full">
                                     <p class=""><b>Wybierz typ agregacji danych:</b></p>
                                      <div x-ref="tabButtons"
-                                        class="mt-2 overflow-x-auto sm:text-sm flex sm:inline-grid items-center sm:justify-center w-auto sm:w-full h-10 flex-row sm:grid-cols-4 p-1 text-gray-500 bg-gray-200 rounded-lg select-none"
+                                        class="mt-2 overflow-x-auto sm:text-sm flex  sm:inline-grid items-center sm:justify-center w-auto sm:w-full h-10 flex-row sm:grid-cols-4 p-1 text-gray-500 bg-gray-200 rounded-lg select-none"
                                         role="tablist">
 
                                         <!-- Buttons -->
@@ -100,7 +100,7 @@
                                 <div class="px-2 py-3 ">
                                     <div  x-show="selectedTab === '30min'"  role="tabpanel" aria-label="30min">
                                         <p class="py-2 ">Wybierz okres odczytu danych:</p>
-                                        <div  class="flex gap-2">
+                                        <div  class="flex gap-2 flex-wrap flex-row">
                                             <button wire:click="$set('dateOption', 'today'); $wire.loadData()" wire:loading.attr="disabled" wire:target="loadData"
                                                     :disabled="!selectedId || !stations[selectedId] || !query"
                                                     :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
@@ -128,7 +128,7 @@
                                     </div>
                                     <div x-cloak x-show="selectedTab === 'terminowe'"  role="tabpanel" aria-label="terminowe">
                                         <p class="py-2">Wybierz zakres dni odczytu danych:</p>
-                                                <div class="flex gap-2">
+                                                <div class="flex gap-2 ">
                                                      {{-- minDate below set to earliest data that i have --}}
                                                      <div class="flex flex-col md:flex-row w-full" x-data="{
                                                             start: $wire.entangle('terminoweStartDate'),
@@ -185,7 +185,7 @@
                                                             }
                                                         }"
                                                         x-init="validateRange()">
-                                                        <div class="flex flex-col sm:flex-row items-end gap-4 w-full">
+                                                        <div class="flex flex-col sm:flex-row flex-wrap items-end gap-4 w-full">
                                                             <div class="flex flex-col w-full">
                                                                 <label for="start" class="sm:text-sm font-medium text-gray-700">Data początkowa:</label>
                                                                 <input type="date" id="start" wire:loading.attr="disabled" wire:target="loadData"
