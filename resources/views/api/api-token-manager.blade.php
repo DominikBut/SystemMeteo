@@ -4,7 +4,7 @@
 
         <div class="flex flex-col  w-full bg-white rounded-md shadow-sm p-4 border">
             <h1 class="w-full text-center text-sm sm:text-xl font-bold tracking-wider pb-2"> <span class="text-red-500">Jak działa proces przesyłania danych na serwer systemu meteo przez API?</span></h1>
-            <div class="bg-slate-50 w-full p-2 sm:pb-0 sm:px-4 sm:pt-4 text-xs sm:text-sm  text-pretty text-start font-medium rounded-md shadow-sm">
+            <div class=" w-full p-2 sm:p-4 text-xs sm:text-sm  text-pretty text-start font-medium rounded-md ">
                 1. Dodaj stację w zakładce  <a class="underline text-blue-500" href="{{ route('api-tokens.index') }}">Moje stacje pogodowe</a>.<br>
                 2. Skopiuj 12-cyfrowy numer ID utworzonej stacji pogodowej (np. 111122223333).<br>
                 3. Utwórz token API poniżej i skopiuj jego odszyfrowaną treść, lub wykorzystaj utworzony wcześniej. <br>
