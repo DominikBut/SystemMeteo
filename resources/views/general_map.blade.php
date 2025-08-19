@@ -160,11 +160,11 @@
                                                 <div class="pt-2 text-end flex flex-col justify-end ">
                                                     <div class="text-xs flex flex-row gap-2 justify-end">
                                                         <a class="hover:underline text-gray-500 text-nowrap"
-                                                        href="{{ route('stacja_archive').'/?id='}}${staccjacur['kod_stacji']}">
+                                                        href="{{ route('stacja_archive').'?id='}}${staccjacur['kod_stacji']}">
                                                             Dane archiwalne
                                                         </a>
                                                         <a class="hover:underline text-blue-500 text-nowrap"
-                                                        href="{{ route('stacja_recent').'/?id='}}${staccjacur['kod_stacji']}">
+                                                        href="{{ route('stacja_recent').'?id='}}${staccjacur['kod_stacji']}">
                                                             Dane bieżące
                                                         </a>
                                                     </div>
@@ -345,7 +345,7 @@
             let allStacjicon = {
                                         radius: 5,
                                         color: '#666',
-                                        fillColor: 'lightblue',
+                                        fillColor: 'blue',
                                         fillOpacity: 0.8,
                                         weight: 1
                                     };
@@ -431,7 +431,7 @@
                                             let icon = L.divIcon({
                                                 className: 'custom-temp-icon',
                                                 html: `<div class="marker-label" style="opacity: 0.85; background-color:${color}">${temp.toFixed(1)} °C</div>`,
-                                                iconSize: [55, 20],
+                                                iconSize: [65, 20],
                                             });
 
                                             let marker = L.marker([lat, lon], { icon });
@@ -545,6 +545,12 @@
                             focusStation(`${data.id}`);
                         });
                     }, 1000); // delay in milliseconds (500ms = half a second)
+                });
+                Livewire.on('clear-url-id', () => {
+                    // Remove ?id=... from URL without reloading
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('id');
+                    window.history.replaceState({}, document.title, url.pathname + url.search);
                 });
                 Livewire.on('layer-updated', (newData) => {
                     Alpine.nextTick(() => {

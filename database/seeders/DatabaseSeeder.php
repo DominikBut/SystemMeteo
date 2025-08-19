@@ -23,11 +23,13 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // Make some stations
-        $stations = Stations::factory()->count(10)->create();
+        // $stations = Stations::factory()->count(10)->create();
+        $stations = Stations::get();
+
 
         // For each station, make some fake weather data
         $stations->each(function ($station) {
-            Data::factory()->count(50)->create([
+            Data::factory()->count(10)->create([
                 'station_id' => $station->id
             ]);
         });

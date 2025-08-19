@@ -185,7 +185,7 @@
                                                             }
                                                         }"
                                                         x-init="validateRange()">
-                                                        <div class="flex flex-col sm:flex-row flex-wrap items-end gap-4 w-full">
+                                                        <div class="flex flex-col sm:flex-row flex-wrap 2xl:flex-nowrap items-end gap-4 w-full">
                                                             <div class="flex flex-col w-full">
                                                                 <label for="start" class="sm:text-sm font-medium text-gray-700">Data początkowa:</label>
                                                                 <input type="date" id="start" wire:loading.attr="disabled" wire:target="loadData"
@@ -905,6 +905,10 @@
                                         <table class="w-full text-left ">
                                             <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-center text-xs text-wrap">
+                                                    <th  class="p-2 text-gray-600"
+                                                       >
+                                                       Lp.
+                                                    </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'data' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('data')">
                                                         Data pomiaru <span class="">
@@ -1030,6 +1034,9 @@
                                             <tbody class="divide-y divide-slate-100 ">
                                                 @foreach($sortedData as $data)
                                                     <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 ">
+                                                                 {{ $loop->iteration }}
+                                                        </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
                                                         {{ $data['data'] ?? 'Brak' }}
                                                         </td>
@@ -1100,6 +1107,10 @@
                                         <table class="w-full text-left ">
                                             <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-center text-xs  text-wrap">
+                                                    <th  class="p-2 text-gray-600"
+                                                       >
+                                                       Lp.
+                                                    </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'data' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('data')">
                                                         Data pomiaru <span class="">
@@ -1283,6 +1294,9 @@
                                             <tbody class="divide-y divide-slate-100 ">
                                                 @foreach($sortedData as $data)
                                                     <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 ">
+                                                                 {{ $loop->iteration }}
+                                                        </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
                                                         {{ $data['data'] ?? 'Brak' }}
                                                         </td>
@@ -1375,6 +1389,10 @@
                                         <table class="w-full text-left ">
                                             <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-wrap text-center text-xs ">
+                                                    <th  class="p-2 text-gray-600"
+                                                       >
+                                                       Lp.
+                                                    </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('temperatura_gruntu_data')">
                                                         Pomiar temp.<span class="text-nowrap"> gruntu
@@ -1509,6 +1527,9 @@
                                             <tbody class="divide-y divide-slate-100 ">
                                                 @foreach($sortedData as $data)
                                                     <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 ">
+                                                                 {{ $loop->iteration }}
+                                                        </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'temperatura_gruntu_data' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
                                                             {{ !empty($data['temperatura_gruntu_data']) ? Carbon::parse($data['temperatura_gruntu_data'], 'UTC')->setTimezone('Europe/Warsaw')->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>

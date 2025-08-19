@@ -140,7 +140,10 @@ class MapRecent extends Component
     public function updatedOption()
     {
         $this->getStations();
-        $this->getStationDataid(null); /// hm?
+        $this->error = null;
+        $this->stationId = null;
+        $this->getStationDataid(null);
+        $this->dispatch('clear-url-id');
     }
     protected function getStations()
     {
@@ -277,14 +280,14 @@ class MapRecent extends Component
                 $this->stationDataId = [];
                 $this->stationId = null;
                 if ($kod !== null) {
-                    $this->error = 'Nie znaleziono danych dla podanej stacji.';
+                    $this->error = 'W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.';
                 }
             }
         } catch (\Throwable $th) {
             $this->stationDataId = [];
             $this->stationId = null;
             if ($kod !== null) {
-                $this->error = 'Nie znaleziono danych dla podanej stacji.';
+                $this->error = 'W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.';
             }
         }
     }

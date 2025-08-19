@@ -116,11 +116,11 @@
 
                                             <div class="text-xs flex flex-row gap-2 justify-end">
                                                 <a class="underline text-gray-500 text-nowrap"
-                                                href="{{ route('stacja_archive').'/?id='.$stacja['kod_stacji'] }}">
+                                                href="{{ route('stacja_archive').'?id='.$stacja['kod_stacji'] }}">
                                                     Dane archiwalne
                                                 </a>
                                                 <a class="underline text-blue-500 text-nowrap"
-                                                href="{{ route('stacja_recent').'/?id='.$stacja['kod_stacji'] }}">
+                                                href="{{ route('stacja_recent').'?id='.$stacja['kod_stacji'] }}">
                                                     Dane bieżące
                                                 </a>
 
@@ -130,7 +130,7 @@
                                 </div>
                             @endforeach
                         @else
-                                <div class="text-wrap text-center text-base bg-white">Brak stacji wykonujących pomiary.</div>
+                                <div class="text-wrap text-center text-base bg-white pt-12">Brak stacji wykonujących pomiary.</div>
                         @endif
                     </div>
 
@@ -283,14 +283,14 @@
                         @elseif(!empty($error))
                             <div wire:loading.remove wire:target="getStationDataid"  class="min-h-20 items-center w-full flex flex-col justify-center text-center ">
                                 <div class=" font-bold  w-full flex flex-col justify-center">
-                                    <div class="text-sm font-bold text-red-500">W oficjalnym API IMGW nie znaleziono danych dla stacji o wybranym ID.</div>
-                                    <div class="font-bold text-gray-600 text-sm mt-2">
-                                        Wybierz inną stację lub spróbuj innej z tego samego regionu.
-                                    </div>
-                                    <br>
+
                                     @if ($error)
                                         <p class="font-bold text-red-500">{{ $error }}</p>
                                     @endif
+                                     <div class="font-bold text-gray-600 text-sm mt-2">
+                                        Wybierz inną stację lub spróbuj innej z tego samego regionu.
+                                    </div>
+
                                 </div>
                             </div>
                         @else
@@ -550,8 +550,12 @@
                                         <table class="w-full text-left ">
                                             <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-wrap text-center text-xs ">
-                                                    <th title="Sortuj" class="hover:underline p-2 cursor-pointer  transition hover:opacity-75 text-gray-600"
-                                                        wire:click="setSort('kod_stacji')">
+                                                    <th  class="p-2 text-gray-600"
+                                                       >
+                                                       Lp.
+                                                    </th>
+                                                    <th  class="p-2 text-gray-600"
+                                                       >
                                                         Zapisane dane <span class="text-nowrap">stacji
                                                         </span>
                                                     </th>
@@ -706,10 +710,13 @@
                                             <tbody class="divide-y divide-slate-100 ">
                                                 @foreach($sortedData as $data)
                                                     <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 ">
+                                                                 {{ $loop->iteration }}
+                                                        </td>
                                                         <td class="p-2 font-medium">
-                                                            <a class="underline text-blue-500 text-nowrap" href="{{ route('stacja_recent').'/?id='.$data['kod_stacji'] ?? ''  }}">Bieżace </a>
+                                                            <a class="underline text-blue-500 text-nowrap" href="{{ route('stacja_recent').'?id='.$data['kod_stacji'] ?? ''  }}">Bieżące </a>
                                                             <hr class="my-2">
-                                                            <a class="underline text-gray-500 text-nowrap" href="{{ route('stacja_archive').'/?id='.$data['kod_stacji'] ?? ''  }}">Archiwalne </a>
+                                                            <a class="underline text-gray-500 text-nowrap" href="{{ route('stacja_archive').'?id='.$data['kod_stacji'] ?? ''  }}">Archiwalne </a>
 
                                                         </td>
                                                         <td class="p-2  {{$sortBy === 'kod_stacji' ? 'text-blue-500 font-semibold' : ''  }}">

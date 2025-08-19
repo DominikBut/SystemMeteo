@@ -165,7 +165,7 @@
                                                             }
                                                         }"
                                                         x-init="validateRange()">
-                                                        <div class="flex flex-col sm:flex-row flex-wrap  items-end gap-4 w-full ">
+                                                        <div class="flex flex-col sm:flex-row flex-wrap 2xl:flex-nowrap  items-end gap-4 w-full ">
                                                             <div class="flex flex-col w-full">
                                                                 <label for="start" class="sm:text-sm font-medium text-gray-700">Data początkowa:</label>
                                                                 <input type="date" id="start" wire:loading.attr="disabled" wire:target="loadData"
@@ -417,9 +417,10 @@
 
 
                                                 @if ($this->stationInfo->active === false)
-                                                    <p class="text-sm sm:text-base text-red-500 font-bold">Stacja nieaktywna</p>
+                                                    <p class="text-sm sm:text-base text-red-500 font-bold">Stacja <span class="">{{ ($this->stationInfo->public === true) ? 'publiczna' : 'prywatna'}}</span> nieaktywna</p>
                                                 @else
-                                                    <p class="text-sm sm:text-base text-lime-500 font-bold">Stacja aktywna</p>
+
+                                                    <p class="text-sm sm:text-base text-lime-600 font-bold">Stacja <span class="">{{ ($this->stationInfo->public === true) ? 'publiczna' : 'prywatna'}}</span> aktywna</p>
                                                 @endif
                                                 <p class="text-xs text-gray-500  w-auto ">
                                                 Ostatni pomiar: {{ App\Models\Data::where('station_id',$stationId)->select('created_at')->orderBy('created_at', 'desc')->first()->created_at ?? '–' }}
@@ -619,6 +620,10 @@
                                         <table class="w-full text-left ">
                                             <thead class="h-16 border-b-2 border-gray-300 bg-slate-100  text-black ">
                                                 <tr class="even:bg-blue-600/5 text-wrap text-center text-xs ">
+                                                    <th  class="p-2 text-gray-600"
+                                                       >
+                                                       Lp.
+                                                    </th>
                                                     <th title="Sortuj" class="hover:underline p-2 cursor-pointer   transition hover:opacity-75 {{$sortBy === 'created_at' ? 'text-blue-600' : 'text-gray-600'  }}"
                                                     wire:click="setSort('created_at')">
                                                         <div class="flex flex-col">Data wykonania <span class="text-nowrap">pomiarów
@@ -672,6 +677,9 @@
 
                                                 @foreach($sortedData as $data)
                                                     <tr class="hover:!bg-blue-100 even:bg-gray-700/5 even: text-center transition  text-xs">
+                                                        <td class="p-2 ">
+                                                                 {{ $loop->iteration }}
+                                                        </td>
                                                         <td class="p-2 text-nowrap {{$sortBy === 'created_at' ? 'text-blue-400 font-semibold' : 'text-gray-500'  }}">
                                                             {{ !empty($data['created_at']) ? Carbon::parse($data['created_at'])->format('Y-m-d H:i') : 'Brak' }}
                                                         </td>
