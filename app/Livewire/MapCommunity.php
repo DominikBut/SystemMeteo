@@ -55,12 +55,19 @@ class MapCommunity extends Component
         try {
             $userId = Auth::id();
             $results = [];
+            $resultsall = [];
             $hours = 24; // or make it a property/parameter
             foreach ($this->allstations as $station) {
 
-                $latestDataall = Data::where('station_id', $station['id'])
+                $latestData = Data::where('station_id', $station['id'])
+                    ->where('created_at', '>=', Carbon::now()->subHours($hours))
                     ->orderBy('created_at', 'desc')
                     ->first();
+
+                if (!$latestData) {
+                    continue; // skip station with no data today
+                }
+
                 $resultsall[] = [
                     'station_id'   => $station['id'],
                     'name'         => $station['name'],
@@ -69,24 +76,10 @@ class MapCommunity extends Component
                     'voivodeship'  => $station['voivodeship'],
                     'district'     => $station['district'],
                     'active'     => $station['active'],
-                    'latest'       => $latestDataall,
+                    'latest'       => $latestData,
                     'owned'        => $station['user_id'] === $userId,
                 ];
 
-                if ($this->option != 'all') {
-                    $latestData = Data::where('station_id', $station['id'])
-                        ->where('created_at', '>=', Carbon::now()->subHours($hours))
-                        ->orderBy('created_at', 'desc')
-                        ->first();
-                } else {
-                    $latestData = Data::where('station_id', $station['id'])
-                        ->orderBy('created_at', 'desc')
-                        ->first();
-                }
-
-                if (!$latestData) {
-                    continue; // skip station with no data today
-                }
 
                 // Apply option-specific filters
                 if ($this->option === 'hum') {
@@ -141,6 +134,7 @@ class MapCommunity extends Component
 
             $this->stationData = $results;
             $this->sortedDataAll = $resultsall;
+
             $this->sortedData = $this->sortedDataAll;
             $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
             $this->calculateMinMaxStats();
