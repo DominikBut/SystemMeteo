@@ -55,7 +55,7 @@ class MapCommunity extends Component
         try {
             $userId = Auth::id();
             $results = [];
-            $hours = 23; // or make it a property/parameter
+            $hours = 24; // or make it a property/parameter
             foreach ($this->allstations as $station) {
 
                 $latestDataall = Data::where('station_id', $station['id'])
@@ -325,6 +325,7 @@ class MapCommunity extends Component
         //     $this->dispatch('open', id: $this->stationId);
         // }
     }
+
     protected function getStations()
     {
         $this->error = null;
@@ -416,7 +417,20 @@ class MapCommunity extends Component
     //     });
     //     $this->dispatch('layer-updated', $tmpmatchingRecords, $this->askTime, $this->option);
     // }
+    protected function getSortValue(array $row, string $sortBy)
+    {
+        // Top-level fields
+        if (array_key_exists($sortBy, $row)) {
+            return $row[$sortBy];
+        }
 
+        // Nested "latest" fields
+        if (isset($row['latest'][$sortBy])) {
+            return $row['latest'][$sortBy];
+        }
+
+        return null;
+    }
     protected function sortWetherData()
     {
         if ($this->sortBy === '') {
@@ -424,29 +438,36 @@ class MapCommunity extends Component
             return;
         }
 
-        $data = $this->stationData; // work on plain array for speed
+        // Always sort the full current dataset
+        $data = $this->sortedDataAll;
         $sortBy = $this->sortBy;
         $direction = $this->sortDirection;
 
         usort($data, function ($a, $b) use ($sortBy, $direction) {
-            $valA = $a[$sortBy] ?? null;
-            $valB = $b[$sortBy] ?? null;
+            $valA = $this->getSortValue($a, $sortBy);
+            $valB = $this->getSortValue($b, $sortBy);
 
-            // Always push nulls to the end
+            // Push nulls to end
             $isNullA = is_null($valA);
             $isNullB = is_null($valB);
-
             if ($isNullA && !$isNullB) return 1;
             if (!$isNullA && $isNullB) return -1;
             if ($isNullA && $isNullB) return 0;
 
-            // Both non-null: compare
-            if ($valA == $valB) return 0;
-
-            if ($direction === 'desc') {
-                return ($valA < $valB) ? 1 : -1;
+            // Numeric
+            if (is_numeric($valA) && is_numeric($valB)) {
+                $cmp = $valA <=> $valB;
             }
-            return ($valA > $valB) ? 1 : -1;
+            // Dates
+            elseif (strtotime($valA) !== false && strtotime($valB) !== false) {
+                $cmp = strtotime($valA) <=> strtotime($valB);
+            }
+            // Strings
+            else {
+                $cmp = strcasecmp((string)$valA, (string)$valB);
+            }
+
+            return $direction === 'desc' ? -$cmp : $cmp;
         });
 
         $this->sortedData = $data;

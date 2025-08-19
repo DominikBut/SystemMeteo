@@ -177,7 +177,7 @@
 
                  if(staccjacur)
                  {
-                    console.log(staccjacur);
+                    //console.log(staccjacur);
                     let marker = L.circleMarker([staccjacur['lat'], staccjacur['lon']], {
                                             radius: 0,
                                         });
@@ -537,7 +537,7 @@
                         let Data = newData[0];
                         let Time = newData[1];
                         let Option = newData[2];
-                         console.log(Data);
+                         //console.log(Data);
                         tempLayerGroup.clearLayers();
                                 humidityLayerGroup.clearLayers();
                                 windLayerGroup.clearLayers();

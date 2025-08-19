@@ -49,7 +49,7 @@
                                             <button data-tab="all" x-on:click="selectTab('all');" wire:loading.attr="disabled" wire:target="getStationData, getStations, getStationDataid"
                                             :class="selectedTab === 'all' ? ' bg-white rounded-md shadow-sm text-blue-700' : 'hover:text-black'"
                                             class=" delay-100 duration-300 ease-out inline-flex items-center justify-center w-full h-8 px-3  transition-all rounded-md cursor-pointer whitespace-nowrap"
-                                            type="button" role="tab">Lokalizacje stacji</button>
+                                            type="button" role="tab">Lokalizacje stacji (24h)</button>
                                         </div>
                                 </div>
                     </div>
@@ -291,7 +291,7 @@
                 Ładowanie...
                 </div>
                 <div wire:loading.remove wire:target="getStationData"  class="ms-2 text-xs sm:text-sm pb-4 font-semibold text-gray-500 flex flex-row justify-between">
-                Statystyki odczytanych danych:
+                Statystyki pobranych najnowszych danych (do -2 godz.):
                 </div>
                 <div class="h-64 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
                     <table wire:loading.remove wire:target="getStationData"  class="w-full text-left h-full">
@@ -422,7 +422,7 @@
             </div>
             <div wire:loading.remove wire:target="getStationData, setSort"  class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
 
-                Zestawienie tabelaryczne pobranych danych meteorologicznych wszystkich stacji:
+                Zestawienie tabelaryczne pobranych danych meteorologicznych wszystkich stacji aktywnych przez ostatnie 24 godz.:
 
             </div>
             <div wire:loading wire:target="setSort, setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
