@@ -3,19 +3,18 @@
 namespace Database\Seeders;
 
 use App\Models\Data;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\User;
 use App\Models\Stations;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class DatabaseSeeder extends Seeder
+class DataSeeder2hnow extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        //User::factory(10)->create();
 
         // User::factory()->create([
         //     'name' => 'Test User',
@@ -23,14 +22,16 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         //Make some stations
-        $stations = Stations::factory()->count(25)->create();
-        // $stations = Stations::get();
+        //$stations = Stations::factory()->count(25)->create();
+        $stations = Stations::get();
 
 
         //For each station, make some fake weather data
         $stations->each(function ($station) {
-            Data::factory()->count(40)->create([
-                'station_id' => $station->id
+            Data::factory()->count(20)->create([
+                'station_id' => $station->id,
+                'created_at' => fake()->dateTimeBetween('-2 hours', 'now'),
+                'updated_at' => now(),
             ]);
         });
     }

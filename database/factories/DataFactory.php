@@ -17,12 +17,12 @@ class DataFactory extends Factory
     {
         return [
             'station_id' => Stations::inRandomOrder()->first()?->id,
-            'temp_air' => $this->faker->optional(0.9)->randomFloat(2, -15, 35),
-            'humidity' => $this->faker->optional(0.9)->randomFloat(2, 20, 100),
-            'wind_speed' => $this->faker->randomFloat(2, 0, 15),
-            'wind_direction' => $this->faker->randomFloat(2, 0, 360),
-            'rain_10min' => $this->faker->randomFloat(2, 0, 5),
-            'created_at' => $this->faker->dateTimeBetween('-1 hour', 'now'),
+            'temp_air' => $this->faker->randomFloat(2, 10, 30),
+            'humidity' => $this->faker->randomFloat(2, 60, 100),
+            'wind_speed' => $this->faker->optional(0.90)->randomFloat(2, 0, 15),
+            'wind_direction' => $this->faker->optional(0.90)->randomFloat(2, 0, 360),
+            'rain_10min' => $this->faker->optional(0.5)->randomFloat(2, 0, 0.90),
+            'created_at' => $this->faker->dateTimeBetween('-50 days', 'now'),
             'updated_at' => now(),
         ];
     }

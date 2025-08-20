@@ -9,7 +9,10 @@
                         stations: {{ Js::from($this->stations) }},
                     })"
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
-                    <h1 class="col-span-2 bg-white rounded-md shadow-sm pt-4 pb-1 px-2 mx-2 text-center text-sm sm:text-2xl font-bold tracking-wider">Przeglądasz zweryfikowane archiwalne dane meteorologiczne - klimatyczne IMGW <br>(od 2001.01.01) </h1>
+                    <x-slot name="header">
+                            {{ __('Przeglądasz oficjalne archiwalne dane IMGW meteo - klimatyczne (od 2001.01.01)') }}
+                    </x-slot>
+
                     <h2 class="col-span-2 bg-white rounded-md shadow-sm py-2 px-2 mx-2 text-center tyext-xs sm:text-sm text-gray-500 tracking-wider">Aktualne dane bieżącego miesiąca są udostępnianie po jego zakończeniu 10-ego dnia 2 miesiące później.</h2>
                     <div class="flex flex-col justify-between p-2">
                          @if (!empty($stations) && (count($stations)!=0))

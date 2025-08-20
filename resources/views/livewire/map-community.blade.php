@@ -5,8 +5,9 @@
     @endphp
     <div class="p-4 space-y-4 w-full">
         <div class="bg-white rounded-md shadow-sm border">
-
-            <h1 class=" pt-3 px-2 sm:px-3 pb-2 text-center text-sm sm:text-xl font-bold tracking-wider">Przeglądasz najnowsze dane meteorologiczne stacji pogodowych społeczności</h1>
+                    <x-slot name="header">
+                            {{ __('Przeglądasz najnowsze dane meteo stacji pogodowych społeczności') }}
+                    </x-slot>
             <div class="flex flex-col justify-between w-full">
                                 <div    x-data="{
                                         selectedTab: 'temp',

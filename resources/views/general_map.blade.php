@@ -345,7 +345,7 @@
             let allStacjicon = {
                                         radius: 5,
                                         color: '#666',
-                                        fillColor: 'blue',
+                                        fillColor: 'lightblue',
                                         fillOpacity: 0.8,
                                         weight: 1
                                     };

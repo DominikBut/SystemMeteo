@@ -427,8 +427,8 @@
                                                 </p>
                                             </div>
                                             @if(Storage::url($stationInfo->photo))
-                                             <div class="flex bg-gray-100 border-2 border-gray-500 rounded-md m-auto size-64 sm:size-72">
-                                                <img class="size-64 sm:size-72 rounded-sm object-cover " src="{{ Storage::url($stationInfo->photo) }}" alt="{{ $stationInfo->name }}" title="Zdjęcie stacji"/>
+                                             <div class="flex bg-gray-100 border-2 border-gray-500 rounded-md m-auto size-64 sm:size-72 object-contain">
+                                                <img class="size-64 sm:size-72 rounded-md  max-h-fit " src="{{ Storage::url($stationInfo->photo) }}" alt="{{ $stationInfo->name }}" title="Zdjęcie stacji"/>
                                              </div>
 
                                              @else
