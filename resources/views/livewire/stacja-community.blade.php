@@ -226,11 +226,7 @@
                                 <ul class="grid grid-cols-2 gap-4 sm:text-sm pt-4">
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M12 3v2.25M12 18.75V21M4.22 4.22l1.59 1.59M17.19 17.19l1.59 1.59M3 12h2.25M18.75 12H21M4.22 19.78l1.59-1.59M17.19 6.81l1.59-1.59" stroke-linecap="round"
-                                                    stroke-linejoin="round"/>
-                                            </svg>
+                                            🌡
                                             <strong class=" w-min sm:w-auto">Temp. powietrza:</strong> {{ $stationData->temp_air ?? '-' }} °C
                                         </p>
 
@@ -238,20 +234,14 @@
 
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M12 3v18m9-9H3" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                            💧
                                             <strong class=" w-min sm:w-auto">Wilg. względna:</strong> {{ $stationData->humidity ?? '-' }} %
                                         </p>
 
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M4 12h16M4 6h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                           🌫
                                             <strong>Wiatr śr.:</strong> {{ $stationData->wind_speed ?? '-' }} m/s
                                         </p>
                                     </li>
@@ -263,10 +253,7 @@
                                         <div class="flex flex-row items-start sm:items-center gap-1">
                                             <div class=" w-min sm:w-auto">
                                                 <strong class="flex items-center gap-1 w-min sm:w-auto">
-                                                <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                    viewBox="0 0 24 24">
-                                                    <path d="M12 3v18M5 12h14" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                                🪁
                                                     Kierunek wiatru:
                                                 </strong>
                                             </div>
@@ -280,10 +267,7 @@
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M4 4v16h16V4H4zM9 9h6v6H9z" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                           🌧
                                             <strong class=" w-min sm:w-auto">Opad <span class="text-nowrap">(10 min):</span></strong> {{ $stationData->rain_10min ?? '-' }} mm
                                         </p>
 

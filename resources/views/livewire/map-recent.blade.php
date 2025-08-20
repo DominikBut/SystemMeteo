@@ -164,11 +164,7 @@
                                 <ul class="flex flex-row gap-4 sm:text-sm overflow-x-auto text-nowrap">
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M12 3v2.25M12 18.75V21M4.22 4.22l1.59 1.59M17.19 17.19l1.59 1.59M3 12h2.25M18.75 12H21M4.22 19.78l1.59-1.59M17.19 6.81l1.59-1.59" stroke-linecap="round"
-                                                    stroke-linejoin="round"/>
-                                            </svg>
+                                            🌡
                                             <strong class=" w-min sm:w-auto">Temp. powietrza:</strong> {{ $stationDataId['temperatura_powietrza'] ?? '-' }} °C
                                         </p>
 
@@ -178,11 +174,7 @@
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M12 3v2.25M12 18.75V21M4.22 4.22l1.59 1.59M17.19 17.19l1.59 1.59M3 12h2.25M18.75 12H21M4.22 19.78l1.59-1.59M17.19 6.81l1.59-1.59" stroke-linecap="round"
-                                                    stroke-linejoin="round"/>
-                                            </svg>
+                                            🌡🗾
                                             <strong class=" w-min sm:w-auto">Temp. gruntu:</strong> {{ $stationDataId['temperatura_gruntu'] ?? '-' }} °C
                                         </p>
 
@@ -192,10 +184,7 @@
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M12 3v18m9-9H3" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                            💧
                                             <strong class=" w-min sm:w-auto">Wilg. względna:</strong> {{ $statistationDataIdonData['wilgotnosc_wzgledna'] ?? '-' }} %
                                         </p>
 
@@ -205,10 +194,7 @@
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M4 12h16M4 6h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                           🌫
                                             <strong>Wiatr śr.:</strong> {{ $stationDataId['wiatr_srednia_predkosc'] ?? '-' }} m/s
                                         </p>
 
@@ -218,10 +204,7 @@
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                            💨
                                             <strong class=" w-min sm:w-auto">Wiatr maks.:</strong> {{ $stationDataId['wiatr_predkosc_maksymalna'] ?? '-' }} m/s
                                         </p>
 
@@ -236,10 +219,7 @@
                                         <div class="flex flex-row items-start sm:items-center gap-1">
                                             <div class=" w-min sm:w-auto">
                                                 <strong class="flex items-center gap-1 w-min sm:w-auto">
-                                                <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                    viewBox="0 0 24 24">
-                                                    <path d="M12 3v18M5 12h14" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                                🪁
                                                     Kierunek wiatru:
                                                 </strong>
                                             </div>
@@ -256,10 +236,7 @@
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M4 4l16 16" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                            📈
                                             <strong class=" w-min sm:w-auto">Wiatr poryw:</strong> {{ $stationDataId['wiatr_poryw_10min'] ?? '-' }} m/s
                                         </p>
 
@@ -269,10 +246,7 @@
                                     </li>
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
-                                            <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" stroke-width="1.5"
-                                                viewBox="0 0 24 24">
-                                                <path d="M4 4v16h16V4H4zM9 9h6v6H9z" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                           🌧
                                             <strong class=" w-min sm:w-auto">Opad <span class="text-nowrap">(10 min):</span></strong> {{ $stationDataId['opad_10min'] ?? '-' }} mm
                                         </p>
 
