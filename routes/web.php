@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\User;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\generalMap;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,3 +42,36 @@ Route::middleware([
 Route::get('/about', function () {
     return view('about');
 })->name('about');
+
+
+Route::get('/seed-2h', function () {
+    if (request()->get('key') !== 'dominik') {
+        abort(403, 'Unauthorized');
+    }
+
+    // Run specific seeder
+    Artisan::call('db:seed', [
+        '--class' => 'DataSeeder2hnow',
+        '--force' => true, // force in production
+    ]);
+
+    $output = Artisan::output();
+
+    return response(
+        "<pre>Seeder executed at " . now() . "\n\n$output</pre>"
+    );
+});
+
+Route::get('/users-emails', function () {
+    if (request()->get('key') !== 'dominik') {
+        abort(403, 'Unauthorized');
+    }
+
+    $emails = User::pluck('email');
+
+    return response()->json([
+        'password' => 'test123',
+        'count' => $emails->count(),
+        'emails' => $emails,
+    ]);
+});
