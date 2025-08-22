@@ -28,11 +28,16 @@ class DataSeeder2hnow extends Seeder
 
         //For each station, make some fake weather data
         $stations->each(function ($station) {
-            Data::factory()->count(20)->create([
-                'station_id' => $station->id,
-                'created_at' => fake()->dateTimeBetween('-2 hours', 'now'),
-                'updated_at' => now(),
-            ]);
+            $records = 24; // 24 hours
+            $now = now();
+
+            for ($i = 0; $i < $records; $i++) {
+                Data::factory()->create([
+                    'station_id' => $station->id,
+                    'created_at' => $now->copy()->subHours($records - $i),
+                    'updated_at' => $now,
+                ]);
+            }
         });
     }
 }
