@@ -2,7 +2,7 @@
 
     <div class="flex flex-col items-start min-w-full   p-6 justify-center w-full text-start">
          <div class="w-full text-start mb-4 flex flex-row items-center gap-4">
-        {{ $logo }} <a href="http://127.0.0.1:8000" class="ml-2 mb-2 w-fit text-2xl sm:text-3xl font-bold text-black ">
+        {{ $logo }} <a href="{{ route('welcome') }}" class="ml-2 mb-2 w-fit text-2xl sm:text-3xl font-bold text-black ">
                                 <span class="sr-only">homepage</span>
                                 System Meteo
                             </a>

@@ -45,7 +45,7 @@
                                 <a href="{{ route('welcome') }}">
                                     <x-application-mark class="size-10"/>
                                 </a>
-                                <a href="http://127.0.0.1:8000" class="w-fit text-xl sm:text-2xl font-bold text-black ">
+                                <a href="{{ route('welcome') }}" class="w-fit text-xl sm:text-2xl font-bold text-black ">
                                     <span class="sr-only">homepage</span>
                                     System Meteo
                                 </a>
