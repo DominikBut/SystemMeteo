@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Models\Data;
 use App\Models\Stations;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreDataRequest;
 
 class DataController extends Controller
@@ -24,9 +26,14 @@ class DataController extends Controller
     public function store(StoreDataRequest $request)
     {
 
-        $station = Stations::where('id', $request->station_id)->where('active', true)->first();
-        if (!$station) {
-            return response()->json(['message' => 'Station not activated!'], 423);
+        $station = Stations::where('id', $request->station_id)
+            ->first();
+
+        if ($station->user_id != Auth::id()) {
+            return response()->json(['message' => 'Not authorized to do this!'], 403);
+        }
+        if ($station->active == false) {
+            return response()->json(['message' => 'Station not activated!'], 403);
         }
         // // Store
         Data::create([

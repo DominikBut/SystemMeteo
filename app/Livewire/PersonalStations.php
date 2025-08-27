@@ -113,7 +113,7 @@ class PersonalStations extends Component implements HasForms, HasTable
                                 Hidden::make('lon')->default(21.0122),
                                 // ->hiddenLabel()
                                 // ->hidden(),
-                                Select::make('voivodeship')->native(false)->searchable()->prefix('Województwo: ')->required()->columnSpan(2)->default('wielkopolskie')->hiddenLabel()
+                                Select::make('voivodeship')->native(false)->searchable()->prefix('Województwo: ')->required()->columnSpan(2)->default('Wielkopolskie')->hiddenLabel()
                                     ->options([
                                         'Wielkopolskie' => 'Wielkopolskie',
                                         'Dolnośląskie' => 'Dolnośląskie',
@@ -134,7 +134,7 @@ class PersonalStations extends Component implements HasForms, HasTable
                                     ])
                                     ->live(),
 
-                                Select::make('district')->native(false)->searchable()->prefix('Powiat, miasto:')->required()->columnSpan(2)->default('poznanski')->hiddenLabel()
+                                Select::make('district')->native(false)->searchable()->prefix('Powiat, miasto:')->required()->columnSpan(2)->default('poznański')->hiddenLabel()
                                     ->options(fn(Get $get): array => match ($get('voivodeship')) {
                                         'Dolnośląskie' => [
                                             'bolesławiecki' => 'bolesławiecki',

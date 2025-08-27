@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('lat', 8, 5);
             $table->decimal('lon', 8, 5);
-            $table->string('voivodeship')->default('wielkopolskie');
-            $table->string('district')->default('poznanski');
+            $table->string('voivodeship')->default('Wielkopolskie');
+            $table->string('district')->default('poznański');
             $table->string('photo')->nullable();
             $table->mediumText('description')->nullable();
             $table->boolean('temperature')->default(true);

@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     {
 
         RateLimiter::for('data-ip', function (HttpRequest $request) {
-            return Limit::perMinutes(40, 1)->by($request->ip()); // per IP only
+            return Limit::perMinutes(40, 1)->by(optional($request->user())->id ?: $request->ip()); // per IP only
         });
 
 
