@@ -168,7 +168,7 @@
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
                                             💧
-                                            <strong class=" w-min sm:w-auto">Wilg. względna:</strong> {{ $statistationDataId['latest']['humidity'] ?? '-' }} %
+                                            <strong class=" w-min sm:w-auto">Wilg. względna:</strong> {{ $stationDataId['latest']['humidity'] ?? '-' }} %
                                         </p>
 
                                     </li>

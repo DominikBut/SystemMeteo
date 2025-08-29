@@ -185,7 +185,7 @@
                     Livewire.first().call('getStationDataid', staccjacur['station_id']);
                     if (marker) {
                         marker.bindPopup(`<div style="font-size: 14px; color: blue;" class="font-bold pb-1">${staccjacur['name']} <span class="!font-normal text-gray-500">[${staccjacur['station_id']}]</span></div>
-                        <div class="flex flex-row justify-between items-center ${staccjacur['active'] ? 'text-lime-600': 'text-red-500'} pb-1"><b>Stacja ${staccjacur['owned'] ? '🚩prywatna': 'publiczna'} ${staccjacur['active'] ? 'aktywna': 'nieaktywna'}</b></div>
+                        <div class="flex flex-row justify-between items-center ${staccjacur['active'] ? 'text-lime-600': 'text-red-500'} pb-1"><b>Stacja ${staccjacur['owned'] ? '🚩 prywatna': 'publiczna'} ${staccjacur['active'] ? 'aktywna': 'nieaktywna'}</b></div>
                         <div class="flex flex-row justify-between items-center"><b>Temp. powietrza: ${staccjacur['latest']['temp_air'] ?? '- '} °C</b></div>
                                                 <div class="flex flex-row justify-between items-center"><b>Opad 10 min: ${staccjacur['latest']['rain_10min'] ?? '-'} mm</b></div>
                                                 <div class="flex flex-row justify-between items-center"><b>Wilgotność: ${staccjacur['latest']['humidity'] ?? '- '} %</b></div>

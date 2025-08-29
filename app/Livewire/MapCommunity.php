@@ -16,7 +16,6 @@ class MapCommunity extends Component
 {
     public $error = null;
     public $info;
-    #[Url(except: null, as: 'id', history: true)]
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
     public $stationDataId = [];

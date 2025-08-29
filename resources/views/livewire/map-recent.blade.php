@@ -6,7 +6,7 @@
     <div class="p-4 space-y-4 w-full">
         <div class="bg-white rounded-md shadow-sm border">
                     <x-slot name="header">
-                            {{ __('Przeglądasz mapę najświeższych danych meteo stacji pogodowych IMGW') }}
+                            {{ __('Przeglądasz mapę najnowszych danych meteo stacji pogodowych IMGW') }}
                     </x-slot>
 
             <div class="flex flex-col justify-between w-full">
@@ -185,7 +185,7 @@
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
                                             💧
-                                            <strong class=" w-min sm:w-auto">Wilg. względna:</strong> {{ $statistationDataIdonData['wilgotnosc_wzgledna'] ?? '-' }} %
+                                            <strong class=" w-min sm:w-auto">Wilg. względna:</strong> {{ $stationDataId['wilgotnosc_wzgledna'] ?? '-' }} %
                                         </p>
 
                                         <div class="text-xs text-gray-500">
