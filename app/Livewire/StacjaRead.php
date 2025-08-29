@@ -330,7 +330,6 @@ class StacjaRead extends Component
                 $month = $startDate->format('m');
                 $day1 = $startDate->format('d');
                 $day2 = $endDate->format('d');
-
                 $this->weatherData = [];
                 $filtered = null;
 
@@ -432,7 +431,8 @@ class StacjaRead extends Component
                         if (!is_numeric($kod_stacji) || !is_numeric($rok) || !is_numeric($miesiac) || !is_numeric($dzien)) {
                             continue;
                         }
-                        if ((int)$kod_stacji === (int) $this->stationId && ($dzien >= $day1 || $dzien <= $day2)) {
+
+                        if ((int)$kod_stacji == (int) $this->stationId && ($dzien >= $day1 && $dzien <= $day2)) {
                             $filtered[] = [
                                 "kod_stacji" => $kod_stacji,
                                 "nazwa_stacji" => $nazwa_stacji,

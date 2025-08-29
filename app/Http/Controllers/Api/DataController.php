@@ -33,7 +33,7 @@ class DataController extends Controller
             return response()->json(['message' => 'Not authorized to do this!'], 403);
         }
         if ($station->active == false) {
-            return response()->json(['message' => 'Station not activated!'], 403);
+            return response()->json(['message' => 'Station not activated!'], 423);
         }
         // // Store
         Data::create([
