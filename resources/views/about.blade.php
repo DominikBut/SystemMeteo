@@ -27,9 +27,9 @@
                                 <p class="mt-3  text-gray-500 leading-relaxed sm:max-w-4xl text-wrap text-xs sm:text-sm ">
 
                                     <b class="text-wrap">System Meteo to kompleksowe narzędzie pozwalające na odczyt wybranych przez użytkownika oficjalnych
-                                        danych meteorologicznych pozyskiwanych od IMGW przez API oraz archiwum plików, a także danych społecznościowych i niezweryfikowanych biężących danych klimatycznych
+                                        danych meteorologicznych pozyskiwanych od IMGW przez API oraz archiwum plików, a także danych społecznościowych i niezweryfikowanych bieżących danych klimatycznych
                                         archiwizowanych bezpośrednio na serwerze. Dane m.in. temperatury powietrza i gruntu, wilgotności względnej, prędkości i kierunku wiatru, a także opadu z ostatnich 10 min są prezentowane
-                                        w postaci tabelarycznej oraz graficznej zarówno na mapie jak i na wykresach.
+                                        w postaci tabelarycznej oraz graficznej zarówno na mapie, jak i na wykresach.
                                 </b><br><br>
                                     <b>Funkcjonalności systemu:</b><br>
                                     - Odczyt najświeższych danych meteorologicznych wybranej stacji dostępnej przez API IMGW wraz z prezentacją,<br>
@@ -39,10 +39,10 @@
                                     - Interfejs POST API odbioru i autoryzacji i archiwizacji bieżących danych stacji pogodowych użytkowników społeczności.<br>
                                     - Odczyt danych meteorologicznych dla wybranej stacji społeczności z bazy danych systemu wraz z prezentacją,<br>
                                     <br>
-                                    <b>Żródła danych wykorzystywanych przez system:</b><br>
+                                    <b>Źródła danych wykorzystywanych przez system:</b><br>
                                     - <b>Oficjalne dane publiczne IMGW:</b> <a class="underline truncate" href="https://danepubliczne.imgw.pl/pl/introduction">https://danepubliczne.imgw.pl/pl/introduction</a>,<br>
                                     - <b>IMGW API: </b><a class="underline truncate" href="https://danepubliczne.imgw.pl/api/data/meteo/">https://danepubliczne.imgw.pl/api/data/meteo/</a>,<br>
-                                    - <b>Oficjalne dane archiwalne IMGW plikowe (CSV) pomiarowo obserwacyjne - dane meteorologiczne: </b><a class="underline truncate" href="https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/">https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/</a><br>
+                                    - <b>Oficjalne dane archiwalne IMGW plikowe (CSV) pomiarowo-obserwacyjne - dane meteorologiczne: </b><a class="underline truncate" href="https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/">https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/</a><br>
                                     (system wykorzystuje tylko dane z katalogów:</b> "terminowe/klimat/", "dobowe/klimat/", "miesieczne/klimat/"),<br>
                                     - <b>Dla wyboru danych bieżących lista stacji pozyskiwana jest okresowo z API, natomiast dla danych archiwalnych jest połączona ze stacjami z pliku CSV dostępnego w archiwum IMGW:</b> <a class="underline truncate" href="https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/wykaz_stacji.csv">wykaz_stacji.csv</a>,<br>
                                     <br>
@@ -60,17 +60,17 @@
                                     <br>
                                     <b>Co oznaczają rodzaje agregacji:</b><br>
                                     - <b>30-minutowa</b> - dane surowe pozyskiwane bezpośrednio z API co 30 minut dla całego dnia, dostępne tylko przez 8 dni(z dniem aktualnie zapisywanym), <br>
-                                    - <b>terminowa</b> - dane dobowe surowe lub zweryfikowane zawierające po 4 pomiary agregujące lub 3 pomiary dla jednego dnia, w przypadku zweryfikowanych do godz. 6, do godz. 12, do godz. 18, plus do godz. 00 w przypadku danych surowych, <br>
-                                    - <b>dobowa</b> - dane miesieczne surowe lub zweryfikowane zawierające pomiary agregujące, sumaryczne, minimalne, maksymalne, średnie dla każdego dnia wybranego miesiąca, <br>
+                                    - <b>terminowa</b> - dane dobowe surowe lub zweryfikowane zawierające po 4 pomiary agregujące, lub 3 pomiary dla jednego dnia, w przypadku zweryfikowanych do godz. 6, do godz. 12, do godz. 18, plus do godz. 00 w przypadku danych surowych, <br>
+                                    - <b>dobowa</b> - dane miesięczne surowe lub zweryfikowane zawierające pomiary agregujące, sumaryczne, minimalne, maksymalne, średnie dla każdego dnia wybranego miesiąca, <br>
                                     - <b>miesięczna</b> - dane roczne surowe lub zweryfikowane zawierające pomiary agregujące, sumaryczne, minimalne, maksymalne, średnie dla każdego miesiąca wybranego roku. <br>
                                 <br>
                                     <b>Zasada archiwizacji danych z IMGW API:</b><br>
-                                    Dane archiwizowane są dla wszystkich dostępnych stacji pogodowych przez 24 h/7 dni w tygodniu co 30 minut, tzn. Cronjob serwera systemu uruchamia polecenie Artisan Laravel wysyłające zapytanie do API IMGW. Dane następnie są dopisywane do pliku JSON z datą bieżącego dnia.<br>
+                                    Dane archiwizowane są dla wszystkich dostępnych stacji pogodowych przez 24 h/7 dni w tygodniu co 30 minut, tzn. CronJob serwera systemu uruchamia polecenie Artisan Laravel wysyłające zapytanie do API IMGW. Dane następnie są dopisywane do pliku JSON z datą bieżącego dnia.<br>
                                     (nowy plik tworzony jest z wykryciem nowego dnia w chociaż jednej z dat pomiarów uzyskiwanych z API, było to koniecznością, gdyż API IMGW udostępnia dane z opóźnieniem 20 minutowym np. o 11:30 dostajemy dane z 11:10 - pomiary IMGW wykonywane są co 10 minut) <br>
-                                    Następnie jeżeli faktycznie wykryto nowy dzień dane z pliku z dnia poprzedniego są konwertowane do 4 agregujących pomiarów na dzień tzn. od 00:00 do 5:59, 6:00 - 11:59, 12:00 - 17:59, 18:00 - 23:59 i zapisywane do pliku JSON z datą dnia poprzedniego w katalogu "terminowe". <br>
-                                    Po zapisaniu pliku z danymi terminowymi wykonywane jest wyliczanie parametrów średnich, maksymalnych, minimalnych, sumarycznych itp. na podstawie pliku terminowego dla również całej doby poprzedniej i dopisanie ich do pliku JSON miesięcznego odpowiadającego miesiącowi dnia poprzedniego znajdującego się w katalogu "dobowe", jeżeli nie istnieje taki plik jest tworzony.<br>
-                                    Po wyliczeniu wartości dobowych aktualizowane są w pliku JSON rocznym w katalagou "miesieczne", odpowiadającym roku dnia poprzedniego, parametry miesiąca dnia poprzedniego, jeżeli nie istnieje taki plik jest tworzony.<br>
-                                    Dopiero na końcu całęgo procesu usuwane są z bieżącego katalogu pliki JSON starsze od 7 dni z danymi pozyskiwanymi co 30 minut z API IMGW.<br>
+                                    Następnie, jeżeli faktycznie wykryto nowy dzień, dane z pliku z dnia poprzedniego są konwertowane do 4 agregujących pomiarów na dzień tzn. od 00:00 do 5:59, 6:00 - 11:59, 12:00 - 17:59, 18:00 - 23:59 i zapisywane do pliku JSON z datą dnia poprzedniego w katalogu "terminowe". <br>
+                                    Po zapisaniu pliku z danymi terminowymi wykonywane jest wyliczanie parametrów średnich, maksymalnych, minimalnych, sumarycznych itp. na podstawie pliku terminowego dla również całej doby poprzedniej i dopisanie ich do pliku JSON miesięcznego odpowiadającego miesiącowi dnia poprzedniego znajdującego się w katalogu "dobowe", jeżeli nie istnieje taki plik to jest on tworzony.<br>
+                                    Po wyliczeniu wartości dobowych aktualizowane są w pliku JSON rocznym w katalogu "miesieczne", odpowiadającym roku dnia poprzedniego, parametry miesiąca dnia poprzedniego, jeżeli nie istnieje taki plik jest tworzony.<br>
+                                    Dopiero na końcu całego procesu usuwane są z bieżącego katalogu pliki JSON starsze od 7 dni z danymi pozyskiwanymi co 30 minut z API IMGW.<br>
                                     <br>
                                     <b>Autor aplikacji internetowej systemu lokalizacji:</b><br>
                                     But Dominik,<br>

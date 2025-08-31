@@ -88,7 +88,7 @@
                                 <a href="" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
-                                            Sprawdź biężące dane meteo stacji IMGW
+                                            Sprawdź bieżące dane meteo stacji IMGW
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-8 text-blue-600">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                                                             </svg>

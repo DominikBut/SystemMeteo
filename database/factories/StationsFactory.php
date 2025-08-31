@@ -393,7 +393,7 @@ class StationsFactory extends Factory
         return [
             'id' => (string) random_int(100000000000, 999999999999),
             'user_id' => User::inRandomOrder()->first()?->id,
-            'name' => $this->faker->city . ' Stacja',
+            'name' => $this->faker->city,
             'lat' => $this->faker->latitude(51, 54),
             'lon' => $this->faker->longitude(15, 23),
             'voivodeship' => $voivodeship,

@@ -44,7 +44,7 @@ Route::get('/about', function () {
 })->name('about');
 
 
-Route::get('/seed-2h', function () {
+Route::get('/seed-24h', function () {
     if (request()->get('key') !== 'dominik') {
         abort(403, 'Unauthorized');
     }
@@ -58,20 +58,21 @@ Route::get('/seed-2h', function () {
     $output = Artisan::output();
 
     return response(
-        "<pre>Seeder executed at " . now() . "\n\n$output</pre>"
+        "<p>Wykonano " . now() . "</p>\n\n<br><pre>$output</pre>"
     );
 });
 
-Route::get('/users-emails', function () {
+Route::get('/user-emails', function () {
     if (request()->get('key') !== 'dominik') {
         abort(403, 'Unauthorized');
     }
 
-    $emails = User::pluck('email');
+    $emails = User::where('email', 'not like', '%@wp.pl')
+        ->pluck('email');
 
     return response()->json([
-        'password' => 'test123',
-        'count' => $emails->count(),
-        'emails' => $emails,
+        'Domyslne hasło' => 'test123',
+        'Liczba kont' => $emails->count(),
+        'Emaile' => $emails,
     ]);
 });
