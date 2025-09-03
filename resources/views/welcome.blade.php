@@ -58,7 +58,7 @@
                                                 </svg>
 
                             <h2 class="ms-3 lg:text-xl font-bold text-gray-900">
-                                <a href="" class="tracking-wide flex flex-col border-blue-600
+                                <a href="{{ route('stacja_archive') }}" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
                                             Sprawdź archiwum klimatyczne stacji IMGW
@@ -85,7 +85,7 @@
 
 
                             <h2 class="ms-3 lg:text-xl font-bold text-gray-900">
-                                <a href="" class="tracking-wide flex flex-col border-blue-600
+                                <a href="{{ route('stacja_recent') }}" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
                                             Sprawdź bieżące dane meteo stacji IMGW
@@ -115,7 +115,7 @@
 
 
                             <h2 class="ms-3 lg:text-xl font-bold text-gray-900">
-                                <a href="" class="tracking-wide flex flex-col border-blue-600
+                                <a href="{{ route('stacja_community') }}" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
                                             Sprawdź biężące dane meteo stacji społeczności
