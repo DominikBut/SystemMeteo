@@ -153,7 +153,7 @@
         </div>
         <div class="p-4 bg-white rounded-md shadow-sm text-xs sm:text-sm min-h-32 h-auto w-full">
                         @if (!empty($stationId))
-                            <div wire:loading.remove wire:target="getStationData">
+                            <div wire:loading.remove wire:target="getStationData, getStationDataid">
                                 <div class="flex flex-col sm:flex-row  justify-between w-full mb-4">
                                     <p class="truncate font-bold  text-sm sm:text-base text-gray-500 w-auto">Najnowsze dane meteo dla stacji <span class="text-nowrap text-lime-600">{{ $stationDataId['nazwa_stacji'] ?? '-' }} [{{  $stationDataId['kod_stacji'] }}] </span></p>
                                     <p class="text-xs text-gray-500  w-auto">

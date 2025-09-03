@@ -474,7 +474,7 @@ class StacjaRead extends Component
 
     public function loadDataForDate(Carbon $date)
     {
-        //add checka for wersje t mies dobowe jak 30mins a b  do kazdego? fomysle a a b jest do zmienienia moze toggle w tabie dobowe i mies
+        //add checka for wersje t mies dobowe
         if ($this->validate()) {
             if ($this->stop == false) {
                 $filtered = null;

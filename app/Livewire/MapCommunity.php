@@ -16,6 +16,7 @@ class MapCommunity extends Component
 {
     public $error = null;
     public $info;
+    #[Url(except: null, as: 'id', history: true)]
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
     public $stationDataId = [];
@@ -431,27 +432,32 @@ class MapCommunity extends Component
             return;
         }
 
-        // Always sort the full current dataset
-        $data = $this->sortedDataAll;
-        $sortBy = $this->sortBy;
+        $sortBy   = $this->sortBy;
         $direction = $this->sortDirection;
 
-        usort($data, function ($a, $b) use ($sortBy, $direction) {
+        $nonNulls = [];
+        $nulls    = [];
+
+        // Split into null / non-null buckets
+        foreach ($this->sortedDataAll as $row) {
+            $val = $this->getSortValue($row, $sortBy);
+            if (is_null($val)) {
+                $nulls[] = $row;
+            } else {
+                $nonNulls[] = $row;
+            }
+        }
+
+        // Sort non-null rows
+        usort($nonNulls, function ($a, $b) use ($sortBy, $direction) {
             $valA = $this->getSortValue($a, $sortBy);
             $valB = $this->getSortValue($b, $sortBy);
-
-            // Push nulls to end
-            $isNullA = is_null($valA);
-            $isNullB = is_null($valB);
-            if ($isNullA && !$isNullB) return 1;
-            if (!$isNullA && $isNullB) return -1;
-            if ($isNullA && $isNullB) return 0;
 
             // Numeric
             if (is_numeric($valA) && is_numeric($valB)) {
                 $cmp = $valA <=> $valB;
             }
-            // Dates
+            // Dates (works if values are parseable by strtotime)
             elseif (strtotime($valA) !== false && strtotime($valB) !== false) {
                 $cmp = strtotime($valA) <=> strtotime($valB);
             }
@@ -463,7 +469,8 @@ class MapCommunity extends Component
             return $direction === 'desc' ? -$cmp : $cmp;
         });
 
-        $this->sortedData = $data;
+        // Merge sorted + nulls (nulls at the end)
+        $this->sortedData = array_merge($nonNulls, $nulls);
     }
     public function getStationDataid($kod)
     {

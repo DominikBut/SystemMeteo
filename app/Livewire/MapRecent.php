@@ -15,6 +15,7 @@ class MapRecent extends Component
 {
     public $error = null;
     public $info;
+    #[Url(except: null, as: 'id', history: true)]
     #[Validate('numeric', message: 'Zły format id!')]
     public $stationId;
     public $stationDataId = [];
@@ -230,23 +231,26 @@ class MapRecent extends Component
             return;
         }
 
-        $data = $this->stationData; // work on plain array for speed
         $sortBy = $this->sortBy;
         $direction = $this->sortDirection;
 
-        usort($data, function ($a, $b) use ($sortBy, $direction) {
-            $valA = $a[$sortBy] ?? null;
-            $valB = $b[$sortBy] ?? null;
+        // Split into nulls and non-nulls
+        $nonNulls = [];
+        $nulls = [];
 
-            // Always push nulls to the end
-            $isNullA = is_null($valA);
-            $isNullB = is_null($valB);
+        foreach ($this->stationData as $row) {
+            if (empty($row[$sortBy]) && $row[$sortBy] !== 0) {
+                $nulls[] = $row;
+            } else {
+                $nonNulls[] = $row;
+            }
+        }
 
-            if ($isNullA && !$isNullB) return 1;
-            if (!$isNullA && $isNullB) return -1;
-            if ($isNullA && $isNullB) return 0;
+        // Sort only non-nulls
+        usort($nonNulls, function ($a, $b) use ($sortBy, $direction) {
+            $valA = $a[$sortBy];
+            $valB = $b[$sortBy];
 
-            // Both non-null: compare
             if ($valA == $valB) return 0;
 
             if ($direction === 'desc') {
@@ -255,7 +259,8 @@ class MapRecent extends Component
             return ($valA > $valB) ? 1 : -1;
         });
 
-        $this->sortedData = $data;
+        // Merge: non-nulls first, then nulls
+        $this->sortedData = array_merge($nonNulls, $nulls);
     }
     public function getStationDataid($kod)
     {

@@ -157,7 +157,7 @@
 
                                 </div>
 
-                                <ul class="flex flex-row gap-4 sm:text-sm min-h-6 overflow-x-auto text-nowrap">
+                                <ul class="flex flex-row gap-4 sm:text-sm min-h-7 overflow-x-auto text-nowrap">
                                     <li>
                                         <p class="flex items-start sm:items-center gap-1">
                                             🌡

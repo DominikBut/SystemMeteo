@@ -396,7 +396,6 @@ class StacjaRecent extends Component
                         $filePath = "imgw/api-data/{$year}/{$month}/{$year}-{$month}-{$day}.json";
                         break;
                 }
-                // Build filepath, e.g.: imgw/collected/terminowe/2025/07/27.json
 
                 $this->info = $filePath . "" . $this->stationId;
 
@@ -446,7 +445,7 @@ class StacjaRecent extends Component
     public function getStationsProperty(): array
     {
         return $this->stations = Cache::remember('station_list_api', now()->addHour(1), function () {
-            // Step 1: Download latest CSV file
+            // Download latest CSV file
             try {
                 $response = Http::timeout(30)->connectTimeout(30)->retry(3, 100)->get('https://danepubliczne.imgw.pl/api/data/meteo/');
 
