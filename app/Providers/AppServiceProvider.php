@@ -2,14 +2,13 @@
 
 namespace App\Providers;
 
+use Illuminate\Http\Request;
 use Filament\Support\Colors\Color;
 use App\Http\Requests\StoreDataRequest;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Filament\Support\Facades\FilamentColor;
-use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,8 +26,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        RateLimiter::for('data-ip', function (HttpRequest $request) {
-            return Limit::perMinutes(40, 1)->by(optional($request->user())->id ?: $request->ip()); // per IP only
+        RateLimiter::for('data-ip', function (Request $request) {
+            return [
+                Limit::perMinutes(40, 2)->by(
+                    optional($request->user())->currentAccessToken()->id
+                        ?: $request->ip()
+                ),
+            ];
         });
 
 

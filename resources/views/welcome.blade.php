@@ -44,7 +44,7 @@
                             </h2>
                         </div>
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:sm:leading-relaxed text-pretty">
-                            Sprawdź na mapie oficjalnych stacji pogodowych pozyskiwany z API IMGW najbardziej aktualny rozkład temperatur
+                            Sprawdź na mapie oficjalnych stacji pogodowych IMGW najbardziej aktualny rozkład temperatur
                             powietrza i gruntu, prędkości i kierunku wiatru, poziomu wilgotności i opadu.
                         </p>
 
@@ -73,7 +73,7 @@
                         </div>
 
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:leading-relaxed">
-                            Wybierz i sprawdź archiwalne dane wybranej stacji pogodowej gromadzone przez lata przez IMGW rozmieszone na wykresach i w tabelach statystycznych.
+                            Wybierz i sprawdź archiwalne dane wybranej stacji pogodowej IMGW, gromadzone przez lata, rozmieszone na wykresach i w tabelach statystycznych.
                         </p>
                     </div>
                     <div>
@@ -101,7 +101,7 @@
                         </div>
 
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:leading-relaxed">
-                            Wybierz i sprawdź zapisywane przez System Meteo na bieżąco dane meteorologiczne z API IMGW wybranej stacji pogodowej rozmieszone na wykresach i w tabelach statystycznych.
+                            Wybierz i sprawdź archiwizowane przez System Meteo na bieżąco dane meteorologiczne IMGW dla wybranej stacji pogodowej, rozmieszone na wykresach i w tabelach statystycznych.
                         </p>
 
                     </div>
@@ -131,7 +131,7 @@
                         </div>
 
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:leading-relaxed">
-                            Wybierz i sprawdź zapisywane przez System Meteo dane meteorologiczne wybranej stacji pogodowej dodanej przez użytkownika społeczności rozmieszone na wykresach i w tabelach statystycznych.
+                            Wybierz i sprawdź archiwizowane przez System Meteo dane meteorologiczne wybranej stacji pogodowej użytkownika społeczności, rozmieszone na wykresach i w tabelach statystycznych.
                         </p>
 
                     </div>
@@ -196,8 +196,9 @@
                             @endauth
                             @endif
 
-                    <div class="flex flex-row justify-center text-center text-sm text-gray-500 font-semibold pt-6 sm:pt-0">
+                    <div class="flex flex-col justify-center text-center text-sm text-gray-500 font-semibold pt-6 sm:pt-0">
                         &copy; 2025-2026 | Dominik But
+                        <p class="text-xs text-gray-500 font-normal pt-2 text-balance">Źródłem pochodzenia danych jest Instytut Meteorologii i Gospodarki Wodnej – Państwowy Instytut Badawczy. <br>Dane IMGW-PIB zostały przetworzone na potrzeby niektórych funkcjonalności systemu.</p>
                     </div>
                 </div>
 

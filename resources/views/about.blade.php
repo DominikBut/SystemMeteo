@@ -27,16 +27,16 @@
                                 <p class="mt-3  text-gray-500 leading-relaxed sm:max-w-4xl text-wrap text-xs sm:text-sm ">
 
                                     <b class="text-wrap">System Meteo to kompleksowe narzędzie pozwalające na odczyt wybranych przez użytkownika oficjalnych
-                                        danych meteorologicznych pozyskiwanych od IMGW przez API oraz archiwum plików, a także danych społecznościowych i niezweryfikowanych bieżących danych klimatycznych
+                                        danych meteorologicznych pozyskiwanych od Instytutu Meteorologii i Gospodarki Wodnej (IMGW) – Państwowego Instytutu Badawczego przez API oraz archiwum plików, a także danych społecznościowych i niezweryfikowanych bieżących danych klimatycznych
                                         archiwizowanych bezpośrednio na serwerze. Dane m.in. temperatury powietrza i gruntu, wilgotności względnej, prędkości i kierunku wiatru, a także opadu z ostatnich 10 min są prezentowane
                                         w postaci tabelarycznej oraz graficznej zarówno na mapie, jak i na wykresach.
                                 </b><br><br>
                                     <b>Funkcjonalności systemu:</b><br>
-                                    - Odczyt najświeższych danych meteorologicznych wybranej stacji dostępnej przez API IMGW wraz z prezentacją,<br>
-                                    - Odczyt najświeższych danych meteorologicznych wszystkich stacji dostępnej przez API IMGW wraz z prezentacją na dynamicznej mapie,<br>
-                                    - Codzienny odczyt i archiwizacja 30-minutowa bieżących danych meteorologicznych wszystkich stacji dostępnych przez API IMGW w postaci dziennych plików w formacie JSON oraz przygotowywanie terminowych, dobowych, miesięcznych plików sumarycznych zawierających odpowiednie średnie sumy, maksyma, minima parametrów wszystkich stacji również w formatach JSON<br>
+                                    - Odczyt najnowszych danych meteorologicznych wybranej stacji dostępnej przez API IMGW wraz z prezentacją,<br>
+                                    - Odczyt najnowszych danych meteorologicznych wszystkich stacji dostępnych przez API IMGW wraz z prezentacją na interkatywnej mapie,<br>
+                                    - Codzienny odczyt i archiwizacja 30-minutowa bieżących danych meteorologicznych wszystkich stacji dostępnych przez API IMGW w postaci dziennych plików w formacie JSON oraz przygotowywanie terminowych, dobowych, miesięcznych plików sumarycznych zawierających odpowiednie średnie sumy, maksyma, minima parametrów wszystkich stacji, również w formatach JSON,<br>
                                     - Odczyt oficjalnych zweryfikowanych danych meteorologicznych-klimatycznych dla wybranej stacji z archiwum plików IMGW wraz z prezentacją,<br>
-                                    - Interfejs POST API odbioru i autoryzacji i archiwizacji bieżących danych stacji pogodowych użytkowników społeczności.<br>
+                                    - Interfejs POST API odbioru, autoryzacji i archiwizacji bieżących danych stacji pogodowych użytkowników społeczności,<br>
                                     - Odczyt danych meteorologicznych dla wybranej stacji społeczności z bazy danych systemu wraz z prezentacją,<br>
                                     <br>
                                     <b>Źródła danych wykorzystywanych przez system:</b><br>
@@ -59,8 +59,8 @@
                                     - <a class="underline" href="https://filamentphp.com/plugins/dotswan-map-picker">Plugin Filament v3 Map Picker v1.8.8</a>.<br>
                                     <br>
                                     <b>Co oznaczają rodzaje agregacji:</b><br>
-                                    - <b>30-minutowa</b> - dane surowe pozyskiwane bezpośrednio z API co 30 minut dla całego dnia, dostępne tylko przez 8 dni(z dniem aktualnie zapisywanym), <br>
-                                    - <b>terminowa</b> - dane dobowe surowe lub zweryfikowane zawierające po 4 pomiary agregujące, lub 3 pomiary dla jednego dnia, w przypadku zweryfikowanych do godz. 6, do godz. 12, do godz. 18, plus do godz. 00 w przypadku danych surowych, <br>
+                                    - <b>30-minutowa</b> - dane surowe pozyskiwane bezpośrednio z API co 30 minut dla całego dnia, dostępne tylko przez 8 dni (z dniem aktualnie zapisywanym), <br>
+                                    - <b>terminowa</b> - dane dobowe surowe lub zweryfikowane zawierające po 4 pomiary agregujące lub 3 pomiary dla jednego dnia w przypadku zweryfikowanych, do godz. 6, do godz. 12, do godz. 18, plus do godz. 24 w przypadku danych surowych, <br>
                                     - <b>dobowa</b> - dane miesięczne surowe lub zweryfikowane zawierające pomiary agregujące, sumaryczne, minimalne, maksymalne, średnie dla każdego dnia wybranego miesiąca, <br>
                                     - <b>miesięczna</b> - dane roczne surowe lub zweryfikowane zawierające pomiary agregujące, sumaryczne, minimalne, maksymalne, średnie dla każdego miesiąca wybranego roku. <br>
                                 <br>
