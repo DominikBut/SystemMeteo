@@ -118,9 +118,10 @@ class StacjaCommunity extends Component
     {
 
         $station_tmp = Stations::where('id', $this->stationId)->first();
-
+        $user = Auth::id();
+        // dd($station_tmp, $user);
         if ($station_tmp) {
-            if ($station_tmp->public == true || $station_tmp->user_id === Auth::id()) {
+            if ($station_tmp->public == true || $station_tmp->user_id == $user) {
                 $this->station_name = $station_tmp->name;
                 $response = Data::where('station_id', $this->stationId)
                     ->whereDate('created_at', Carbon::today())
@@ -230,13 +231,18 @@ class StacjaCommunity extends Component
 
     public function loadDataForDate(Carbon $date)
     {
+        $user = Auth::id();
         if ($this->validate()) {
             if ($this->stop == false) {
-                $response = Data::where('station_id', $this->stationId)
-                    ->whereDate('created_at', $date)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                return $response->values(); // reindex
+                if (!is_null($this->stationInfo)) {
+                    $response = Data::where('station_id', $this->stationId)
+                        ->whereDate('created_at', $date)
+                        ->orderBy('created_at', 'asc')
+                        ->get();
+                    return $response->values(); // reindex
+                } else {
+                    $respone = null;
+                }
             }
         } else {
             $date = Carbon::yesterday();

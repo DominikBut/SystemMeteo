@@ -54,40 +54,40 @@
                             <div class="flex flex-col gap-2 overflow-y-auto py-4 border-t border-gray-200 ">
                                 <div class=" gap-2 flex flex-col  uppercase font-semibold text-xs ">
                                         <a href="{{ route('map')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('map') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0">
+                                            {{ request()->routeIs('map') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
                                                 </svg>
-                                                <span>[Mapa meteo] <br>IMGW</span>
+                                                <span><span class="font-semibold text-blue-500">Mapa meteo</span> <br>IMGW</span>
                                             </a>
                                             <a href="{{ route('stacja_recent') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('stacja_recent') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0">
+                                            {{ request()->routeIs('stacja_recent') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                                                 </svg>
-                                                <span>[Archiwum Lokalne]<br> Dane stacji</span>
+                                                <span><span class="font-semibold text-blue-500">Archiwum Lokalne</span><br> Dane stacji</span>
                                             </a>
 
                                             <a href="{{ route('stacja_archive') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('stacja_archive') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0">
+                                            {{ request()->routeIs('stacja_archive') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                                                 </svg>
-                                                <span>[Archiwum IMGW]<br> Dane stacji</span>
+                                                <span><span class="font-semibold text-blue-500">Archiwum IMGW</span><br> Dane stacji</span>
                                             </a>
                                             <a href="{{ route('map_community')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('map_community') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0">
+                                            {{ request()->routeIs('map_community') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
                                                 </svg>
-                                                <span>[Mapa meteo] <br>  społeczności</span>
+                                                <span><span class="font-semibold text-blue-500">Mapa meteo</span> <br>  społeczności</span>
                                             </a>
                                             <a href="{{ route('stacja_community') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('stacja_community') ? 'bg-blue-200 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0">
+                                            {{ request()->routeIs('stacja_community') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                                                 </svg>
-                                                <span>[Archiwum społeczności]<br> Dane stacji </span>
+                                                <span><span class="font-semibold text-blue-500">Archiwum lokalne społeczności</span><br> Dane stacji </span>
                                             </a>
                                 </div>
                             </div>
@@ -153,7 +153,7 @@
                                         </button>
 
                                         <!-- menu -->
-                                        <div x-cloak x-show="menuIsOpen" class=" absolute bottom-50 right-6 md:-right-[11.5rem] md:bottom-[4.5rem] z-20 -mr-1 w-48 border divide-y divide-slate-300 border-gray-200 bg-white   rounded-xl " role="menu" x-on:click.outside="menuIsOpen = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition="" x-trap="menuIsOpen">
+                                        <div x-cloak x-show="menuIsOpen" class=" absolute bottom-30 right-6 md:-right-[11.5rem] md:bottom-[4.5rem] z-20 -mr-1 w-48 border-2 divide-y divide-slate-300 border-gray-400 bg-white   rounded-xl " role="menu" x-on:click.outside="menuIsOpen = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition="" x-trap="menuIsOpen">
 
                                                 <form method="POST" action="{{ route('logout') }}" x-data>
                                                     @csrf

@@ -31,11 +31,11 @@ class DataSeeder2hnow extends Seeder
             $records = 24; // 24 hours
             $now = now();
 
-            for ($i = 0; $i < $records; $i++) {
+            for ($i = 0; $i <= $records; $i++) {
                 Data::factory()->create([
                     'station_id' => $station->id,
                     'created_at' => $now->copy()->subHours($records - $i),
-                    'updated_at' => $now,
+                    'updated_at' => $now->copy()->subHours($records - $i),
                 ]);
             }
         });

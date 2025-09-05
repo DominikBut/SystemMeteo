@@ -401,10 +401,10 @@
 
 
                                                 @if ($this->stationInfo->active === false)
-                                                    <p class="text-sm sm:text-base text-red-500 font-bold">Stacja <span class="">{{ ($this->stationInfo->public === true) ? 'publiczna' : 'prywatna'}}</span> nieaktywna</p>
+                                                    <p class="text-sm sm:text-base text-red-500 font-bold {{ ($this->stationInfo->public == true) ? 'text-lime-600 ' : 'text-red-500'}}">Stacja <span class="">{{ ($this->stationInfo->public == true) ? 'publiczna' : 'prywatna'}}</span> nieaktywna</p>
                                                 @else
 
-                                                    <p class="text-sm sm:text-base text-lime-600 font-bold">Stacja <span class="">{{ ($this->stationInfo->public === true) ? 'publiczna' : 'prywatna'}}</span> aktywna</p>
+                                                    <p class="text-sm sm:text-base font-bold {{ ($this->stationInfo->public == true) ? 'text-lime-600 ' : 'text-red-500'}}">Stacja <span class="">{{ ($this->stationInfo->public == true) ? 'publiczna' : 'prywatna'}}</span> aktywna</p>
                                                 @endif
                                                 <p class="text-xs text-gray-500  w-auto ">
                                                 Ostatni pomiar: {{ App\Models\Data::where('station_id',$stationId)->select('created_at')->orderBy('created_at', 'desc')->first()->created_at ?? '–' }}
