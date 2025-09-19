@@ -51,44 +51,120 @@
                                 </a>
                             </div>
                             <!-- sidebar links  -->
-                            <div class="flex flex-col gap-2 overflow-y-auto py-4 border-t border-gray-200 ">
+                            <div class="flex flex-col gap-2  py-4 border-t border-gray-200 ">
                                 <div class=" gap-2 flex flex-col  uppercase font-semibold text-xs ">
-                                        <a href="{{ route('map')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('map') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-                                                </svg>
-                                                <span><span class="font-semibold text-blue-500">Mapa meteo</span> <br>IMGW</span>
+
+                                            <a href="{{ route('map') }}"
+                                                class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2 focus-visible:underline focus:outline-hidden
+                                                        {{ request()->routeIs('map') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                    <!-- Icon -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                        stroke-width="1.8" stroke="currentColor"
+                                                        class="size-5 shrink-0 text-blue-800">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                                                    </svg>
+                                                    <!-- Text with tooltip trigger -->
+                                                    <span class="relative  w-full">
+                                                        <span class=" text-blue-800 font-bold">Mapa pogodowa</span><br>
+                                                        <span class="peer cursor-help">- stacji IMGW*</span>
+                                                        <!-- Tooltip -->
+                                                        <div id="tooltip"
+                                                            class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
+                                                            role="tooltip">
+                                                            <div class=" normal-case">Przeglądaj bieżącą mapę najnowszych danych meteorologicznych oficjalnych stacji IMGW, pozyskiwanych przy użyciu API IMGW.</div>
+                                                        </div>
+                                                    </span>
                                             </a>
-                                            <a href="{{ route('stacja_recent') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('stacja_recent') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                                                </svg>
-                                                <span><span class="font-semibold text-blue-500">Archiwum Lokalne</span><br> Dane stacji</span>
+                                            <a href="{{ route('stacja_recent') }}"
+                                                class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2 focus-visible:underline focus:outline-hidden
+                                                        {{ request()->routeIs('stacja_recent') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                    <!-- Icon -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                        stroke-width="1.5" stroke="currentColor"
+                                                        class="size-5 shrink-0 text-blue-600">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                                                    </svg>
+                                                    <!-- Text with tooltip trigger -->
+                                                    <span class="relative w-full">
+                                                        <span class=" text-blue-500">Archiwum Lokalne</span><br>
+                                                        <span class="peer cursor-help">- dane stacji*</span>
+                                                        <!-- Tooltip -->
+                                                        <div id="tooltip"
+                                                            class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
+                                                            role="tooltip">
+                                                            <div class=" normal-case">Przeglądaj bieżące historyczne dane meteorologiczne oficjalnych stacji IMGW, archiwizowane przy użyciu API IMGW lokalnie w plikach serwera meteo.</div>
+                                                        </div>
+                                                    </span>
+                                            </a>
+                                            <a href="{{ route('stacja_archive') }}"
+                                                class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2 focus-visible:underline focus:outline-hidden
+                                                        {{ request()->routeIs('stacja_archive') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                    <!-- Icon -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                        stroke-width="1.5" stroke="currentColor"
+                                                        class="size-5 shrink-0 text-blue-600">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                                                    </svg>
+                                                    <!-- Text with tooltip trigger -->
+                                                    <span class="relative w-full">
+                                                        <span class=" text-blue-500">Archiwum IMGW</span><br>
+                                                        <span class="peer cursor-help">- dane stacji*</span>
+                                                        <!-- Tooltip -->
+                                                        <div id="tooltip"
+                                                            class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
+                                                            role="tooltip">
+                                                            <div class=" normal-case">Przeglądaj historyczne dane meteorologiczne oficjalnych stacji IMGW, pozyskiwane z publicznego serwera danych IMGW.</div>
+                                                        </div>
+                                                    </span>
+                                            </a>
+                                            <a href="{{ route('map_community') }}"
+                                                class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2 focus-visible:underline focus:outline-hidden
+                                                        {{ request()->routeIs('map_community') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                    <!-- Icon -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                        stroke-width="1.8" stroke="currentColor"
+                                                        class="size-5 shrink-0 text-blue-800">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+
+                                                    </svg>
+
+                                                    <!-- Text with tooltip trigger -->
+                                                    <span class="relative w-full">
+                                                        <span class=" text-blue-800 font-bold">Mapa pogodowa</span><br>
+                                                        <span class="peer cursor-help">- stacji społeczności*</span>
+                                                        <!-- Tooltip -->
+                                                        <div id="tooltip"
+                                                            class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
+                                                            role="tooltip">
+                                                            <div class=" normal-case">Przeglądaj bieżącą mapę najnowszych danych meteorologicznych stacji użytkowników społeczności, zapisanych lokalnie w bazie danych serwera meteo.</div>
+                                                        </div>
+                                                    </span>
+                                            </a>
+                                            <a href="{{ route('stacja_community') }}"
+                                                class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2 focus-visible:underline focus:outline-hidden
+                                                        {{ request()->routeIs('stacja_community') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
+                                                    <!-- Icon -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                        stroke-width="1.5" stroke="currentColor"
+                                                        class="size-5 shrink-0 text-blue-600">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                                                    </svg>
+                                                    <!-- Text with tooltip trigger -->
+                                                    <span class="relative w-full">
+                                                        <span class=" text-blue-500">Archiwum lokalne społeczności</span><br>
+                                                        <span class="peer cursor-help">- dane stacji*</span>
+                                                        <!-- Tooltip -->
+                                                        <div id="tooltip"
+                                                            class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
+                                                            role="tooltip">
+                                                            <div class=" normal-case">Przeglądaj historyczne dane meteorologiczne stacji użytkowników społeczności, zapisane lokalnie w bazie danych serwera meteo.</div>
+                                                        </div>
+                                                    </span>
                                             </a>
 
-                                            <a href="{{ route('stacja_archive') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2  font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('stacja_archive') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                                                </svg>
-                                                <span><span class="font-semibold text-blue-500">Archiwum IMGW</span><br> Dane stacji</span>
-                                            </a>
-                                            <a href="{{ route('map_community')}}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('map_community') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-                                                </svg>
-                                                <span><span class="font-semibold text-blue-500">Mapa meteo</span> <br>  społeczności</span>
-                                            </a>
-                                            <a href="{{ route('stacja_community') }}" class="shadow-sm flex items-center rounded-md gap-2 px-2 py-2 font-medium underline-offset-2  focus-visible:underline focus:outline-hidden
-                                            {{ request()->routeIs('stacja_community') ? 'bg-blue-100 text-sky-950' : 'hover:bg-blue-100 hover:text-black text-gray-600' }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 shrink-0 text-blue-600">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                                                </svg>
-                                                <span><span class="font-semibold text-blue-500">Archiwum lokalne społeczności</span><br> Dane stacji </span>
-                                            </a>
                                 </div>
                             </div>
                         </div>

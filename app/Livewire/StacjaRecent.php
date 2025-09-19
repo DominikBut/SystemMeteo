@@ -76,10 +76,69 @@ class StacjaRecent extends Component
         $this->sortWetherData();
     }
 
+    // public function calculateMinMaxStats()
+    // {
+    //     $fields = [
+    //         //terminowe
+    //         'temperatura_gruntu',
+    //         'wiatr_kierunek',
+    //         'wiatr_srednia_predkosc',
+    //         'wiatr_predkosc_maksymalna',
+    //         'wiatr_poryw_10min',
+    //         'wilgotnosc_wzgledna',
+    //         'opad_10min',
+    //         'mean_temp_gruntu_dobowa',
+    //         'min_temp_gruntu_dobowa',
+    //         'max_temp_gruntu_dobowa',
+    //         'mean_wilgotnosc_wzgledna',
+    //         'min_wilgotnosc_wzgledna',
+    //         'max_wilgotnosc_wzgledna',
+    //         'sum_opad_10min',
+    //         'mean_wiatr_srednia_predkosc',
+    //         'max_wiatr_predkosc_maksymalna',
+    //         'max_wiatr_poryw_10min',
+    //         'mean_wiatr_kierunek',
+    //         'max_max_temp_gruntu_mies',
+    //         'mean_max_temp_gruntu_mies',
+    //         'min_min_temp_gruntu_mies',
+    //         'mean_min_temp_gruntu_mies',
+    //         'mean_mean_temp_gruntu_mies',
+    //         'mean_mean_wiatr_kierunek',
+    //         'mean_mean_wiatr_srednia_predkosc',
+    //         'max_max_wiatr_predkosc_maksymalna',
+    //         'max_max_wiatr_poryw_10min',
+    //         'min_min_wilgotnosc_wzgledna',
+    //         'mean_min_wilgotnosc_wzgledna',
+    //         'max_max_wilgotnosc_wzgledna',
+    //         'mean_max_wilgotnosc_wzgledna',
+    //         'mean_mean_wilgotnosc_wzgledna',
+    //         'max_sum_opad_10min',
+    //         'sum_sum_opad_10min',
+    //         'max_max_temp_powietrza_mies',
+    //         'mean_max_temp_powietrza_mies',
+    //         'min_min_temp_powietrza_mies',
+    //         'mean_min_temp_powietrza_mies',
+    //         'mean_mean_temp_powietrza_mies',
+    //         'max_temp_powietrza_dobowa',
+    //         'min_temp_powietrza_dobowa',
+    //         'mean_temp_powietrza_dobowa',
+    //         'temperatura_powietrza',
+    //         'temperatura_powietrza_data',
+    //     ];
+
+    //     foreach ($fields as $field) {
+    //         $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
+    //         $this->minMaxStats[$field] = [
+    //             'min' => $values->isEmpty() ? null : $values->min(),
+    //             'max' => $values->isEmpty() ? null : $values->max(),
+    //             'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+    //         ];
+    //     }
+    // }
     public function calculateMinMaxStats()
     {
         $fields = [
-            //terminowe
+            // terminowe + dobowe + miesieczne
             'temperatura_gruntu',
             'wiatr_kierunek',
             'wiatr_srednia_predkosc',
@@ -127,14 +186,55 @@ class StacjaRecent extends Component
         ];
 
         foreach ($fields as $field) {
-            $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
+            $values = collect($this->weatherData)
+                ->pluck($field)
+                ->filter(fn($val) => is_numeric($val))
+                ->map(fn($v) => (float) $v);
+
+            if ($values->isEmpty()) {
+                $this->minMaxStats[$field] = [
+                    'min'      => null,
+                    'max'      => null,
+                    'avg'      => null,
+                    'median'   => null,
+                    'std'      => null,
+                    'variance' => null,
+                    'sum'      => null,
+                    'count'    => 0,
+                ];
+                continue;
+            }
+
+            $minValue   = $values->min();
+            $maxValue   = $values->max();
+            $avgValue   = round($values->avg(), 1);
+            $sumValue   = round($values->sum(), 1);
+            $countValue = $values->count();
+
+            // Median
+            $sorted = $values->sort()->values();
+            $mid = (int) floor(($countValue - 1) / 2);
+            $median = $countValue % 2
+                ? $sorted[$mid]
+                : round(($sorted[$mid] + $sorted[$mid + 1]) / 2, 1);
+
+            // Variance & Std
+            $variance = $values->map(fn($x) => pow($x - $avgValue, 2))->avg();
+            $std = round(sqrt($variance), 2);
+
             $this->minMaxStats[$field] = [
-                'min' => $values->isEmpty() ? null : $values->min(),
-                'max' => $values->isEmpty() ? null : $values->max(),
-                'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+                'min'      => $minValue,
+                'max'      => $maxValue,
+                'avg'      => $avgValue,
+                'median'   => $median,
+                'std'      => $std,
+                'variance' => round($variance, 2),
+                'sum'      => $sumValue,
+                'count'    => $countValue,
             ];
         }
     }
+
     public function updatedStationId()
     {
         if ($this->validate()) {

@@ -255,6 +255,55 @@ class MapCommunity extends Component
         $this->sortWetherData();
     }
 
+    // protected function calculateMinMaxStats()
+    // {
+    //     $fields = [
+    //         'wind_direction',
+    //         'wind_speed',
+    //         'humidity',
+    //         'rain_10min',
+    //         'temp_air',
+    //     ];
+
+    //     foreach ($fields as $field) {
+    //         // Filter only numeric and recent values
+    //         $numericRecords = collect($this->stationData)
+    //             ->filter(function ($entry) use ($field) {
+    //                 return isset($entry['latest'][$field])
+    //                     && is_numeric($entry['latest'][$field])
+    //                     && $this->isRecentEnough($entry['latest']['created_at'] ?? null);
+    //             });
+
+    //         if ($numericRecords->isEmpty()) {
+    //             $this->minMaxStats[$field] = [
+    //                 'min'             => null,
+    //                 'min_station'     => null,
+    //                 'min_station_id'  => null,
+    //                 'max'             => null,
+    //                 'max_station'     => null,
+    //                 'max_station_id'  => null,
+    //                 'avg'             => null,
+    //             ];
+    //             continue;
+    //         }
+
+    //         $minValue = $numericRecords->min(fn($e) => $e['latest'][$field]);
+    //         $maxValue = $numericRecords->max(fn($e) => $e['latest'][$field]);
+
+    //         $minEntry = $numericRecords->first(fn($e) => $e['latest'][$field] == $minValue);
+    //         $maxEntry = $numericRecords->first(fn($e) => $e['latest'][$field] == $maxValue);
+
+    //         $this->minMaxStats[$field] = [
+    //             'min'             => $minValue,
+    //             'min_station'     => $minEntry['name'] ?? null,
+    //             'min_station_id'  => $minEntry['station_id'] ?? null,
+    //             'max'             => $maxValue,
+    //             'max_station'     => $maxEntry['name'] ?? null,
+    //             'max_station_id'  => $maxEntry['station_id'] ?? null,
+    //             'avg'             => round($numericRecords->avg(fn($e) => $e['latest'][$field]), 1),
+    //         ];
+    //     }
+    // }
     protected function calculateMinMaxStats()
     {
         $fields = [
@@ -272,35 +321,61 @@ class MapCommunity extends Component
                     return isset($entry['latest'][$field])
                         && is_numeric($entry['latest'][$field])
                         && $this->isRecentEnough($entry['latest']['created_at'] ?? null);
-                });
+                })
+                ->map(fn($e) => (float) $e['latest'][$field]); // only keep numeric values
 
             if ($numericRecords->isEmpty()) {
                 $this->minMaxStats[$field] = [
-                    'min'             => null,
-                    'min_station'     => null,
-                    'min_station_id'  => null,
-                    'max'             => null,
-                    'max_station'     => null,
-                    'max_station_id'  => null,
-                    'avg'             => null,
+                    'min'       => null,
+                    'min_station' => null,
+                    'min_station_id' => null,
+                    'max'       => null,
+                    'max_station' => null,
+                    'max_station_id' => null,
+                    'avg'       => null,
+                    'median'    => null,
+                    'std'       => null,
+                    'variance'  => null,
+                    'sum'       => null,
+                    'count'     => 0,
                 ];
                 continue;
             }
 
-            $minValue = $numericRecords->min(fn($e) => $e['latest'][$field]);
-            $maxValue = $numericRecords->max(fn($e) => $e['latest'][$field]);
+            $minValue = $numericRecords->min();
+            $maxValue = $numericRecords->max();
+            $avgValue = round($numericRecords->avg(), 1);
+            $sumValue = round($numericRecords->sum(), 1);
+            $countValue = $numericRecords->count();
 
-            $minEntry = $numericRecords->first(fn($e) => $e['latest'][$field] == $minValue);
-            $maxEntry = $numericRecords->first(fn($e) => $e['latest'][$field] == $maxValue);
+            // Median
+            $sorted = $numericRecords->sort()->values();
+            $mid = (int) floor(($countValue - 1) / 2);
+            $median = $countValue % 2
+                ? $sorted[$mid]
+                : round(($sorted[$mid] + $sorted[$mid + 1]) / 2, 1);
+
+            // Variance and Standard Deviation
+            $variance = $numericRecords->map(fn($x) => pow($x - $avgValue, 2))->avg();
+            $std = round(sqrt($variance), 2);
+
+            // Find stations for min/max
+            $minEntry = collect($this->stationData)->first(fn($e) => isset($e['latest'][$field]) && $e['latest'][$field] == $minValue);
+            $maxEntry = collect($this->stationData)->first(fn($e) => isset($e['latest'][$field]) && $e['latest'][$field] == $maxValue);
 
             $this->minMaxStats[$field] = [
-                'min'             => $minValue,
-                'min_station'     => $minEntry['name'] ?? null,
-                'min_station_id'  => $minEntry['station_id'] ?? null,
-                'max'             => $maxValue,
-                'max_station'     => $maxEntry['name'] ?? null,
-                'max_station_id'  => $maxEntry['station_id'] ?? null,
-                'avg'             => round($numericRecords->avg(fn($e) => $e['latest'][$field]), 1),
+                'min'          => $minValue,
+                'min_station'  => $minEntry['name'] ?? null,
+                'min_station_id' => $minEntry['station_id'] ?? null,
+                'max'          => $maxValue,
+                'max_station'  => $maxEntry['name'] ?? null,
+                'max_station_id' => $maxEntry['station_id'] ?? null,
+                'avg'          => $avgValue,
+                'median'       => $median,
+                'std'          => $std,
+                'variance'     => round($variance, 2),
+                'sum'          => $sumValue,
+                'count'        => $countValue,
             ];
         }
     }

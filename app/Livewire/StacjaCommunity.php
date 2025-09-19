@@ -71,23 +71,83 @@ class StacjaCommunity extends Component
         $this->sortWetherData();
     }
 
+    // public function calculateMinMaxStats()
+    // {
+    //     $fields = [
+    //         //terminowe
+    //         'temp_air',
+    //         'humidity',
+    //         'wind_speed',
+    //         'rain_10min',
+
+    //     ];
+
+    //     foreach ($fields as $field) {
+    //         $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
+    //         $this->minMaxStats[$field] = [
+    //             'min' => $values->isEmpty() ? null : $values->min(),
+    //             'max' => $values->isEmpty() ? null : $values->max(),
+    //             'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+    //         ];
+    //     }
+    // }
     public function calculateMinMaxStats()
     {
         $fields = [
-            //terminowe
+            // terminowe
             'temp_air',
             'humidity',
             'wind_speed',
             'rain_10min',
-
         ];
 
         foreach ($fields as $field) {
-            $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
+            // Keep only numeric values
+            $numericRecords = collect($this->weatherData)
+                ->pluck($field)
+                ->filter(fn($val) => is_numeric($val))
+                ->map(fn($val) => (float) $val);
+
+            if ($numericRecords->isEmpty()) {
+                $this->minMaxStats[$field] = [
+                    'min'      => null,
+                    'max'      => null,
+                    'avg'      => null,
+                    'median'   => null,
+                    'std'      => null,
+                    'variance' => null,
+                    'sum'      => null,
+                    'count'    => 0,
+                ];
+                continue;
+            }
+
+            $minValue   = $numericRecords->min();
+            $maxValue   = $numericRecords->max();
+            $avgValue   = round($numericRecords->avg(), 1);
+            $sumValue   = round($numericRecords->sum(), 1);
+            $countValue = $numericRecords->count();
+
+            // Median
+            $sorted = $numericRecords->sort()->values();
+            $mid = (int) floor(($countValue - 1) / 2);
+            $median = $countValue % 2
+                ? $sorted[$mid]
+                : round(($sorted[$mid] + $sorted[$mid + 1]) / 2, 1);
+
+            // Variance & Standard Deviation
+            $variance = $numericRecords->map(fn($x) => pow($x - $avgValue, 2))->avg();
+            $std = round(sqrt($variance), 2);
+
             $this->minMaxStats[$field] = [
-                'min' => $values->isEmpty() ? null : $values->min(),
-                'max' => $values->isEmpty() ? null : $values->max(),
-                'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+                'min'      => $minValue,
+                'max'      => $maxValue,
+                'avg'      => $avgValue,
+                'median'   => $median,
+                'std'      => $std,
+                'variance' => round($variance, 2),
+                'sum'      => $sumValue,
+                'count'    => $countValue,
             ];
         }
     }

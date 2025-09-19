@@ -543,7 +543,7 @@
                 <div wire:loading.remove wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
                 Statystyki odczytanych danych:
                 </div>
-                <div class="h-44 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
+                <div class="h-[22rem] text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
                     <table wire:loading.remove wire:target.except="setSort" class="w-full text-left h-full">
                          <thead class="border-b-2 border-gray-300  text-black text-center h-auto">
                                     <th class="p-2 text-gray-600">
@@ -584,6 +584,42 @@
                                         <td>{{ $minMaxStats['humidity']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['rain_10min']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wind_speed']['min'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 border-t-2 border-slate-300">SUMA</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['rain_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                    </tr>
+                                     <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['temp_air']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['humidity']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['rain_10min']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wind_speed']['median'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                        <td>{{ $minMaxStats['temp_air']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['humidity']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['rain_10min']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wind_speed']['std'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                        <td>{{ $minMaxStats['temp_air']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['humidity']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['rain_10min']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wind_speed']['variance'] ?? '-' }}</td>
+                                    </tr>
+
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                        <td>{{ $minMaxStats['temp_air']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['humidity']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['rain_10min']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wind_speed']['count'] ?? '-' }}</td>
                                     </tr>
                                 </tbody>
                     </table>

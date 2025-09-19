@@ -94,25 +94,100 @@ class StacjaRead extends Component
         $this->doboweType = false;
         $this->miesieczneType = false;
     }
+    // public function calculateMinMaxStats()
+    // {
+    //     $fields = [
+    //         //terminowe
+    //         "temperatura_powietrza",
+    //         "temp_term_zw",
+    //         "wilgotnosc_wzgledna",
+    //         "wiatr_srednia_predkosc",
+    //         "zachmurzenie",
+    //         //dobowe
+    //         "max_temp_powietrza_dobowa",
+    //         "min_temp_powietrza_dobowa",
+    //         "mean_temp_powietrza_dobowa",
+    //         "min_temp_gruntu_dobowa",
+    //         "sum_opad_10min",
+    //         "pokrywa_sniezna_wys",
+
+
+    //         //miesieczne
+    //         "max_max_temp_powietrza_mies",
+    //         "min_min_temp_powietrza_mies",
+    //         "abs_max_max_temp_powietrza_mies",
+    //         "abs_min_min_temp_powietrza_mies",
+    //         "mean_mean_temp_powietrza_mies",
+    //         "min_min_temp_gruntu_mies",
+    //         "sum_sum_opad_10min",
+    //         "max_sum_opad_10min",
+
+    //         "dni_deszcz_opad_10min",
+    //         "dni_snieg_opad_10min",
+    //         "pokrywa_sniezna_wys",
+    //         "dni_pokrywa_sniezna_wys",
+
+    //         'temperatura_gruntu',
+    //         'wiatr_srednia_predkosc',
+    //         'wiatr_predkosc_maksymalna',
+    //         'wiatr_poryw_10min',
+    //         'wilgotnosc_wzgledna',
+
+
+    //     ];
+
+    //     foreach ($fields as $field) {
+    //         $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
+    //         $this->minMaxStats[$field] = [
+    //             'min' => $values->isEmpty() ? null : $values->min(),
+    //             'max' => $values->isEmpty() ? null : $values->max(),
+    //             'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+    //         ];
+    //         // Extra stats ONLY for 'sum_opad_10min'
+    //         if ($field === 'sum_opad_10min') {
+    //             // For snow (contains 'S')
+    //             $snowValues = collect($this->weatherData)
+    //                 ->filter(fn($row) => str_contains($row['rodzaj_opadu'] ?? '', 'S'))
+    //                 ->pluck($field)
+    //                 ->filter(fn($val) => is_numeric($val));
+
+    //             $this->minMaxStats["{$field}_snow"] = [
+    //                 'min' => $snowValues->isEmpty() ? null : $snowValues->min(),
+    //                 'max' => $snowValues->isEmpty() ? null : $snowValues->max(),
+    //                 'avg' => $snowValues->isEmpty() ? null : round($snowValues->avg(), 1),
+    //             ];
+
+    //             // For rain (contains 'W')
+    //             $rainValues = collect($this->weatherData)
+    //                 ->filter(fn($row) => str_contains($row['rodzaj_opadu'] ?? '', 'W'))
+    //                 ->pluck($field)
+    //                 ->filter(fn($val) => is_numeric($val));
+
+    //             $this->minMaxStats["{$field}_rain"] = [
+    //                 'min' => $rainValues->isEmpty() ? null : $rainValues->min(),
+    //                 'max' => $rainValues->isEmpty() ? null : $rainValues->max(),
+    //                 'avg' => $rainValues->isEmpty() ? null : round($rainValues->avg(), 1),
+    //             ];
+    //         }
+    //     }
+    // }
     public function calculateMinMaxStats()
     {
         $fields = [
-            //terminowe
+            // terminowe
             "temperatura_powietrza",
             "temp_term_zw",
             "wilgotnosc_wzgledna",
             "wiatr_srednia_predkosc",
             "zachmurzenie",
-            //dobowe
+            // dobowe
             "max_temp_powietrza_dobowa",
             "min_temp_powietrza_dobowa",
             "mean_temp_powietrza_dobowa",
             "min_temp_gruntu_dobowa",
             "sum_opad_10min",
             "pokrywa_sniezna_wys",
-
-
-            //miesieczne
+            // miesieczne
             "max_max_temp_powietrza_mies",
             "min_min_temp_powietrza_mies",
             "abs_max_max_temp_powietrza_mies",
@@ -121,56 +196,126 @@ class StacjaRead extends Component
             "min_min_temp_gruntu_mies",
             "sum_sum_opad_10min",
             "max_sum_opad_10min",
-
             "dni_deszcz_opad_10min",
             "dni_snieg_opad_10min",
             "pokrywa_sniezna_wys",
             "dni_pokrywa_sniezna_wys",
 
+            // extra
             'temperatura_gruntu',
             'wiatr_srednia_predkosc',
             'wiatr_predkosc_maksymalna',
             'wiatr_poryw_10min',
             'wilgotnosc_wzgledna',
-
-
         ];
 
         foreach ($fields as $field) {
-            $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
+            $values = collect($this->weatherData)
+                ->pluck($field)
+                ->filter(fn($val) => is_numeric($val))
+                ->map(fn($v) => (float) $v);
+
+            if ($values->isEmpty()) {
+                $this->minMaxStats[$field] = [
+                    'min'      => null,
+                    'max'      => null,
+                    'avg'      => null,
+                    'median'   => null,
+                    'std'      => null,
+                    'variance' => null,
+                    'sum'      => null,
+                    'count'    => 0,
+                ];
+                continue;
+            }
+
+            $minValue   = $values->min();
+            $maxValue   = $values->max();
+            $avgValue   = round($values->avg(), 1);
+            $sumValue   = round($values->sum(), 1);
+            $countValue = $values->count();
+
+            // Median
+            $sorted = $values->sort()->values();
+            $mid = (int) floor(($countValue - 1) / 2);
+            $median = $countValue % 2
+                ? $sorted[$mid]
+                : round(($sorted[$mid] + $sorted[$mid + 1]) / 2, 1);
+
+            // Variance & Std
+            $variance = $values->map(fn($x) => pow($x - $avgValue, 2))->avg();
+            $std = round(sqrt($variance), 2);
+
             $this->minMaxStats[$field] = [
-                'min' => $values->isEmpty() ? null : $values->min(),
-                'max' => $values->isEmpty() ? null : $values->max(),
-                'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
+                'min'      => $minValue,
+                'max'      => $maxValue,
+                'avg'      => $avgValue,
+                'median'   => $median,
+                'std'      => $std,
+                'variance' => round($variance, 2),
+                'sum'      => $sumValue,
+                'count'    => $countValue,
             ];
-            // Extra stats ONLY for 'sum_opad_10min'
+
+            // Special case: split rain/snow stats for "sum_opad_10min"
             if ($field === 'sum_opad_10min') {
-                // For snow (contains 'S')
+                // Snow (S)
                 $snowValues = collect($this->weatherData)
                     ->filter(fn($row) => str_contains($row['rodzaj_opadu'] ?? '', 'S'))
                     ->pluck($field)
-                    ->filter(fn($val) => is_numeric($val));
+                    ->filter(fn($val) => is_numeric($val))
+                    ->map(fn($v) => (float) $v);
 
                 $this->minMaxStats["{$field}_snow"] = [
-                    'min' => $snowValues->isEmpty() ? null : $snowValues->min(),
-                    'max' => $snowValues->isEmpty() ? null : $snowValues->max(),
-                    'avg' => $snowValues->isEmpty() ? null : round($snowValues->avg(), 1),
+                    'min'      => $snowValues->isEmpty() ? null : $snowValues->min(),
+                    'max'      => $snowValues->isEmpty() ? null : $snowValues->max(),
+                    'avg'      => $snowValues->isEmpty() ? null : round($snowValues->avg(), 1),
+                    'median'   => $snowValues->isEmpty() ? null : $this->calculateMedian($snowValues),
+                    'std'      => $snowValues->isEmpty() ? null : round(sqrt($snowValues->map(fn($x) => pow($x - $snowValues->avg(), 2))->avg()), 2),
+                    'variance' => $snowValues->isEmpty() ? null : round($snowValues->map(fn($x) => pow($x - $snowValues->avg(), 2))->avg(), 2),
+                    'sum'      => $snowValues->isEmpty() ? null : round($snowValues->sum(), 1),
+                    'count'    => $snowValues->count(),
                 ];
 
-                // For rain (contains 'W')
+                // Rain (W)
                 $rainValues = collect($this->weatherData)
                     ->filter(fn($row) => str_contains($row['rodzaj_opadu'] ?? '', 'W'))
                     ->pluck($field)
-                    ->filter(fn($val) => is_numeric($val));
+                    ->filter(fn($val) => is_numeric($val))
+                    ->map(fn($v) => (float) $v);
 
                 $this->minMaxStats["{$field}_rain"] = [
-                    'min' => $rainValues->isEmpty() ? null : $rainValues->min(),
-                    'max' => $rainValues->isEmpty() ? null : $rainValues->max(),
-                    'avg' => $rainValues->isEmpty() ? null : round($rainValues->avg(), 1),
+                    'min'      => $rainValues->isEmpty() ? null : $rainValues->min(),
+                    'max'      => $rainValues->isEmpty() ? null : $rainValues->max(),
+                    'avg'      => $rainValues->isEmpty() ? null : round($rainValues->avg(), 1),
+                    'median'   => $rainValues->isEmpty() ? null : $this->calculateMedian($rainValues),
+                    'std'      => $rainValues->isEmpty() ? null : round(sqrt($rainValues->map(fn($x) => pow($x - $rainValues->avg(), 2))->avg()), 2),
+                    'variance' => $rainValues->isEmpty() ? null : round($rainValues->map(fn($x) => pow($x - $rainValues->avg(), 2))->avg(), 2),
+                    'sum'      => $rainValues->isEmpty() ? null : round($rainValues->sum(), 1),
+                    'count'    => $rainValues->count(),
                 ];
             }
         }
     }
+
+    /**
+     * Small helper for median calculation.
+     */
+    protected function calculateMedian($values)
+    {
+        if ($values->isEmpty()) {
+            return null;
+        }
+
+        $sorted = $values->sort()->values();
+        $count = $sorted->count();
+        $mid = (int) floor(($count - 1) / 2);
+
+        return $count % 2
+            ? $sorted[$mid]
+            : round(($sorted[$mid] + $sorted[$mid + 1]) / 2, 1);
+    }
+
     public function updatedStationId()
     {
         if ($this->validate()) {

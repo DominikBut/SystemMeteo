@@ -471,7 +471,7 @@
                         @switch($this->aggregation)
 
                             @case('terminowe')
-                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs">(3 pomiary na dzień - 6:00, 12:00, 18:00)</span>
+                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs text-wrap">(3 pomiary na dzień - 6:00, 12:00, 18:00)</span>
                                 @break
                             @case('dobowe')
                                 {{ '['.$this->doboweDate.']' }}
@@ -554,7 +554,7 @@
                 <div wire:loading.remove wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
                 Statystyki odczytanych danych:
                 </div>
-                <div class="h-44 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
+                <div class="h-[22rem] text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
                     <table wire:loading.remove wire:target.except="setSort" class="w-full text-left h-full">
                         @switch($aggregation)
                             @case('dobowe')
@@ -623,6 +623,67 @@
                                             <td>{{ $minMaxStats['sum_opad_10min_snow']['min'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['pokrywa_sniezna_wys']['min'] ?? '-' }}</td>
                                         </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 border-t-2 border-slate-300">SUMA</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['sum_opad_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['sum_opad_10min_rain']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['sum_opad_10min_snow']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['pokrywa_sniezna_wys']['sum'] ?? '-' }}</td>
+
+                                    </tr>
+                                     <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_rain']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_snow']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['median'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_rain']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_snow']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['std'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_rain']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_snow']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['variance'] ?? '-' }}</td>
+
+                                    </tr>
+
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                       <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_rain']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_opad_10min_snow']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['count'] ?? '-' }}</td>
+
+                                    </tr>
                                     </tbody>
                                 @else
                                     <thead class="border-b-2 border-gray-300  text-black text-center h-auto">
@@ -649,7 +710,7 @@
                                             <td>{{ $minMaxStats['temperatura_powietrza']['max'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
-                                            <td class="flex flex-col">
+                                            <td class="flex flex-col pt-1">
                                             <strong>{{ $minMaxStats['zachmurzenie']['max'] ?? '-' }}</strong>
                                                                 @php
                                                                     $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -704,7 +765,7 @@
                                             <td>{{ $minMaxStats['temperatura_powietrza']['avg'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
-                                            <td class="flex flex-col">
+                                            <td class="flex flex-col pt-1">
                                             <strong>{{ $minMaxStats['zachmurzenie']['avg'] ?? '-' }}</strong>
                                                                 @php
                                                                     $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -758,7 +819,7 @@
                                             <td>{{ $minMaxStats['temperatura_powietrza']['min'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
-                                            <td class="flex flex-col">
+                                            <td class="flex flex-col pt-1">
                                             <strong>{{ $minMaxStats['zachmurzenie']['min'] ?? '-' }}</strong>
                                                                 @php
                                                                     $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -807,6 +868,86 @@
                                                             <span class="font-normal text-gray-500">{{ $zachmurzenieOpis }}</span>
                                             </td>
                                         </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['median'] ?? '-' }}</td>
+                                        <td class="flex flex-col pt-1">
+                                        <strong>{{ $minMaxStats['zachmurzenie']['median'] ?? '-' }}</strong>
+                                                            @php
+                                                                $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
+                                                                $zachmurzenie = $minMaxStats['zachmurzenie']['median'] ?? null;
+
+                                                                $zachmurzenieMapOktanty = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => 'Bardzo małe zachmurzenie',
+                                                                    2 => 'Małe zachmurzenie',
+                                                                    3 => 'Umiarkowane zachmurzenie',
+                                                                    4 => 'Połowiczne zachmurzenie',
+                                                                    5 => 'Umiarkowanie duże',
+                                                                    6 => 'Duże zachmurzenie',
+                                                                    7 => 'Prawie całkowite',
+                                                                    8 => 'Całkowite zachmurzenie',
+                                                                    9 => 'Nie można określić',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieMapDziesiatki = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => '1/10 nieba',
+                                                                    2 => '2/10 nieba',
+                                                                    3 => '3/10 nieba',
+                                                                    4 => '4/10 nieba',
+                                                                    5 => 'Połowiczne',
+                                                                    6 => '6/10 nieba',
+                                                                    7 => '7/10 nieba',
+                                                                    8 => '8/10 nieba',
+                                                                    9 => '9/10 nieba',
+                                                                    10 => 'Całkowite zachmurzenie',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieOpis = '-';
+
+                                                                if (!is_null($zachmurzenie)) {
+                                                                    if (!is_null($rok) && (int)$rok < 1989) {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapDziesiatki[(int)$zachmurzenie] ?? '-';
+                                                                    } else {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapOktanty[(int)$zachmurzenie] ?? '-';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                         <span class="font-normal text-gray-500">{{ $zachmurzenieOpis }}</span>
+                                        </td>
+
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                         <td>{{ $minMaxStats['temperatura_powietrza']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['zachmurzenie']['std'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['zachmurzenie']['variance'] ?? '-' }}</td>
+                                    </tr>
+
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['zachmurzenie']['count'] ?? '-' }}</td>
+
+                                    </tr>
+
                                     </tbody>
                                 @endif
 
@@ -903,6 +1044,86 @@
                                             <td>{{ $minMaxStats['pokrywa_sniezna_wys']['min'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['dni_pokrywa_sniezna_wys']['min'] ?? '-' }}</td>
                                         </tr>
+                                        <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 border-t-2 border-slate-300">SUMA</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['sum_sum_opad_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['dni_deszcz_opad_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['dni_snieg_opad_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['pokrywa_sniezna_wys']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['dni_pokrywa_sniezna_wys']['sum'] ?? '-' }}</td>
+
+                                    </tr>
+                                     <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                         <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_min_min_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_max_max_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_sum_opad_10min']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_sum_opad_10min']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_deszcz_opad_10min']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_snieg_opad_10min']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['median'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_pokrywa_sniezna_wys']['median'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_min_min_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_max_max_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_sum_opad_10min']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_sum_opad_10min']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_deszcz_opad_10min']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_snieg_opad_10min']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_pokrywa_sniezna_wys']['std'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_min_min_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_max_max_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_sum_opad_10min']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_sum_opad_10min']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_deszcz_opad_10min']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_snieg_opad_10min']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_pokrywa_sniezna_wys']['variance'] ?? '-' }}</td>
+                                    </tr>
+
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                       <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_min_min_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['abs_max_max_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['sum_sum_opad_10min']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['max_sum_opad_10min']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_deszcz_opad_10min']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_snieg_opad_10min']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['pokrywa_sniezna_wys']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['dni_pokrywa_sniezna_wys']['count'] ?? '-' }}</td>
+
+                                    </tr>
                                     </tbody>
                             @else
                                     <thead class="border-b-2 border-gray-300  text-black text-center h-auto">
@@ -929,7 +1150,7 @@
                                             <td>{{ $minMaxStats['temperatura_powietrza']['max'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
-                                            <td class="flex flex-col">
+                                            <td class="flex flex-col pt-1">
                                             <strong>{{ $minMaxStats['zachmurzenie']['max'] ?? '-' }}</strong>
                                                                 @php
                                                                     $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -984,7 +1205,7 @@
                                             <td>{{ $minMaxStats['temperatura_powietrza']['avg'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
-                                            <td class="flex flex-col">
+                                            <td class="flex flex-col pt-1">
                                             <strong>{{ $minMaxStats['zachmurzenie']['avg'] ?? '-' }}</strong>
                                                                 @php
                                                                     $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -1038,7 +1259,7 @@
                                             <td>{{ $minMaxStats['temperatura_powietrza']['min'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
                                             <td>{{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
-                                            <td class="flex flex-col">
+                                            <td class="flex flex-col pt-1">
                                             <strong>{{ $minMaxStats['zachmurzenie']['min'] ?? '-' }}</strong>
                                                                 @php
                                                                     $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -1087,6 +1308,85 @@
                                                             <span class="font-normal text-gray-500">{{ $zachmurzenieOpis }}</span>
                                             </td>
                                         </tr>
+                                        <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['median'] ?? '-' }}</td>
+                                        <td class="flex flex-col pt-1">
+                                        <strong>{{ $minMaxStats['zachmurzenie']['median'] ?? '-' }}</strong>
+                                                            @php
+                                                                $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
+                                                                $zachmurzenie = $minMaxStats['zachmurzenie']['median'] ?? null;
+
+                                                                $zachmurzenieMapOktanty = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => 'Bardzo małe zachmurzenie',
+                                                                    2 => 'Małe zachmurzenie',
+                                                                    3 => 'Umiarkowane zachmurzenie',
+                                                                    4 => 'Połowiczne zachmurzenie',
+                                                                    5 => 'Umiarkowanie duże',
+                                                                    6 => 'Duże zachmurzenie',
+                                                                    7 => 'Prawie całkowite',
+                                                                    8 => 'Całkowite zachmurzenie',
+                                                                    9 => 'Nie można określić',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieMapDziesiatki = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => '1/10 nieba',
+                                                                    2 => '2/10 nieba',
+                                                                    3 => '3/10 nieba',
+                                                                    4 => '4/10 nieba',
+                                                                    5 => 'Połowiczne',
+                                                                    6 => '6/10 nieba',
+                                                                    7 => '7/10 nieba',
+                                                                    8 => '8/10 nieba',
+                                                                    9 => '9/10 nieba',
+                                                                    10 => 'Całkowite zachmurzenie',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieOpis = '-';
+
+                                                                if (!is_null($zachmurzenie)) {
+                                                                    if (!is_null($rok) && (int)$rok < 1989) {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapDziesiatki[(int)$zachmurzenie] ?? '-';
+                                                                    } else {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapOktanty[(int)$zachmurzenie] ?? '-';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                         <span class="font-normal text-gray-500">{{ $zachmurzenieOpis }}</span>
+                                        </td>
+
+                                        </tr>
+                                        <tr class="bg-slate-100 text-center h-auto">
+                                            <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                            <td>{{ $minMaxStats['temperatura_powietrza']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['wiatr_srednia_predkosc']['std'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['zachmurzenie']['std'] ?? '-' }}</td>
+
+                                        </tr>
+                                        <tr class="bg-slate-50 text-center h-auto">
+                                            <td class="p-2 text-gray-700">WARIANCJA</td>
+                                            <td>{{ $minMaxStats['temperatura_powietrza']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['wiatr_srednia_predkosc']['variance'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['zachmurzenie']['variance'] ?? '-' }}</td>
+                                        </tr>
+
+                                        <tr class="bg-slate-100 text-center h-auto">
+                                            <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                            <td>{{ $minMaxStats['temperatura_powietrza']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['wiatr_srednia_predkosc']['count'] ?? '-' }}</td>
+                                            <td>{{ $minMaxStats['zachmurzenie']['count'] ?? '-' }}</td>
+
+                                        </tr>
                                     </tbody>
                             @endif
 
@@ -1119,7 +1419,7 @@
                                         <td>{{ $minMaxStats['temp_term_zw']['max'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wilgotnosc_wzgledna']['max'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['max'] ?? '-' }}</td>
-                                        <td class="flex flex-col">
+                                        <td class="flex flex-col pt-1">
                                         <strong>{{ $minMaxStats['zachmurzenie']['max'] ?? '-' }}</strong>
                                                             @php
                                                                 $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -1175,7 +1475,7 @@
                                         <td>{{ $minMaxStats['temp_term_zw']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wilgotnosc_wzgledna']['avg'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['avg'] ?? '-' }}</td>
-                                        <td class="flex flex-col">
+                                        <td class="flex flex-col pt-1">
                                         <strong>{{ $minMaxStats['zachmurzenie']['avg'] ?? '-' }}</strong>
                                                             @php
                                                                 $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -1230,7 +1530,7 @@
                                         <td>{{ $minMaxStats['temp_term_zw']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wilgotnosc_wzgledna']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
-                                        <td class="flex flex-col">
+                                        <td class="flex flex-col pt-1">
                                         <strong>{{ $minMaxStats['zachmurzenie']['min'] ?? '-' }}</strong>
                                                             @php
                                                                 $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
@@ -1278,6 +1578,89 @@
 
                                                          <span class="font-normal text-gray-500">{{ $zachmurzenieOpis }}</span>
                                         </td>
+
+                                    </tr>
+                                     <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temp_term_zw']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['median'] ?? '-' }}</td>
+                                        <td class="flex flex-col pt-1">
+                                        <strong>{{ $minMaxStats['zachmurzenie']['median'] ?? '-' }}</strong>
+                                                            @php
+                                                                $rok = Carbon::parse($weatherData[0]['data'], 'UTC')->format('Y') ?? null;
+                                                                $zachmurzenie = $minMaxStats['zachmurzenie']['median'] ?? null;
+
+                                                                $zachmurzenieMapOktanty = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => 'Bardzo małe zachmurzenie',
+                                                                    2 => 'Małe zachmurzenie',
+                                                                    3 => 'Umiarkowane zachmurzenie',
+                                                                    4 => 'Połowiczne zachmurzenie',
+                                                                    5 => 'Umiarkowanie duże',
+                                                                    6 => 'Duże zachmurzenie',
+                                                                    7 => 'Prawie całkowite',
+                                                                    8 => 'Całkowite zachmurzenie',
+                                                                    9 => 'Nie można określić',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieMapDziesiatki = [
+                                                                    0 => 'Bezchmurnie',
+                                                                    1 => '1/10 nieba',
+                                                                    2 => '2/10 nieba',
+                                                                    3 => '3/10 nieba',
+                                                                    4 => '4/10 nieba',
+                                                                    5 => 'Połowiczne',
+                                                                    6 => '6/10 nieba',
+                                                                    7 => '7/10 nieba',
+                                                                    8 => '8/10 nieba',
+                                                                    9 => '9/10 nieba',
+                                                                    10 => 'Całkowite zachmurzenie',
+                                                                    99 => 'Brak danych',
+                                                                ];
+
+                                                                $zachmurzenieOpis = '-';
+
+                                                                if (!is_null($zachmurzenie)) {
+                                                                    if (!is_null($rok) && (int)$rok < 1989) {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapDziesiatki[(int)$zachmurzenie] ?? '-';
+                                                                    } else {
+                                                                        $zachmurzenieOpis = $zachmurzenieMapOktanty[(int)$zachmurzenie] ?? '-';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                         <span class="font-normal text-gray-500">{{ $zachmurzenieOpis }}</span>
+                                        </td>
+
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                         <td>{{ $minMaxStats['temperatura_powietrza']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temp_term_zw']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['zachmurzenie']['std'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temp_term_zw']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['zachmurzenie']['variance'] ?? '-' }}</td>
+                                    </tr>
+
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temp_term_zw']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['zachmurzenie']['count'] ?? '-' }}</td>
 
                                     </tr>
                                 </tbody>

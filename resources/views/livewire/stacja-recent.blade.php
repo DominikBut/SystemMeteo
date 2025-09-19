@@ -471,7 +471,7 @@
                                 @endswitch
                                 @break
                             @case('terminowe')
-                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs">(4 okresy pomiarowe na dzień - około godziny do 6:00, 12:00, 18:00, 23:59)</span>
+                                {{ '['.$this->terminoweStartDate .'] - ['.  $this->terminoweEndDate .']' }} <span class="text-xs text-wrap">(4 okresy pomiarowe na dzień - około godziny do 6:00, 12:00, 18:00, 23:59)</span>
                                 @break
                             @case('dobowe')
                                 {{ '['.$this->doboweDate.']' }}
@@ -549,7 +549,7 @@
                 <div wire:loading.remove wire:target.except="setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
                 Statystyki odczytanych danych:
                 </div>
-                <div class="h-44 text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
+                <div class="h-[22rem] text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
                     <table wire:loading.remove wire:target.except="setSort" class="w-full text-left h-full">
                         @switch($aggregation)
                             @case('dobowe')
@@ -645,6 +645,92 @@
                                         <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['max_wiatr_poryw_10min']['min'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 border-t-2 border-slate-300">SUMA</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['sum_opad_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                    </tr>
+                                     <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['mean_temp_gruntu_dobowa']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_gruntu_dobowa']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_opad_10min']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_poryw_10min']['median'] ?? '-' }}</td>
+
+
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                         <td>{{ $minMaxStats['mean_temp_gruntu_dobowa']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_gruntu_dobowa']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_opad_10min']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_poryw_10min']['std'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                         <td>{{ $minMaxStats['mean_temp_gruntu_dobowa']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_gruntu_dobowa']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_opad_10min']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_poryw_10min']['variance'] ?? '-' }}</td>
+
+                                    </tr>
+
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                        <td>{{ $minMaxStats['mean_temp_gruntu_dobowa']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_gruntu_dobowa']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_gruntu_dobowa']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_temp_powietrza_dobowa']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_temp_powietrza_dobowa']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_temp_powietrza_dobowa']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_opad_10min']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_wiatr_srednia_predkosc']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_predkosc_maksymalna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_wiatr_poryw_10min']['count'] ?? '-' }}</td>
+
                                     </tr>
                                 </tbody>
                                 @break
@@ -785,6 +871,128 @@
                                         <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['min'] ?? '-' }}</td>
                                     </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 border-t-2 border-slate-300">SUMA</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['sum_sum_opad_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+
+                                    </tr>
+                                     <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_gruntu_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_gruntu_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_gruntu_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_gruntu_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_powietrza_mies']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_sum_opad_10min']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_sum_opad_10min']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wiatr_srednia_predkosc']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['median'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                         <td>{{ $minMaxStats['mean_mean_temp_gruntu_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_gruntu_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_gruntu_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_gruntu_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_powietrza_mies']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_sum_opad_10min']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_sum_opad_10min']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wiatr_srednia_predkosc']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['std'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                         <td>{{ $minMaxStats['mean_mean_temp_gruntu_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_gruntu_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_gruntu_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_gruntu_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_powietrza_mies']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_sum_opad_10min']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_sum_opad_10min']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wiatr_srednia_predkosc']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['variance'] ?? '-' }}</td>
+
+                                    </tr>
+
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_gruntu_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_gruntu_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_gruntu_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_gruntu_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_gruntu_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_temp_powietrza_mies']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['min_min_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_min_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_max_wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['sum_sum_opad_10min']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_sum_opad_10min']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['mean_mean_wiatr_srednia_predkosc']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_predkosc_maksymalna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['max_max_wiatr_poryw_10min']['count'] ?? '-' }}</td>
+
+                                    </tr>
                                 </tbody>
                                 @break
                             @default
@@ -844,6 +1052,61 @@
                                         <td>{{ $minMaxStats['wiatr_srednia_predkosc']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['min'] ?? '-' }}</td>
                                         <td>{{ $minMaxStats['wiatr_poryw_10min']['min'] ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700 border-t-2 border-slate-300">SUMA</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ $minMaxStats['opad_10min']['sum'] ?? '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{ '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                        <td class="border-t-2 border-slate-300">{{  '-' }}</td>
+                                    </tr>
+                                     <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700 ">MEDIANA</td>
+                                        <td>{{ $minMaxStats['temperatura_gruntu']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['opad_10min']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['median'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['median'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ODCH. STD.</td>
+                                         <td>{{ $minMaxStats['temperatura_gruntu']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['opad_10min']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['std'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['std'] ?? '-' }}</td>
+
+                                    </tr>
+                                    <tr class="bg-slate-100 text-center h-auto">
+                                        <td class="p-2 text-gray-700">WARIANCJA</td>
+                                        <td>{{ $minMaxStats['temperatura_gruntu']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['opad_10min']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['variance'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['variance'] ?? '-' }}</td>
+
+                                    </tr>
+
+                                    <tr class="bg-slate-50 text-center h-auto">
+                                        <td class="p-2 text-gray-700">ILOŚĆ POM.</td>
+                                        <td>{{ $minMaxStats['temperatura_gruntu']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['temperatura_powietrza']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wilgotnosc_wzgledna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['opad_10min']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_srednia_predkosc']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_predkosc_maksymalna']['count'] ?? '-' }}</td>
+                                        <td>{{ $minMaxStats['wiatr_poryw_10min']['count'] ?? '-' }}</td>
+
                                     </tr>
                                 </tbody>
                         @endswitch

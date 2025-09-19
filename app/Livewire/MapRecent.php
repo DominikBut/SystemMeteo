@@ -96,6 +96,45 @@ class MapRecent extends Component
         $this->sortWetherData();
     }
 
+    // protected function calculateMinMaxStats()
+    // {
+    //     $fields = [
+    //         'temperatura_gruntu',
+    //         'wiatr_kierunek',
+    //         'wiatr_srednia_predkosc',
+    //         'wiatr_predkosc_maksymalna',
+    //         'wiatr_poryw_10min',
+    //         'wilgotnosc_wzgledna',
+    //         'opad_10min',
+    //         'temperatura_powietrza',
+    //     ];
+
+    //     foreach ($fields as $field) {
+    //         $numericRecords = collect($this->stationData)
+    //             ->filter(function ($entry) use ($field) {
+    //                 return is_numeric($entry[$field] ?? null)
+    //                     && $this->isRecentEnough($entry[$field . '_data'] ?? null);
+    //             });
+
+    //         $minValue = $numericRecords->min($field);
+    //         $maxValue = $numericRecords->max($field);
+
+    //         $minStation    = $numericRecords->firstWhere($field, $minValue)['nazwa_stacji'] ?? null;
+    //         $minidStation  = $numericRecords->firstWhere($field, $minValue)['kod_stacji'] ?? null;
+    //         $maxStation    = $numericRecords->firstWhere($field, $maxValue)['nazwa_stacji'] ?? null;
+    //         $maxidStation  = $numericRecords->firstWhere($field, $maxValue)['kod_stacji'] ?? null;
+
+    //         $this->minMaxStats[$field] = [
+    //             'min'             => $numericRecords->isEmpty() ? null : $minValue,
+    //             'min_station'     => $numericRecords->isEmpty() ? null : $minStation,
+    //             'min_station_id'  => $numericRecords->isEmpty() ? null : $minidStation,
+    //             'max'             => $numericRecords->isEmpty() ? null : $maxValue,
+    //             'max_station'     => $numericRecords->isEmpty() ? null : $maxStation,
+    //             'max_station_id'  => $numericRecords->isEmpty() ? null : $maxidStation,
+    //             'avg'             => $numericRecords->isEmpty() ? null : round($numericRecords->avg($field), 1),
+    //         ];
+    //     }
+    // }
     protected function calculateMinMaxStats()
     {
         $fields = [
@@ -116,22 +155,60 @@ class MapRecent extends Component
                         && $this->isRecentEnough($entry[$field . '_data'] ?? null);
                 });
 
-            $minValue = $numericRecords->min($field);
-            $maxValue = $numericRecords->max($field);
+            if ($numericRecords->isEmpty()) {
+                $this->minMaxStats[$field] = [
+                    'min'            => null,
+                    'min_station'    => null,
+                    'min_station_id' => null,
+                    'max'            => null,
+                    'max_station'    => null,
+                    'max_station_id' => null,
+                    'avg'            => null,
+                    'median'         => null,
+                    'std'            => null,
+                    'variance'       => null,
+                    'sum'            => null,
+                    'count'          => 0,
+                ];
+                continue;
+            }
 
-            $minStation    = $numericRecords->firstWhere($field, $minValue)['nazwa_stacji'] ?? null;
-            $minidStation  = $numericRecords->firstWhere($field, $minValue)['kod_stacji'] ?? null;
-            $maxStation    = $numericRecords->firstWhere($field, $maxValue)['nazwa_stacji'] ?? null;
-            $maxidStation  = $numericRecords->firstWhere($field, $maxValue)['kod_stacji'] ?? null;
+            $values = $numericRecords->pluck($field)->map(fn($v) => (float) $v);
+
+            $minValue = $values->min();
+            $maxValue = $values->max();
+            $avgValue = round($values->avg(), 1);
+            $sumValue = round($values->sum(), 1);
+            $countValue = $values->count();
+
+            // Median
+            $sorted = $values->sort()->values();
+            $mid = (int) floor(($countValue - 1) / 2);
+            $median = $countValue % 2
+                ? $sorted[$mid]
+                : round(($sorted[$mid] + $sorted[$mid + 1]) / 2, 1);
+
+            // Variance & Std
+            $variance = $values->map(fn($x) => pow($x - $avgValue, 2))->avg();
+            $std = round(sqrt($variance), 2);
+
+            // Find stations for min/max
+            $minEntry = $numericRecords->firstWhere($field, $minValue);
+            $maxEntry = $numericRecords->firstWhere($field, $maxValue);
 
             $this->minMaxStats[$field] = [
-                'min'             => $numericRecords->isEmpty() ? null : $minValue,
-                'min_station'     => $numericRecords->isEmpty() ? null : $minStation,
-                'min_station_id'  => $numericRecords->isEmpty() ? null : $minidStation,
-                'max'             => $numericRecords->isEmpty() ? null : $maxValue,
-                'max_station'     => $numericRecords->isEmpty() ? null : $maxStation,
-                'max_station_id'  => $numericRecords->isEmpty() ? null : $maxidStation,
-                'avg'             => $numericRecords->isEmpty() ? null : round($numericRecords->avg($field), 1),
+                'min'            => $minValue,
+                'min_station'    => $minEntry['nazwa_stacji'] ?? null,
+                'min_station_id' => $minEntry['kod_stacji'] ?? null,
+                'max'            => $maxValue,
+                'max_station'    => $maxEntry['nazwa_stacji'] ?? null,
+                'max_station_id' => $maxEntry['kod_stacji'] ?? null,
+                'avg'            => $avgValue,
+                'median'         => $median,
+                'std'            => $std,
+                'variance'       => round($variance, 2),
+                'sum'            => $sumValue,
+                'count'          => $countValue,
             ];
         }
     }
