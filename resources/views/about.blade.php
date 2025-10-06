@@ -72,13 +72,18 @@
                                     Po wyliczeniu wartości dobowych aktualizowane są w pliku JSON rocznym w katalogu "miesieczne", odpowiadającym roku dnia poprzedniego, parametry miesiąca dnia poprzedniego, jeżeli nie istnieje taki plik jest tworzony.<br>
                                     Dopiero na końcu całego procesu usuwane są z bieżącego katalogu pliki JSON starsze od 7 dni z danymi pozyskiwanymi co 30 minut z API IMGW.<br>
                                     <br>
-                                    <b>Autor aplikacji internetowej systemu lokalizacji:</b><br>
+                                    <b>UWAGA! Dane są poprawnie archiwizowane od początku września 2025 roku, wcześniej zarchiwizowane dane mogą zawierać błędy lub luki.</b>
+                                    <br>
+                                    <br>
+                                    <b>Autor aplikacji internetowej systemu meteo:</b><br>
                                     But Dominik,<br>
-                                    WYDZIAŁ INŻYNIERII ŚRODOWISKA I INŻYNIERII MECHANICZNEJ,<br>
+                                    Uniwersytet Przyrodniczy w Poznaniu,<br>
+                                    <a href="https://wisim.up.poznan.pl/" class="underline">WYDZIAŁ INŻYNIERII ŚRODOWISKA I INŻYNIERII MECHANICZNEJ,</a><br>
                                     Informatyka i Inżyniera Danych, 2 stopień.<br>
+                                    Kontakt: <a href="mailto:butdominik.biz@gmail.com" class="text-blue-500 hover:underline">butdominik.biz@gmail.com</a></p>
                                     <br>
                                     <b>System wykonany na potrzeby pracy dyplomowej magisterskiej pod kierunkiem dr inż. Sebastiana Kujawy.</b><br>
-                                    Data wydania: czerwiec 2025.                            </p>
+                                    Data wydania: wrzesień 2025.                            </p>
 
                             </div>
                         </div>

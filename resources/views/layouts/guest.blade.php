@@ -5,7 +5,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Laravel') }} | By Dominik But</title>
+        <meta name="description" itemprop="description" content="System Meteo to aplikacja internetowa oparta na Laravel 12 służąca do archiwizacji i wizualizacji danych meteorologicznych pochodzących z IMGW oraz ze stacji społeczności. Umożliwia prezentację danych w postaci map, tabel i wykresów oraz automatyczną archiwizację i agregację danych terminowych, dobowych i miesięcznych.">
+        <meta name="keywords" content="System Meteo, dane meteorologiczne, IMGW, API IMGW, dane klimatyczne, archiwizacja danych, wizualizacja danych, mapa meteorologiczna, stacje pogodowe, Laravel, Livewire, Chart.js, Leaflet, dane pogodowe, Polska, meteorologia, klimat">
+        <link rel="canonical" href="{{ rtrim(config('app.url') . '/' . request()->path(),'/') }}" />
+
+        <!-- OpenGraph Seo -->
+        <meta property="og:type" content="website">
+        <meta property="og:locale" content="pl-PL">
+        <meta property="og:site_name" content="System Meteo">
+        <meta property="og:title" content="System Meteo | Archiwizacja i wizualizacja danych meteorologicznych IMGW">
+        <meta property="og:description" content="System Meteo służy do archiwizacji i wizualizacji danych meteorologicznych z IMGW oraz stacji społecznościowych. Umożliwia analizę temperatury, wilgotności, wiatru i opadów w postaci map, tabel i wykresów.">
+        <meta property="og:url" content="{{ url()->current() }}">
+
+        <!-- Twitter Seo -->
+        <meta name="twitter:title" content="System Meteo | Archiwizacja i wizualizacja danych meteorologicznych IMGW">
+        <meta name="twitter:site" content="@SystemMeteo">
+        <meta name="twitter:description" content="System Meteo to aplikacja internetowa oparta na Laravel 12 umożliwiająca archiwizację i prezentację danych meteorologicznych z IMGW i stacji społecznościowych.">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -282,7 +298,7 @@
                                 Informacje o systemie
                                 </a>
                                 <div class="text-xs flex flex-row justify-center text-center  text-gray-500 ">
-                                &copy; 2025-2026 | Dominik But
+                                &copy; 2025-{{ \Carbon\Carbon::now()->year }} |  <a href="mailto:butdominik.biz@gmail.com" title="Kontakt" class="ms-1 text-blue-500 hover:underline font-bold">Dominik But</a>
                                 </div>
                             </div>
                         </div>
