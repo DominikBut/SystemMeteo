@@ -54,7 +54,18 @@ class LogImgwData extends Command
                 return 0;
             }
 
-            $timestamps = array_filter(array_column($data, 'temperatura_gruntu_data'));
+            // // tu jest problem jak wylacza pomiarowe do tego powietrza/gruntu itp moze zmienic na dzien aktulany?
+            // $timestamps = array_filter(array_column($data, 'temperatura_powietrza_data'));
+
+            $timestamps = [];
+
+            foreach ($data as $row) {
+                foreach ($row as $key => $value) {
+                    if (str_ends_with($key, '_data') && $value) {
+                        $timestamps[] = $value;
+                    }
+                }
+            }
             $latestUTC = $timestamps ? max($timestamps) : now()->toISOString();
             $latestUTC2 = Carbon::parse($latestUTC, 'UTC')->setTimezone('Europe/Warsaw');
             $date = $latestUTC2->format('Y-m-d');
