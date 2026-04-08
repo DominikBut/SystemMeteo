@@ -31,7 +31,7 @@
                                 <a href="{{ route('map') }}" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
-                                            Mapa bieżących danych meteorologicznych
+                                            Zobacz mapę aktualnych pomiarów stacji IMGW
 
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-8 text-blue-600">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
@@ -44,8 +44,7 @@
                             </h2>
                         </div>
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:sm:leading-relaxed text-pretty">
-                            Sprawdź na mapie oficjalnych stacji pogodowych IMGW najbardziej aktualny rozkład temperatur
-                            powietrza i gruntu, prędkości i kierunku wiatru, poziomu wilgotności i opadu.
+                            Zobacz na mapie Polski najnowsze, aktualnie odebrane od stacji pogodowych IMGW, pomiary temperatur powietrza i gruntu, prędkości i kierunku wiatru, poziomu wilgotności i opadu.
                         </p>
 
                     </div>
@@ -61,7 +60,7 @@
                                 <a href="{{ route('stacja_archive') }}" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
-                                            Sprawdź archiwum klimatyczne stacji IMGW
+                                            Sprawdź archiwum oficjalnych danych IMGW
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-8 text-blue-600">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                                                             </svg>
@@ -73,7 +72,7 @@
                         </div>
 
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:leading-relaxed">
-                            Wybierz i sprawdź archiwalne dane wybranej stacji pogodowej IMGW, gromadzone przez lata, rozmieszone na wykresach i w tabelach statystycznych.
+                            Wybierz stację pogodową IMGW i sprawdź zweryfikowane archiwalne dane meteorologiczne IMGW, gromadzone przez lata, rozmieszone na wykresach i w tabelach statystycznych.
                         </p>
                     </div>
                     <div>
@@ -88,7 +87,7 @@
                                 <a href="{{ route('stacja_recent') }}" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
-                                            Sprawdź bieżące dane meteo stacji IMGW
+                                            Sprawdź lokalne archiwum danych IMGW
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-8 text-blue-600">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                                                             </svg>
@@ -101,7 +100,7 @@
                         </div>
 
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:leading-relaxed">
-                            Wybierz i sprawdź archiwizowane przez System Meteo na bieżąco dane meteorologiczne IMGW dla wybranej stacji pogodowej, rozmieszone na wykresach i w tabelach statystycznych.
+                            Wybierz stację pogodową IMGW i sprawdź archiwizowane na bieżąco przez system dane meteorologiczne, rozmieszone na wykresach i w tabelach statystycznych.
                         </p>
 
                     </div>
@@ -118,7 +117,7 @@
                                 <a href="{{ route('stacja_community') }}" class="tracking-wide flex flex-col border-blue-600
                                         hover:text-sky-700 group transition-all duration-300 truncate text-sky-950">
                                         <div class="flex flex-row place-content-center justify-center place-items-center text-wrap">
-                                            Sprawdź biężące dane meteo stacji społeczności
+                                            Sprawdź pomiary stacji społeczności
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-8 text-blue-600">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                                                             </svg>
@@ -131,7 +130,7 @@
                         </div>
 
                         <p class="mt-2 sm:mt-4 ps-6 text-gray-500 text-xs sm:text-sm sm:leading-relaxed">
-                            Wybierz i sprawdź archiwizowane przez System Meteo dane meteorologiczne wybranej stacji pogodowej użytkownika społeczności, rozmieszone na wykresach i w tabelach statystycznych.
+                            Wybierz stację pogodową użytkownika społeczności i sprawdź archiwizowane na bieżąco przez system dostępne dane meteorologiczne, rozmieszone na wykresach i w tabelach statystycznych.
                         </p>
 
                     </div>
@@ -163,7 +162,7 @@
                                     </div>
 
                                     <p class="mt-2  ps-6 text-gray-500 text-xs  sm:leading-relaxed">
-                                       Przejdź do listy stacji pogodowych twojego profilu w Systemie Meteo.
+                                       Przejdź do listy stacji pogodowych należących do twojego konta.
                                     </p>
 
                                 </a>
@@ -189,7 +188,7 @@
                                 </div>
 
                                 <p class="mt-2  ps-6 text-gray-500 text-xs sm:leading-relaxed">
-                                    Posiadanie konta gwarantuje dostęp do API Systemu Meteo oraz możliwość tworzenia prywatnych stacji pogodowych.
+                                    Założenie konta gwarantuje autoryzowany dostęp do API  Systemu oraz możliwość dodawania prywatnych stacji pogodowych.
                                 </p>
 
                             </a>

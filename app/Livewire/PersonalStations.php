@@ -68,10 +68,7 @@ class PersonalStations extends Component implements HasForms, HasTable
                     ->falseIcon('heroicon-o-x-mark')->alignment(Alignment::Center),
                 IconColumn::make('public')->sortable()->searchable()->label('Publiczna')->boolean()->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-mark')->alignment(Alignment::Center),
-                CheckboxColumn::make('temperature')->sortable()->label('Temperatura')->disabled(),
-                CheckboxColumn::make('humidity')->sortable()->label('Wilgotność')->disabled(),
-                CheckboxColumn::make('wind')->sortable()->label('Wiatr')->disabled(),
-                CheckboxColumn::make('rain')->sortable()->label('Deszcz')->disabled(),
+               
             ])
 
             ->headerActions([

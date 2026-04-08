@@ -201,7 +201,7 @@
 
                                                         </div>
                                                     </div>
-                                                      <p class="sm:pt-1 sm:ps-2 pb-2 sm:pb-0 text-gray-500 text-xs order-1 sm:order-none">Zakres musi mieścić się w tym zamym miesiącu.</p>
+                                                      <p class="sm:pt-1 sm:ps-2 pb-2 sm:pb-0 text-gray-500 text-xs order-1 sm:order-none">Zakres musi mieścić się w tym samym miesiącu.</p>
 
                                                 </div>
 
@@ -837,10 +837,10 @@
 
             let datasetsM = [];
 
-            const Powtemperatures = weatherData.map(item => parseFloat(item.temp_air ) || null);
-            const humidities = weatherData.map(item => parseFloat(item.humidity ) || null);
-            const rain10s = weatherData.map(item => parseFloat(item.rain_10min ) || null);
-            const meanWind = weatherData.map(item => parseFloat(item.wind_speed ) || null);
+            const Powtemperatures = weatherData.map(item => toNumberOrNull(item.temp_air ));
+            const humidities = weatherData.map(item => toNumberOrNull(item.humidity ));
+            const rain10s = weatherData.map(item => toNumberOrNull(item.rain_10min ));
+            const meanWind = weatherData.map(item => toNumberOrNull(item.wind_speed ));
 
              datasetsM.push(
                                     {
@@ -1048,5 +1048,9 @@
         });
 
     });
+    const toNumberOrNull = v => {
+        const n = parseFloat(v);
+        return isNaN(n) ? null : n;
+    };
     </script>
 </div>

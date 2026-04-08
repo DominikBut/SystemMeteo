@@ -6,7 +6,7 @@
     <div class="p-4 space-y-4 w-full">
         <div class="bg-white rounded-md shadow-sm border">
                     <x-slot name="header">
-                            {{ __('Przeglądasz mapę najnowszych danych meteo stacji pogodowych IMGW') }}
+                            {{ __('Przeglądasz mapę najnowszych danych meteorologicznych stacji pogodowych IMGW') }}
                     </x-slot>
 
             <div class="flex flex-col justify-between w-full">

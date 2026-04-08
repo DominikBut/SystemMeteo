@@ -10,7 +10,7 @@
                     })"
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
                      <x-slot name="header">
-                            {{ __('Przeglądasz lokalne dane meteo gromadzone z API IMGW') }}
+                            {{ __('Przeglądasz lokalne archiwum danych meteorologicznych stacji pogodowych z API IMGW') }}
                     </x-slot>
                     <div class="flex flex-col justify-between p-2">
                          @if (!empty($stations) && (count($stations)!=0))
@@ -2057,13 +2057,13 @@
 
             let datasetsM = [];
 
-            const temperatures = weatherData.map(item => parseFloat(item.temperatura_gruntu ?? item.mean_temp_gruntu_dobowa ?? item.mean_mean_temp_gruntu_mies) || null);
-            const Powtemperatures = weatherData.map(item => parseFloat(item.temperatura_powietrza ?? item.mean_temp_powietrza_dobowa ?? item.mean_min_temp_powietrza_mies) || null);
-            const humidities = weatherData.map(item => parseFloat(item.wilgotnosc_wzgledna ?? item.mean_wilgotnosc_wzgledna ?? item.mean_mean_wilgotnosc_wzgledna) || null);
-            const rain10s = weatherData.map(item => parseFloat(item.opad_10min ?? item.sum_opad_10min ?? item.sum_sum_opad_10min) || null);
-            const meanWind = weatherData.map(item => parseFloat(item.wiatr_srednia_predkosc ?? item.mean_wiatr_srednia_predkosc ?? item.mean_mean_wiatr_srednia_predkosc) || null);
-            const maxWind = weatherData.map(item => parseFloat(item.wiatr_predkosc_maksymalna ?? item.max_wiatr_predkosc_maksymalna ?? item.max_max_wiatr_predkosc_maksymalna) || null);
-            const porywWind = weatherData.map(item => parseFloat(item.wiatr_poryw_10min ?? item.max_wiatr_poryw_10min ?? item.max_max_wiatr_poryw_10min) || null);
+            const temperatures = weatherData.map(item => toNumberOrNull(item.temperatura_gruntu ?? item.mean_temp_gruntu_dobowa ?? item.mean_mean_temp_gruntu_mies));
+            const Powtemperatures = weatherData.map(item => toNumberOrNull(item.temperatura_powietrza ?? item.mean_temp_powietrza_dobowa ?? item.mean_min_temp_powietrza_mies));
+            const humidities = weatherData.map(item => toNumberOrNull(item.wilgotnosc_wzgledna ?? item.mean_wilgotnosc_wzgledna ?? item.mean_mean_wilgotnosc_wzgledna));
+            const rain10s = weatherData.map(item => toNumberOrNull(item.opad_10min ?? item.sum_opad_10min ?? item.sum_sum_opad_10min));
+            const meanWind = weatherData.map(item => toNumberOrNull(item.wiatr_srednia_predkosc ?? item.mean_wiatr_srednia_predkosc ?? item.mean_mean_wiatr_srednia_predkosc));
+            const maxWind = weatherData.map(item => toNumberOrNull(item.wiatr_predkosc_maksymalna ?? item.max_wiatr_predkosc_maksymalna ?? item.max_max_wiatr_predkosc_maksymalna));
+            const porywWind = weatherData.map(item => toNumberOrNull(item.wiatr_poryw_10min ?? item.max_wiatr_poryw_10min ?? item.max_max_wiatr_poryw_10min));
 
              datasetsM.push({
                                         label: tmpAxisLabel,
@@ -2170,12 +2170,12 @@
 
             if( aggr==='dobowe'|| aggr === 'miesieczne')
             {
-                const Mintemperatures = weatherData.map(item => parseFloat(item.min_temp_gruntu_dobowa ?? item.min_min_temp_gruntu_mies ) || null);
-                const Maxtemperatures = weatherData.map(item => parseFloat(item.max_temp_gruntu_dobowa ?? item.max_max_temp_gruntu_mies ) || null);
-                const PowMintemperatures = weatherData.map(item => parseFloat(item.min_temp_powietrza_dobowa ?? item.min_min_temp_powietrza_mies ) || null);
-                const PowMaxtemperatures = weatherData.map(item => parseFloat(item.max_temp_powietrza_dobowa ?? item.max_max_temp_powietrza_mies ) || null);
-                const Minhumidities = weatherData.map(item => parseFloat(item.min_wilgotnosc_wzgledna ?? item.min_min_wilgotnosc_wzgledna ) || null);
-                const Maxhumidities = weatherData.map(item => parseFloat(item.max_wilgotnosc_wzgledna ?? item.max_max_wilgotnosc_wzgledna ) || null);
+                const Mintemperatures = weatherData.map(item => toNumberOrNull(item.min_temp_gruntu_dobowa ?? item.min_min_temp_gruntu_mies ));
+                const Maxtemperatures = weatherData.map(item => toNumberOrNull(item.max_temp_gruntu_dobowa ?? item.max_max_temp_gruntu_mies ));
+                const PowMintemperatures = weatherData.map(item => toNumberOrNull(item.min_temp_powietrza_dobowa ?? item.min_min_temp_powietrza_mies ));
+                const PowMaxtemperatures = weatherData.map(item => toNumberOrNull(item.max_temp_powietrza_dobowa ?? item.max_max_temp_powietrza_mies ));
+                const Minhumidities = weatherData.map(item => toNumberOrNull(item.min_wilgotnosc_wzgledna ?? item.min_min_wilgotnosc_wzgledna ));
+                const Maxhumidities = weatherData.map(item => toNumberOrNull(item.max_wilgotnosc_wzgledna ?? item.max_max_wilgotnosc_wzgledna ));
                 datasetsM.push({
                                         label: mintmpAxisLabel,
                                         data: Mintemperatures,
@@ -2264,13 +2264,13 @@
             }
             if(aggr === 'miesieczne')
             {
-                const MeanMintemperatures = weatherData.map(item => parseFloat(item.mean_min_temp_gruntu_mies) || null);
-                const MeanMaxtemperatures = weatherData.map(item => parseFloat(item.mean_max_temp_gruntu_mies) || null);
-                const PowMeanMintemperatures = weatherData.map(item => parseFloat(item.mean_min_temp_powietrza_mies) || null);
-                const PowMeanMaxtemperatures = weatherData.map(item => parseFloat(item.mean_max_temp_powietrza_mies) || null);
-                const MeanMinhumidities = weatherData.map(item => parseFloat(item.mean_min_wilgotnosc_wzgledna ) || null);
-                const MeanMaxhumidities = weatherData.map(item => parseFloat(item.mean_max_wilgotnosc_wzgledna) || null);
-                const Maxrain10s = weatherData.map(item => parseFloat(item.max_sum_opad_10min) || null);
+                const MeanMintemperatures = weatherData.map(item => toNumberOrNull(item.mean_min_temp_gruntu_mies));
+                const MeanMaxtemperatures = weatherData.map(item => toNumberOrNull(item.mean_max_temp_gruntu_mies));
+                const PowMeanMintemperatures = weatherData.map(item => toNumberOrNull(item.mean_min_temp_powietrza_mies));
+                const PowMeanMaxtemperatures = weatherData.map(item => toNumberOrNull(item.mean_max_temp_powietrza_mies));
+                const MeanMinhumidities = weatherData.map(item => toNumberOrNull(item.mean_min_wilgotnosc_wzgledna ));
+                const MeanMaxhumidities = weatherData.map(item => toNumberOrNull(item.mean_max_wilgotnosc_wzgledna));
+                const Maxrain10s = weatherData.map(item => toNumberOrNull(item.max_sum_opad_10min));
                 datasetsM.push({
                                         label: MeanmintmpAxisLabel,
                                         data: MeanMintemperatures,
@@ -2519,5 +2519,9 @@
         });
 
     });
+    const toNumberOrNull = v => {
+        const n = parseFloat(v);
+        return isNaN(n) ? null : n;
+    };
     </script>
 </div>

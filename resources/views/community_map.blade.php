@@ -190,7 +190,7 @@
                                                 <div class="flex flex-row justify-between items-center"><b>Opad 10 min: ${staccjacur['latest']['rain_10min'] ?? '-'} mm</b></div>
                                                 <div class="flex flex-row justify-between items-center"><b>Wilgotność: ${staccjacur['latest']['humidity'] ?? '- '} %</b></div>
                                                 <div class="flex flex-row justify-between items-center"><b>Wiatr śr.: ${staccjacur['latest']['wind_speed'] ?? '- '} m/s</b></div>
-                                                <div class="flex flex-row justify-between items-center"><b>Wiatr kieruenk: ${renderWindDirection(staccjacur['latest']['wind_direction']) ?? '-'} ${staccjacur['latest']['wind_direction'] ?? '-'} °</b></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Wiatr kierunek: ${renderWindDirection(staccjacur['latest']['wind_direction']) ?? '-'} ${staccjacur['latest']['wind_direction'] ?? '-'} °</b></div>
                                                 <div class="flex flex-row justify-between items-center py-1">Pomiary wykonano: &nbsp${staccjacur['latest']['created_at'] ? convertToLocalDate(staccjacur['latest']['created_at']) : 'Brak pomiaru'}</div>
                                                     <div class=" flex flex-row justify-end">
                                                         <a class="hover:underline text-blue-500 text-nowrap"

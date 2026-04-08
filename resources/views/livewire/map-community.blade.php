@@ -6,7 +6,7 @@
     <div class="p-4 space-y-4 w-full">
         <div class="bg-white rounded-md shadow-sm border">
                     <x-slot name="header">
-                            {{ __('Przeglądasz najnowsze dane meteo stacji pogodowych społeczności') }}
+                            {{ __('Przeglądasz mapę najnowszych danych meteorologicznych stacji pogodowych społeczności') }}
                     </x-slot>
             <div class="flex flex-col justify-between w-full">
                                 <div    x-data="{
@@ -276,7 +276,7 @@
                 Ładowanie...
                 </div>
                 <div wire:loading.remove wire:target="getStationData"  class="ms-2 text-xs sm:text-sm pb-4 font-semibold text-gray-500 flex flex-row justify-between">
-                Statystyki pobranych najnowszych danych (do maks. 2 godz. wcześniej):
+                Statystyki najnowszych pobranych danych meteorologicznych (do maks. 2 godz. wcześniej):
                 </div>
                 <div class="h-[22rem] text-xs bg-white rounded-md shadow-sm border border-gray-300 overflow-hidden w-full overflow-x-auto overflow-y-auto ">
                     <table wire:loading.remove wire:target="getStationData"  class="w-full text-left h-full">
@@ -444,7 +444,7 @@
             </div>
             <div wire:loading.remove wire:target="getStationData, setSort"  class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">
 
-                Zestawienie tabelaryczne pobranych danych meteorologicznych wszystkich stacji aktywnych przez ostatnie 24 godz.:
+                Zestawienie tabelaryczne najnowszych pobranych danych meteorologicznych wszystkich stacji aktywnych w ciągu ostatnich 24 godz.:
 
             </div>
             <div wire:loading wire:target="setSort, setSort" class="ms-2 mt-4 text-xs sm:text-sm py-4 font-semibold text-gray-500 flex flex-row justify-between">

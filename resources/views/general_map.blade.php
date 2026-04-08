@@ -156,7 +156,7 @@
                                                 <div class="flex flex-row justify-between items-center"><b>Wiatr śr.: ${staccjacur['wiatr_srednia_predkosc'] ?? '- '} m/s</b>&nbsp&nbsp<sub>${staccjacur['wiatr_srednia_predkosc_data'] ?? 'Brak pomiaru'}</sub></div>
                                                 <div class="flex flex-row justify-between items-center"><b>Wiatr maks.: ${staccjacur['wiatr_predkosc_maksymalna'] ?? '- '} m/s</b>&nbsp&nbsp<sub>${staccjacur['wiatr_predkosc_maksymalna_data'] ?? 'Brak pomiaru'}</sub></div>
                                                 <div class="flex flex-row justify-between items-center"><b>Wiatr poryw: ${staccjacur['wiatr_poryw_10min'] ?? '- '} m/s</b>&nbsp&nbsp<sub>${staccjacur['wiatr_poryw_10min_data'] ?? 'Brak pomiaru'}</sub></div>
-                                                <div class="flex flex-row justify-between items-center"><b>Wiatr kieruenk: ${renderWindDirection(staccjacur['wiatr_kierunek']) ?? '-'} ${staccjacur['wiatr_kierunek'] ?? '-'} °</b>&nbsp&nbsp<sub>${staccjacur['wiatr_kierunek_data'] ?? 'Brak pomiaru'}</sub></div>
+                                                <div class="flex flex-row justify-between items-center"><b>Wiatr kierunek: ${renderWindDirection(staccjacur['wiatr_kierunek']) ?? '-'} ${staccjacur['wiatr_kierunek'] ?? '-'} °</b>&nbsp&nbsp<sub>${staccjacur['wiatr_kierunek_data'] ?? 'Brak pomiaru'}</sub></div>
                                                 <div class="pt-2 text-end flex flex-col justify-end ">
                                                     <div class="text-xs flex flex-row gap-2 justify-end">
                                                         <a class="hover:underline text-gray-500 text-nowrap"

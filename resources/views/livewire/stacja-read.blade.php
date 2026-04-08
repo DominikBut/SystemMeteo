@@ -10,7 +10,7 @@
                     })"
                     class="flex flex-col md:grid  md:grid-cols-2 w-full">
                     <x-slot name="header">
-                            {{ __('Przeglądasz oficjalne archiwalne dane IMGW meteo - klimatyczne (od 2001.01.01)') }}
+                            {{ __('Przeglądasz archiwum oficjalnych danych meteorologicznych stacji pogodowych IMGW - publiczne dane klimatyczne od 2001.01.01') }}
                     </x-slot>
 
                     <h2 class="col-span-2 bg-white rounded-md shadow-sm py-2 px-2 mx-2 text-center tyext-xs sm:text-sm text-gray-500 tracking-wider">Aktualne dane bieżącego miesiąca są udostępnianie po jego zakończeniu 10-ego dnia 2 miesiące później.</h2>
@@ -3254,6 +3254,21 @@
                                         order: 2,
                                         hidden: true,
                                     },
+
+                                    {
+                                        label: maxrainAxisLabel,
+                                        data: Maxrains,
+                                        type: 'bar',
+                                        stack: 'combined',
+
+                                        borderColor: 'rgb(1, 48, 135)',
+                                        backgroundColor: 'rgb(37, 104, 230)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        spanGaps: false,
+                                        yAxisID: 'y4', // ← attach to right axis
+                                        order: 3,
+                                    },
                                     {
                                         label: rainAxisLabel,
                                         data: rains,
@@ -3265,20 +3280,6 @@
                                         // pointHoverRadius: 4,
                                         borderColor: 'rgb(1, 48, 135)',
                                         backgroundColor: 'rgb(115, 149, 217)',
-                                        borderWidth: 2,
-                                        tension: 0.3,
-                                        spanGaps: false,
-                                        yAxisID: 'y4', // ← attach to right axis
-                                        order: 3,
-                                    },
-                                    {
-                                        label: maxrainAxisLabel,
-                                        data: Maxrains,
-                                        type: 'bar',
-                                        stack: 'combined',
-
-                                        borderColor: 'rgb(1, 48, 135)',
-                                        backgroundColor: 'rgb(37, 104, 230)',
                                         borderWidth: 2,
                                         tension: 0.3,
                                         spanGaps: false,
@@ -3462,5 +3463,9 @@
         });
 
     });
+    const toNumberOrNull = v => {
+        const n = parseFloat(v);
+        return isNaN(n) ? null : n;
+    };
     </script>
 </div>

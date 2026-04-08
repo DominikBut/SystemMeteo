@@ -82,12 +82,12 @@
                                                     <!-- Text with tooltip trigger -->
                                                     <span class="relative  w-full">
                                                         <span class=" text-blue-800 font-bold">Mapa pogodowa</span><br>
-                                                        <span class="peer cursor-help">- stacji IMGW*</span>
+                                                        <span class="peer cursor-help">- stacje IMGW*</span>
                                                         <!-- Tooltip -->
                                                         <div id="tooltip"
                                                             class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
                                                             role="tooltip">
-                                                            <div class=" normal-case">Przeglądaj bieżącą mapę najnowszych danych meteorologicznych oficjalnych stacji IMGW, pozyskiwanych przy użyciu API IMGW.</div>
+                                                            <div class=" normal-case">Przeglądaj mapę Polski z najnowszymi pomiarami meteorologicznymi odebranymi od oficjalnych stacji IMGW (pomiary pozyskane przy użyciu oficjalnego API IMGW).</div>
                                                         </div>
                                                     </span>
                                             </a>
@@ -103,13 +103,13 @@
                                                     </svg>
                                                     <!-- Text with tooltip trigger -->
                                                     <span class="relative w-full">
-                                                        <span class=" text-blue-500">Archiwum Lokalne</span><br>
-                                                        <span class="peer cursor-help">- dane stacji*</span>
+                                                        <span class=" text-blue-500">Lokalne archiwum IMGW</span><br>
+                                                        <span class="peer cursor-help">- dane stacji IMGW*</span>
                                                         <!-- Tooltip -->
                                                         <div id="tooltip"
                                                             class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
                                                             role="tooltip">
-                                                            <div class=" normal-case">Przeglądaj bieżące historyczne dane meteorologiczne oficjalnych stacji IMGW, archiwizowane przy użyciu API IMGW lokalnie w plikach serwera meteo.</div>
+                                                            <div class=" normal-case">Przeglądaj najnowsze historyczne dane meteorologiczne z oficjalnych stacji IMGW, archiwizowane dzięki użyciu API IMGW, lokalnie w systemie plików serwera systemu.</div>
                                                         </div>
                                                     </span>
                                             </a>
@@ -125,13 +125,13 @@
                                                     </svg>
                                                     <!-- Text with tooltip trigger -->
                                                     <span class="relative w-full">
-                                                        <span class=" text-blue-500">Archiwum IMGW</span><br>
-                                                        <span class="peer cursor-help">- dane stacji*</span>
+                                                        <span class=" text-blue-500">Oficjalne archiwum IMGW</span><br>
+                                                        <span class="peer cursor-help">- dane stacji IMGW*</span>
                                                         <!-- Tooltip -->
                                                         <div id="tooltip"
                                                             class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
                                                             role="tooltip">
-                                                            <div class=" normal-case">Przeglądaj historyczne dane meteorologiczne oficjalnych stacji IMGW, pozyskiwane z publicznego serwera danych IMGW.</div>
+                                                            <div class=" normal-case">Przeglądaj zweryfikowane historyczne dane meteorologiczne z oficjalnych stacji IMGW, pozyskiwane z publicznego serwera danych klimatycznych IMGW.</div>
                                                         </div>
                                                     </span>
                                             </a>
@@ -149,12 +149,12 @@
                                                     <!-- Text with tooltip trigger -->
                                                     <span class="relative w-full">
                                                         <span class=" text-blue-800 font-bold">Mapa pogodowa</span><br>
-                                                        <span class="peer cursor-help">- stacji społeczności*</span>
+                                                        <span class="peer cursor-help">- stacje społeczności*</span>
                                                         <!-- Tooltip -->
                                                         <div id="tooltip"
                                                             class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
                                                             role="tooltip">
-                                                            <div class=" normal-case">Przeglądaj bieżącą mapę najnowszych danych meteorologicznych stacji użytkowników społeczności, zapisanych lokalnie w bazie danych serwera meteo.</div>
+                                                            <div class=" normal-case">Przeglądaj mapę Polski z najnowszymi pomiarami meteorologicznymi odebranymi od stacji użytkowników społeczności (pomiary zapisane w bazie danych po odebraniu przez POST API systemu).</div>
                                                         </div>
                                                     </span>
                                             </a>
@@ -170,13 +170,13 @@
                                                     </svg>
                                                     <!-- Text with tooltip trigger -->
                                                     <span class="relative w-full">
-                                                        <span class=" text-blue-500">Archiwum lokalne społeczności</span><br>
-                                                        <span class="peer cursor-help">- dane stacji*</span>
+                                                        <span class=" text-blue-500">Archiwum społeczności</span><br>
+                                                        <span class="peer cursor-help">- dane stacji społeczności*</span>
                                                         <!-- Tooltip -->
                                                         <div id="tooltip"
                                                             class="pointer-events-none shadow-md absolute top-full right-1/3 translate-x-1/2 z-40 flex min-w-52 lg:min-w-52 flex-col gap-1 ring-2 ring-blue-300 rounded bg-blue-50 p-1.5 text-xs text-sky-950 opacity-0 transition-all ease-out peer-hover:opacity-100"
                                                             role="tooltip">
-                                                            <div class=" normal-case">Przeglądaj historyczne dane meteorologiczne stacji użytkowników społeczności, zapisane lokalnie w bazie danych serwera meteo.</div>
+                                                            <div class=" normal-case">Przeglądaj najnowsze historyczne dane meteorologiczne ze stacji użytkowników społeczności, odbierane przez POST API i zapisane w bazie danych systemu.</div>
                                                         </div>
                                                     </span>
                                             </a>
