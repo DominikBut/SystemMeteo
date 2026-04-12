@@ -3020,7 +3020,7 @@
                                         label: rainAxisLabel,
                                         data: rains,
                                         type: 'bar',
-                                        stack: 'combined',
+                                        stack: 'overlay',
                                         // borderDash: [2, 2],
                                         // pointStyle: 'circle',
                                         // pointRadius: 3,
@@ -3037,7 +3037,7 @@
                                         label: snowAxisLabel,
                                         data: snows,
                                         type: 'bar',
-                                        stack: 'combined',
+                                        stack: 'overlay',
 
                                         borderColor: 'rgb(202, 213, 235)',
                                         backgroundColor: 'rgb(172, 179, 191,0.7)',
@@ -3259,7 +3259,7 @@
                                         label: maxrainAxisLabel,
                                         data: Maxrains,
                                         type: 'bar',
-                                        stack: 'combined',
+                                        stack: 'overlay',
 
                                         borderColor: 'rgb(1, 48, 135)',
                                         backgroundColor: 'rgb(37, 104, 230)',
@@ -3273,7 +3273,7 @@
                                         label: rainAxisLabel,
                                         data: rains,
                                         type: 'bar',
-                                        stack: 'combined',
+                                        stack: 'overlay',
                                         // borderDash: [2, 2],
                                         // pointStyle: 'circle',
                                         // pointRadius: 3,
@@ -3339,7 +3339,8 @@
                                         x: {
                                             title: {
                                                 display: true,
-                                                text: axisLabel
+                                                text: axisLabel,
+                                                stacked: false
                                             }
                                         },
                                         y: {
@@ -3393,6 +3394,7 @@
                                             display: displayAxesDobowe,
                                             position: 'right',
                                             min: 0,
+                                            stacked: false,
                                             suggestedMax: 1,
                                             title: {
                                                 display: true,

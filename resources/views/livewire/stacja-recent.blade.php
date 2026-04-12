@@ -2108,7 +2108,7 @@
                                         label: rainAxisLabel,
                                         data: rain10s,
                                         type: 'bar',
-                                        stack: 'combined',
+                                        stack: 'overlay',
                                         // borderDash: [2, 2],
                                         // pointStyle: 'circle',
                                         // pointRadius: 3,
@@ -2119,7 +2119,7 @@
                                         tension: 0.3,
                                         spanGaps: false,
                                         yAxisID: 'y2', // ← attach to right axis
-                                        order: 4,
+                                        order: 8,
                                     },
                                     {
                                         label: meanWindAxisLabel,
@@ -2359,7 +2359,7 @@
                                         label: maxrainAxisLabel,
                                         data: Maxrain10s,
                                         type: 'bar',
-                                        stack: 'combined',
+                                        stack: 'overlay',
                                         // borderDash: [2, 2],
                                         // pointStyle: 'circle',
                                         // pointRadius: 3,
@@ -2370,7 +2370,7 @@
                                         tension: 0.3,
                                         spanGaps: false,
                                         yAxisID: 'y2', // ← attach to right axis
-                                        order: 3,
+                                        order: 7,
                                     },
                 );
 
@@ -2426,7 +2426,8 @@
                                         x: {
                                             title: {
                                                 display: true,
-                                                text: axisLabel
+                                                text: axisLabel,
+                                                stacked: false
                                             }
                                         },
                                         y: {
@@ -2460,10 +2461,12 @@
                                             },
                                         },
                                         y2: {
+
                                             type: 'linear',
                                             display: true,
                                             position: 'right',
                                             min: 0,
+                                            stacked: false,
                                             suggestedMax: 1,
                                             title: {
                                                 display: true,
