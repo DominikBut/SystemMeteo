@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }} | By Dominik But</title>
+        <title>{{ config('app.name', 'Laravel') }}</title>
         <meta name="description" itemprop="description" content="System Meteo to aplikacja internetowa oparta na Laravel 12 służąca do archiwizacji i wizualizacji danych meteorologicznych pochodzących z IMGW oraz ze stacji społeczności. Umożliwia prezentację danych w postaci map, tabel i wykresów oraz automatyczną archiwizację i agregację danych terminowych, dobowych i miesięcznych.">
         <meta name="keywords" content="System Meteo, dane meteorologiczne, IMGW, API IMGW, dane klimatyczne, archiwizacja danych, wizualizacja danych, mapa meteorologiczna, stacje pogodowe, Laravel, Livewire, Chart.js, Leaflet, dane pogodowe, Polska, meteorologia, klimat">
         <link rel="canonical" href="{{ rtrim(config('app.url') . '/' . request()->path(),'/') }}" />

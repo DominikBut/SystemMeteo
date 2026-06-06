@@ -179,6 +179,7 @@ return [
     'custom' => [
         'attribute-name' => [
             'rule-name' => 'custom-message',
+            'current-password' => 'hasło',
         ],
     ],
 

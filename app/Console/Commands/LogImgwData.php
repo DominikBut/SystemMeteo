@@ -54,9 +54,6 @@ class LogImgwData extends Command
                 return 0;
             }
 
-            // // tu jest problem jak wylacza pomiarowe do tego powietrza/gruntu itp moze zmienic na dzien aktulany?
-            // $timestamps = array_filter(array_column($data, 'temperatura_powietrza_data'));
-
             $timestamps = [];
 
             foreach ($data as $row) {
@@ -91,7 +88,7 @@ class LogImgwData extends Command
             Log::channel('imgw')->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
             $this->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
 
-            // ✅ Generate summary if first time writing today
+            // Generate summary if first time writing today
             if ($isFirstWriteToday) {
                 $yesterday = Carbon::parse($date)->subDay();
                 $prevDate = $yesterday->format('Y-m-d');
@@ -255,11 +252,6 @@ class LogImgwData extends Command
                             $summary[] = $intervalRecord;
                             $intervalRecord = null;
                             $match = null;
-                            // Attach the opad_10min sum to the representative record
-                            // $intervalRecord = $match ? $match : [];
-                            // $intervalRecord['opad_10min'] = $opadSum;
-
-                            // $summary[] = $intervalRecord;
                         }
                     }
                     $grouped = null;
@@ -376,7 +368,6 @@ class LogImgwData extends Command
                             // Directly collect values without filtering
                             $pluck = fn($key) => collect($records)->pluck($key)->filter(fn($v) => is_numeric($v))->map(fn($v) => (float) $v);
 
-                            // Example usage
 
                             $gruntu_max  = $fieldStats($pluck('max_temp_gruntu_dobowa'));
                             $gruntu_min  = $fieldStats($pluck('min_temp_gruntu_dobowa'));
@@ -492,82 +483,4 @@ class LogImgwData extends Command
             return 1;
         }
     }
-
-    // public function handle()
-    // {
-    //     ini_set('memory_limit', '512M');
-    //     try {
-    //         $response = Http::timeout(30)->get('https://danepubliczne.imgw.pl/api/data/meteo/');
-
-    //         if (!$response->successful()) {
-    //             Log::channel('imgw')->error('Failed to fetch IMGW data: HTTP error');
-    //             $this->error('Failed to fetch IMGW data: HTTP error');
-    //             return 1;
-    //         }
-
-    //         $data = $response->json();
-
-    //         // Encode current data for cache comparison
-    //         $currentJson = json_encode($data, JSON_UNESCAPED_UNICODE);
-    //         $lastJson = Cache::get('imgw_last_data');
-
-    //         if ($lastJson === $currentJson) {
-    //             $this->info('Data is unchanged; skipping save.');
-    //             Log::channel('imgw')->info('Data unchanged; no file saved at ' . now()->format('H:i:s'));
-    //             return 0;
-    //         }
-
-    //         // Build year/month path
-    //         $timestamps = array_filter(array_column($data, 'temperatura_gruntu_data'));
-
-    //         if (empty($timestamps)) {
-    //             Log::channel('imgw')->warning('No temperatura_gruntu_data found in data; falling back to now().');
-    //             $date = now()->format('Y-m-d');
-    //         } else {
-    //             $latestUTC = max($timestamps);
-    //             $latestUTC2 = Carbon::parse($latestUTC, 'UTC')->setTimezone('Europe/Warsaw');
-    //             $date = $latestUTC2->format('Y-m-d');
-    //         }
-
-    //         $year = substr($date, 0, 4);
-    //         $month = substr($date, 5, 2);
-
-    //         $folderPath = "imgw/api-data/{$year}/{$month}";
-    //         $filename = "{$folderPath}/{$date}.json";
-
-
-    //         // Load existing content or initialize empty array
-    //         if (Storage::exists($filename)) {
-    //             $existing = json_decode(Storage::get($filename), true);
-    //             if (!is_array($existing)) {
-    //                 $existing = [];
-    //             }
-    //         } else {
-    //             $existing = [];
-    //         }
-
-    //         // Merge new data
-    //         $existing = array_merge($existing, $data);
-
-    //         // // Sort by 'kod_stacji'
-    //         // usort($existing, function ($a, $b) {
-    //         //     return strcmp($a['kod_stacji'], $b['kod_stacji']);
-    //         // });
-
-    //         // Save back to file
-    //         Storage::put($filename, json_encode($existing, JSON_UNESCAPED_UNICODE));
-
-    //         // Cache new data
-    //         Cache::put('imgw_last_data', $currentJson, now()->addHours(2));
-
-    //         Log::channel('imgw')->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
-    //         $this->info("Appended raw data to {$filename} at " . now()->format('H:i:s') . " latest temp date in file: {$latestUTC} converted to {$latestUTC2}");
-    //     } catch (\Exception $e) {
-    //         Log::channel('imgw')->error('Exception: ' . $e->getMessage());
-    //         $this->error('Exception: ' . $e->getMessage());
-    //         return 1;
-    //     }
-
-    //     return 0;
-    // }
 }

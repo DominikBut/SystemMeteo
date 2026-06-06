@@ -96,45 +96,7 @@ class MapRecent extends Component
         $this->sortWetherData();
     }
 
-    // protected function calculateMinMaxStats()
-    // {
-    //     $fields = [
-    //         'temperatura_gruntu',
-    //         'wiatr_kierunek',
-    //         'wiatr_srednia_predkosc',
-    //         'wiatr_predkosc_maksymalna',
-    //         'wiatr_poryw_10min',
-    //         'wilgotnosc_wzgledna',
-    //         'opad_10min',
-    //         'temperatura_powietrza',
-    //     ];
 
-    //     foreach ($fields as $field) {
-    //         $numericRecords = collect($this->stationData)
-    //             ->filter(function ($entry) use ($field) {
-    //                 return is_numeric($entry[$field] ?? null)
-    //                     && $this->isRecentEnough($entry[$field . '_data'] ?? null);
-    //             });
-
-    //         $minValue = $numericRecords->min($field);
-    //         $maxValue = $numericRecords->max($field);
-
-    //         $minStation    = $numericRecords->firstWhere($field, $minValue)['nazwa_stacji'] ?? null;
-    //         $minidStation  = $numericRecords->firstWhere($field, $minValue)['kod_stacji'] ?? null;
-    //         $maxStation    = $numericRecords->firstWhere($field, $maxValue)['nazwa_stacji'] ?? null;
-    //         $maxidStation  = $numericRecords->firstWhere($field, $maxValue)['kod_stacji'] ?? null;
-
-    //         $this->minMaxStats[$field] = [
-    //             'min'             => $numericRecords->isEmpty() ? null : $minValue,
-    //             'min_station'     => $numericRecords->isEmpty() ? null : $minStation,
-    //             'min_station_id'  => $numericRecords->isEmpty() ? null : $minidStation,
-    //             'max'             => $numericRecords->isEmpty() ? null : $maxValue,
-    //             'max_station'     => $numericRecords->isEmpty() ? null : $maxStation,
-    //             'max_station_id'  => $numericRecords->isEmpty() ? null : $maxidStation,
-    //             'avg'             => $numericRecords->isEmpty() ? null : round($numericRecords->avg($field), 1),
-    //         ];
-    //     }
-    // }
     protected function calculateMinMaxStats()
     {
         $fields = [

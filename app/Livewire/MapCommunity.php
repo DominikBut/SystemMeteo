@@ -165,85 +165,8 @@ class MapCommunity extends Component
             $this->error = 'Nie udało się pobrać danych dla stacji.';
             $this->dispatch('layer-updated', $this->stationData, $this->askTime, $this->option);
         }
-        // try {
-        //     $userId = Auth::id();
-        //     $results = [];
-
-        //     foreach ($this->allstations as $station) {
-
-        //         $latestData = Data::where('station_id', $station['id'])
-        //             ->whereDate('created_at', Carbon::today())
-        //             ->orderBy('created_at', 'desc')
-        //             ->first();
-
-        //         $results[] = [
-        //             'station_id'   => $station['id'],
-        //             'name' => $station['name'],
-        //             'lat' => $station['lat'],
-        //             'lon' => $station['lon'],
-        //             'voivodeship' => $station['voivodeship'],
-        //             'district' => $station['district'],
-        //             'latest'       => $latestData,
-        //             'owned'        => $station['user_id'] === $userId, // like before
-        //         ];
-        //     }
-
-        //     $this->stationData = $results;
-        //     $this->askTime     = Carbon::now()->format('Y-m-d H:i:s');
-        //     // Dispatch the event like in old code
-        //     $this->dispatch('layer-updated', $this->stationData, $this->askTime, $this->option);
-        // } catch (\Throwable $th) {
-        //     $this->stationData = [];
-        //     $this->askTime     = Carbon::today();
-        //     $this->error       = 'Nie udało się pobrać danych dla stacji.';
-        //     // Dispatch the event like in old code
-        //     $this->dispatch('layer-updated', $this->stationData, $this->askTime, $this->option);
-        // }
     }
 
-
-    // public function getStationData()
-    // {
-    //     try {
-    //         if (!Cache::has('DaneStacji')) {
-    //             $response = Http::timeout(5)->connectTimeout(5)->retry(3, 100)->get("https://danepubliczne.imgw.pl/api/data/meteo/");
-    //             if ($response->successful()) {
-    //                 $this->stationData = (array) json_decode($response->body(), true);
-    //                 // Example: adjust all *_data fields to current timezone
-    //                 $this->stationData = collect($this->stationData)->map(function ($record) {
-    //                     foreach ($record as $key => $value) {
-    //                         if (str_ends_with($key, '_data') && !empty($value)) {
-    //                             // Convert from UTC to your app's timezone
-    //                             $record[$key] = Carbon::parse($value, 'UTC')
-    //                                 ->setTimezone(config('app.timezone'))
-    //                                 ->toDateTimeString();
-    //                         }
-    //                     }
-    //                     return $record;
-    //                 })->toArray();
-    //                 Cache::put('DaneStacji', $this->stationData, now()->addMinutes(5));
-    //                 $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
-    //                 Cache::put('AskTime', $this->askTime);
-    //             } else {
-    //                 $this->stationData = [];
-    //             }
-    //         } else {
-    //             $this->stationData = Cache::get('DaneStacji');
-    //             $this->askTime = Cache::get('AskTime');
-    //         }
-
-    //         $this->sortedData = $this->stationData;
-    //         $this->calculateMinMaxStats();
-    //         $this->getStations();
-    //     } catch (\Throwable $th) {
-    //         $this->stationData = [];
-    //         $this->askTime = Carbon::today();
-    //         $this->error = 'Nie udało się pobrać danych z API. ';
-    //         $this->sortedData = $this->stationData;
-    //         $this->calculateMinMaxStats();
-    //         $this->getStations();
-    //     }
-    // }
     public function setSort(string $column)
     {
         if ($this->sortBy === $column) {
@@ -255,55 +178,6 @@ class MapCommunity extends Component
         $this->sortWetherData();
     }
 
-    // protected function calculateMinMaxStats()
-    // {
-    //     $fields = [
-    //         'wind_direction',
-    //         'wind_speed',
-    //         'humidity',
-    //         'rain_10min',
-    //         'temp_air',
-    //     ];
-
-    //     foreach ($fields as $field) {
-    //         // Filter only numeric and recent values
-    //         $numericRecords = collect($this->stationData)
-    //             ->filter(function ($entry) use ($field) {
-    //                 return isset($entry['latest'][$field])
-    //                     && is_numeric($entry['latest'][$field])
-    //                     && $this->isRecentEnough($entry['latest']['created_at'] ?? null);
-    //             });
-
-    //         if ($numericRecords->isEmpty()) {
-    //             $this->minMaxStats[$field] = [
-    //                 'min'             => null,
-    //                 'min_station'     => null,
-    //                 'min_station_id'  => null,
-    //                 'max'             => null,
-    //                 'max_station'     => null,
-    //                 'max_station_id'  => null,
-    //                 'avg'             => null,
-    //             ];
-    //             continue;
-    //         }
-
-    //         $minValue = $numericRecords->min(fn($e) => $e['latest'][$field]);
-    //         $maxValue = $numericRecords->max(fn($e) => $e['latest'][$field]);
-
-    //         $minEntry = $numericRecords->first(fn($e) => $e['latest'][$field] == $minValue);
-    //         $maxEntry = $numericRecords->first(fn($e) => $e['latest'][$field] == $maxValue);
-
-    //         $this->minMaxStats[$field] = [
-    //             'min'             => $minValue,
-    //             'min_station'     => $minEntry['name'] ?? null,
-    //             'min_station_id'  => $minEntry['station_id'] ?? null,
-    //             'max'             => $maxValue,
-    //             'max_station'     => $maxEntry['name'] ?? null,
-    //             'max_station_id'  => $maxEntry['station_id'] ?? null,
-    //             'avg'             => round($numericRecords->avg(fn($e) => $e['latest'][$field]), 1),
-    //         ];
-    //     }
-    // }
     protected function calculateMinMaxStats()
     {
         $fields = [
@@ -445,47 +319,7 @@ class MapCommunity extends Component
         $this->allstations = collect($tmpStations)->sortBy('name')->values()->all();
     }
 
-    // protected function getStations()
-    // {
 
-    //     ///here old code
-    //     // Unique cache key for this option
-    //     $cacheKey = "stations_list_base_{$this->option}";
-    //     $tmpmatchingRecords = [];
-
-    //     [$this->stations, $tmpmatchingRecords] = Cache::remember($cacheKey, now()->addMinutes(5), function () {
-    //         $tmpStations = [];
-    //         $matchingRecords = [];
-
-    //         foreach ($this->stationData as $entry) {
-    //             $id = trim($entry['id'] ?? '');
-    //             $name = trim($entry['name'] ?? '');
-
-    //             if (!$id || !$name) {
-    //                 continue;
-    //             }
-    //             if (
-    //                 $this->isRecentEnough($entry['created_at'])
-    //             ) {
-    //                 continue;
-    //             }
-
-
-    //             // Passed filter → add to both arrays
-    //             $tmpStations[] = [
-    //                 'id' => $id,
-    //                 'name' => $name
-    //             ];
-    //             $matchingRecords[] = $entry;
-    //         }
-
-    //         return [
-    //             collect($tmpStations)->sortBy('name')->values()->all(),
-    //             $matchingRecords
-    //         ];
-    //     });
-    //     $this->dispatch('layer-updated', $tmpmatchingRecords, $this->askTime, $this->option);
-    // }
     protected function getSortValue(array $row, string $sortBy)
     {
         // Top-level fields
@@ -582,62 +416,7 @@ class MapCommunity extends Component
         }
     }
 
-    // public function getStationDataid($kod)
-    // {
-    //     $this->stationId = $kod;
 
-    //     // // First, try to get from cache
-    //     // if (Cache::has('DaneStacjiL' . $kod)) {
-    //     //     $this->stationDataId = Cache::get('DaneStacjiL' . $kod);
-    //     //     return;
-    //     // }
-    //     $station_tmp = Stations::where('id', $this->stationId)->first();
-
-    //     if ($station_tmp) {
-    //         if ($station_tmp->public == true || $station_tmp->user_id === Auth::id()) {
-    //             $this->station_name = $station_tmp->name;
-    //             $response = Data::where('station_id', $this->stationId)
-    //                 ->whereDate('created_at', Carbon::today())
-    //                 ->orderBy('created_at', 'desc')
-    //                 ->first();
-    //             $this->stationInfo = $station_tmp;
-    //             $this->stationData = $response;
-    //             $this->askTime = Carbon::now()->format('Y-m-d H:i:s');
-    //         } else {
-    //             $this->stationInfo = null;
-    //             $this->station_name = null;
-    //             $this->stationData = null;
-    //             $this->error = 'Stacja nie jest publiczna. ';
-    //         }
-    //     } else {
-    //         $this->stationInfo = null;
-    //         $this->station_name = null;
-    //         $this->stationData = null;
-    //         $this->error = 'Nie udało się pobrać danych dla tej stacji. ';
-    //     }
-    //     // Not in cache, search locally
-    //     try {
-    //         $record = collect($this->stationData)->firstWhere('id', $kod);
-
-    //         if ($record) {
-    //             $this->stationDataId = (array) $record;
-    //             // Cache the result for 5 minutes
-    //             // Cache::put('DaneStacjiL' . $kod, $this->stationDataId, now()->addMinutes(5));
-    //         } else {
-    //             $this->stationDataId = [];
-    //             $this->stationId = null;
-    //             if ($kod !== null) {
-    //                 $this->error = 'Nie znaleziono danych dla podanej stacji.';
-    //             }
-    //         }
-    //     } catch (\Throwable $th) {
-    //         $this->stationDataId = [];
-    //         $this->stationId = null;
-    //         if ($kod !== null) {
-    //             $this->error = 'Nie znaleziono danych dla podanej stacji.';
-    //         }
-    //     }
-    // }
     protected function isRecentEnough(?string $utcString, int $maxAgeMinutes = 120): bool
     {
         if (!$utcString) {

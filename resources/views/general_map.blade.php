@@ -94,41 +94,7 @@
                              //console.log(Data);
                             map.addLayer(clickedLayerGroup);
 
-            // function convertToLocalDate(dateStr) {
-            //     if (!dateStr) return null;
 
-            //     // Fix format: replace " " with "T" and mark as UTC with "Z"
-            //     const isoStr = dateStr.replace(" ", "T") + "Z";
-
-            //     const utcDate = new Date(isoStr);
-
-            //     if (isNaN(utcDate.getTime())) return null;
-
-            //     // Return local date and time (with seconds)
-            //     return utcDate.toLocaleString('pl-PL', {
-            //         hour: '2-digit',
-            //         minute: '2-digit',
-            //         second: '2-digit',
-            //         year: 'numeric',
-            //         month: '2-digit',
-            //         day: '2-digit',
-            //         hour12: false
-            //     });
-            // }
-
-            // function isRecentEnough(localString, maxAgeMinutes = 120) {
-            //     if (!localString) return false;
-
-            //     // Create a Date from the given string without forcing UTC
-            //     const dateObj = new Date(localString.replace(" ", "T"));
-
-            //     if (isNaN(dateObj)) return false; // Invalid date safeguard
-
-            //     const now = new Date();
-            //     const diffMinutes = (now - dateObj) / (1000 * 60);
-
-            //     return diffMinutes >= 0 && diffMinutes <= maxAgeMinutes;
-            // }
 
             function focusStation(kod) {
                 // const marker = stationMarkers[currentLayerType]?.[kod];
@@ -182,41 +148,7 @@
                 }
             }
 
-            // function toggleLayer(typeName) {
-            //     const layers = [tempLayerGroup, tempgLayerGroup, humidityLayerGroup, windLayerGroup, rainLayerGroup, allStationsLayerGroup,clickedLayerGroup];
 
-            //     switch (typeName) {
-            //         case 'tempg':
-            //             activeLayer=tempgLayerGroup;
-            //             break;
-            //         case 'hum':
-            //             activeLayer=humidityLayerGroup;
-            //             break;
-            //         case 'wind':
-            //             activeLayer=windLayerGroup;
-            //             break;
-            //         case 'rain':
-            //             activeLayer=rainLayerGroup;
-            //             break;
-            //         case 'all':
-            //             activeLayer=allStationsLayerGroup;
-            //             break;
-            //         default:
-            //             activeLayer=tempLayerGroup;
-            //             break;
-            //     }
-
-            //     // Remove all layers
-            //     layers.forEach(layer => map.removeLayer(layer));
-
-            //     // Add chosen layer
-            //     if (!map.hasLayer(activeLayer)) {
-            //         map.addLayer(activeLayer);
-            //          map.addLayer(clickedLayerGroup);
-            //         currentLayerType = typeName;
-            //         //updateStationListAvailability();
-            //     }
-            // }
 
             function getTemperatureColor(temp) {
                 // // Normalize temperature between -20 and 40 (adjust to your real range)

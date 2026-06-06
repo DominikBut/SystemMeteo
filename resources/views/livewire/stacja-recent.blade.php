@@ -73,7 +73,7 @@
                                 <div class="w-full">
                                     <p class=""><b>Wybierz typ agregacji danych:</b></p>
                                      <div x-ref="tabButtons"
-                                        class="mt-2 overflow-x-auto sm:text-sm flex  sm:inline-grid items-center sm:justify-center w-auto sm:w-full h-10 flex-row sm:grid-cols-4 p-1 text-gray-500 bg-gray-200 rounded-lg select-none"
+                                        class="mt-2 overflow-x-auto overflow-y-none sm:text-sm flex items-center w-auto sm:w-full flex-row sm:grid-cols-4 p-1 text-gray-500 bg-gray-200 rounded-lg select-none"
                                         role="tablist">
 
                                         <!-- Buttons -->
@@ -2058,7 +2058,7 @@
             let datasetsM = [];
 
             const temperatures = weatherData.map(item => toNumberOrNull(item.temperatura_gruntu ?? item.mean_temp_gruntu_dobowa ?? item.mean_mean_temp_gruntu_mies));
-            const Powtemperatures = weatherData.map(item => toNumberOrNull(item.temperatura_powietrza ?? item.mean_temp_powietrza_dobowa ?? item.mean_min_temp_powietrza_mies));
+            const Powtemperatures = weatherData.map(item => toNumberOrNull(item.temperatura_powietrza ?? item.mean_temp_powietrza_dobowa ?? item.mean_mean_temp_powietrza_mies));
             const humidities = weatherData.map(item => toNumberOrNull(item.wilgotnosc_wzgledna ?? item.mean_wilgotnosc_wzgledna ?? item.mean_mean_wilgotnosc_wzgledna));
             const rain10s = weatherData.map(item => toNumberOrNull(item.opad_10min ?? item.sum_opad_10min ?? item.sum_sum_opad_10min));
             const meanWind = weatherData.map(item => toNumberOrNull(item.wiatr_srednia_predkosc ?? item.mean_wiatr_srednia_predkosc ?? item.mean_mean_wiatr_srednia_predkosc));

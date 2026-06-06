@@ -75,7 +75,7 @@
                                 <div class="w-full">
                                     <p class=""><b>Wybierz typ agregacji danych:</b></p>
                                      <div x-ref="tabButtons"
-                                        class="mt-2 overflow-x-auto sm:text-sm flex  sm:inline-grid items-center sm:justify-center w-auto sm:w-full h-10 flex-row sm:grid-cols-3 p-1 text-gray-500 bg-gray-200 rounded-lg select-none"
+                                        class="mt-2 overflow-x-auto overflow-y-none sm:text-sm flex items-center w-auto sm:w-full flex-row sm:grid-cols-4 p-1 text-gray-500 bg-gray-200 rounded-lg select-none"
                                         role="tablist">
 
                                         <button

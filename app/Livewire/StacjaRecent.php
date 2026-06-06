@@ -76,65 +76,7 @@ class StacjaRecent extends Component
         $this->sortWetherData();
     }
 
-    // public function calculateMinMaxStats()
-    // {
-    //     $fields = [
-    //         //terminowe
-    //         'temperatura_gruntu',
-    //         'wiatr_kierunek',
-    //         'wiatr_srednia_predkosc',
-    //         'wiatr_predkosc_maksymalna',
-    //         'wiatr_poryw_10min',
-    //         'wilgotnosc_wzgledna',
-    //         'opad_10min',
-    //         'mean_temp_gruntu_dobowa',
-    //         'min_temp_gruntu_dobowa',
-    //         'max_temp_gruntu_dobowa',
-    //         'mean_wilgotnosc_wzgledna',
-    //         'min_wilgotnosc_wzgledna',
-    //         'max_wilgotnosc_wzgledna',
-    //         'sum_opad_10min',
-    //         'mean_wiatr_srednia_predkosc',
-    //         'max_wiatr_predkosc_maksymalna',
-    //         'max_wiatr_poryw_10min',
-    //         'mean_wiatr_kierunek',
-    //         'max_max_temp_gruntu_mies',
-    //         'mean_max_temp_gruntu_mies',
-    //         'min_min_temp_gruntu_mies',
-    //         'mean_min_temp_gruntu_mies',
-    //         'mean_mean_temp_gruntu_mies',
-    //         'mean_mean_wiatr_kierunek',
-    //         'mean_mean_wiatr_srednia_predkosc',
-    //         'max_max_wiatr_predkosc_maksymalna',
-    //         'max_max_wiatr_poryw_10min',
-    //         'min_min_wilgotnosc_wzgledna',
-    //         'mean_min_wilgotnosc_wzgledna',
-    //         'max_max_wilgotnosc_wzgledna',
-    //         'mean_max_wilgotnosc_wzgledna',
-    //         'mean_mean_wilgotnosc_wzgledna',
-    //         'max_sum_opad_10min',
-    //         'sum_sum_opad_10min',
-    //         'max_max_temp_powietrza_mies',
-    //         'mean_max_temp_powietrza_mies',
-    //         'min_min_temp_powietrza_mies',
-    //         'mean_min_temp_powietrza_mies',
-    //         'mean_mean_temp_powietrza_mies',
-    //         'max_temp_powietrza_dobowa',
-    //         'min_temp_powietrza_dobowa',
-    //         'mean_temp_powietrza_dobowa',
-    //         'temperatura_powietrza',
-    //         'temperatura_powietrza_data',
-    //     ];
 
-    //     foreach ($fields as $field) {
-    //         $values = collect($this->weatherData)->pluck($field)->filter(fn($val) => is_numeric($val));
-    //         $this->minMaxStats[$field] = [
-    //             'min' => $values->isEmpty() ? null : $values->min(),
-    //             'max' => $values->isEmpty() ? null : $values->max(),
-    //             'avg' => $values->isEmpty() ? null : round($values->avg(), 1),
-    //         ];
-    //     }
-    // }
     public function calculateMinMaxStats()
     {
         $fields = [
@@ -568,41 +510,6 @@ class StacjaRecent extends Component
                 return [];
             }
         });
-        // return Cache::remember('station_list', now()->addDays(7), function () {
-        //     // Step 1: Download latest CSV file
-        //     try {
-        //         $response = Http::timeout(30)->connectTimeout(30)->retry(3, 100)->get($this->stationListUrl);
-        //         if (!$response->successful()) {
-        //             throw new \Exception('Nie udało się pobrać wykazu stacji.');
-        //         }
-
-        //         // Convert to UTF-8'Windows-1250', 'UTF-8//IGNORE'
-        //         $utf8Content = iconv('Windows-1250', 'UTF-8//IGNORE', $response->body());
-        //         Storage::put($this->stationListPath, $utf8Content);
-        //     } catch (\Exception $e) {
-        //         $this->error = 'Błąd pobierania listy stacji: ' . $e->getMessage();
-
-        //         // Fallback: try using existing file if any
-        //         if (!Storage::exists($this->stationListPath)) {
-        //             return []; // No fallback possible
-        //         }
-        //     }
-
-        //     // Step 2: Read the file (whether downloaded or fallback)
-        //     $lines = explode("\n", Storage::get($this->stationListPath));
-        //     $stations = [];
-
-        //     foreach ($lines as $line) {
-        //         if (trim($line) === '') continue;
-
-        //         [$id, $name] = str_getcsv($line);
-        //         if ($id && $name) {
-        //             $stations[trim($id)] = trim($name);
-        //         }
-        //     }
-
-        //     return $stations;
-        // });
     }
 
     public function render()

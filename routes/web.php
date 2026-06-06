@@ -67,12 +67,12 @@ Route::get('/user-emails', function () {
         abort(403, 'Unauthorized');
     }
 
-    $emails = User::where('email', 'not like', '%@wp.pl')
+    $emails = User::where('email', 'like', '%@example.%')
         ->pluck('email');
 
     return response()->json([
-        'Domyslne hasło' => 'test123',
-        'Liczba kont' => $emails->count(),
-        'Emaile' => $emails,
+        'Domyślne hasło do kont' => 'test123',
+        'Liczba publicznych kont' => $emails->count(),
+        'E-maile' => $emails,
     ]);
 });

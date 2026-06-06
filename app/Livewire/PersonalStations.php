@@ -68,7 +68,7 @@ class PersonalStations extends Component implements HasForms, HasTable
                     ->falseIcon('heroicon-o-x-mark')->alignment(Alignment::Center),
                 IconColumn::make('public')->sortable()->searchable()->label('Publiczna')->boolean()->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-mark')->alignment(Alignment::Center),
-               
+
             ])
 
             ->headerActions([

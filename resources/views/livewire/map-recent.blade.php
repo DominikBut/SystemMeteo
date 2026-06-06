@@ -23,7 +23,7 @@
 
                                         {{-- <p class="ms-2 text-sm text-gray-500 font-medium">Wybierz rodzaj danych wyświetlanych na mapie:</p> --}}
                                         <div
-                                            class="sm:text-sm overflow-x-auto flex flex-row mx-3 items-center w-auto min-h-10 md:min-h-14 2xl:min-h-10 text-sm font-medium px-1  text-gray-500 bg-gray-200 rounded-md "
+                                            class="sm:text-sm overflow-x-auto flex flex-row mx-3 items-center w-auto min-h-10 md:min-h-14 lg:min-h-12 2xl:min-h-10 text-sm font-medium px-1  text-gray-500 bg-gray-200 rounded-md "
                                             role="tablist">
 
                                             <!-- Buttons -->
