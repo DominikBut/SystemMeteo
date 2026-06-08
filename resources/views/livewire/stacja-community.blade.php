@@ -165,8 +165,8 @@
                                                             }
                                                         }"
                                                         x-init="validateRange()">
-                                                        <div class="flex flex-col sm:flex-row flex-wrap 2xl:flex-nowrap  items-end gap-4 w-full ">
-                                                            <div class="flex flex-col w-full">
+                                                        <div class="flex flex-col sm:flex-row flex-wrap 2xl:flex-nowrap  items-end gap-4 w-full">
+                                                            <div class="flex flex-col w-full {{ $dateOption === 'interval' ? '' : 'opacity-75' }}">
                                                                 <label for="start" class="sm:text-sm font-medium text-gray-700">Data początkowa:</label>
                                                                 <input type="date" id="start" wire:loading.attr="disabled" wire:target="loadData"
                                                                     x-model="start" x-on:change="validateRange()"
@@ -178,7 +178,7 @@
                                                                     class="w-full border border-gray-300 px-2 py-1 rounded" />
                                                             </div>
 
-                                                            <div class="flex flex-col w-full">
+                                                            <div class="flex flex-col w-full {{ $dateOption === 'interval' ? '' : 'opacity-75' }}">
                                                                 <label for="end" class="sm:text-sm font-medium text-gray-700">Dzień końcowy:</label>
                                                                 <input type="date" id="end" wire:loading.attr="disabled" wire:target="loadData"
                                                                     x-model="end" x-on:change="validateRange()"
@@ -191,7 +191,7 @@
                                                             </div>
                                                             <button wire:loading.attr="disabled" wire:target="loadData"
                                                             wire:click="$set('dateOption', 'interval'); $wire.loadData()"
-                                                            class="whitespace-nowrap rounded-xl bg-blue-600 border  px-4 py-2  font-medium text-slate-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed"
+                                                            class="{{ $dateOption === 'interval' ? '' : 'opacity-50 hover:!opacity-100' }} whitespace-nowrap rounded-xl bg-blue-600 border  px-4 py-2  font-medium text-slate-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed"
                                                             :disabled="!selectedId || !stations[selectedId] || !query"
                                                             :class="(!selectedId || !stations[selectedId]) ? 'opacity-60' : ''"
                                                             :title="!selectedId ? 'Wybierz stację' : (!stations[selectedId] ? 'Nieprawidłowa stacja' : '')"
