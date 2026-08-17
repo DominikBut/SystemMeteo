@@ -1,0 +1,15 @@
+*
+*/
+*/*
+!.gitignore
+# Dane generowane przez system
+/api-data/*
+
+/archived/dobowe/*
+/archived/miesieczne/*
+/archived/terminowe/*
+
+/collected/dobowe/*
+/collected/miesieczne/*
+/collected/terminowe/*
+
