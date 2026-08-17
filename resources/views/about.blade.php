@@ -25,8 +25,25 @@
                                     Informacje o systemie
                                 </h1>
 
-                                <p class="mt-3 text-gray-500 leading-relaxed sm:max-w-4xl text-balance text-xs sm:text-sm">
+                                <div class="mt-3 text-gray-500 leading-relaxed sm:max-w-4xl text-balance text-xs sm:text-sm">
+                                    <b class="text-base text-gray-600 leading-relaxed tracking-wider">System opracowany w ramach pracy dyplomowej magisterskiej pt.<br>
+                                        „System archiwizacji i wizualizacji danych meteorologicznych oparty na technologii Laravel”,<br>
+                                        wykonanej pod kierunkiem dra inż. Sebastiana Kujawy.</b><br><br>
+                                    Data wydania: czerwiec 2026.
+                                    <br><br>
+                                    <b>Autor systemu:</b><br>
+                                    inż. But Dominik,<br>
+                                    Uniwersytet Przyrodniczy w Poznaniu,<br>
+                                    <a href="https://wisim.up.poznan.pl/" class="underline">
+                                        Wydział Inżynierii Środowiska i Inżynierii Mechanicznej
+                                    </a><br>
+                                    Informatyka i Inżynieria Danych, II stopień.<br>
+                                    Kontakt:
+                                    <a href="mailto:butdominik.biz@gmail.com" class="text-blue-500 hover:underline">
+                                        butdominik.biz@gmail.com
+                                    </a>
 
+                                    <br><br>
                                     <b class="text-wrap">
                                         System Meteo to kompleksowe narzędzie pozwalające na odczyt wybranych przez użytkownika oficjalnych danych meteorologicznych pozyskiwanych od Instytutu Meteorologii i Gospodarki Wodnej (IMGW) – Państwowego Instytutu Badawczego przez API oraz archiwum plików, a także danych społecznościowych i niezweryfikowanych bieżących danych klimatycznych archiwizowanych lokalnie na serwerze. Dane, m.in. temperatury powietrza i gruntu, wilgotności względnej, prędkości i kierunku wiatru, a także opadu z ostatnich 10 min, są prezentowane w postaci tabelarycznej oraz graficznej zarówno na mapie, jak i na wykresach.
                                     </b>
@@ -43,7 +60,12 @@
 
                                     <br>
 
-                                    <b>Źródła danych wykorzystywanych przez system:</b><br>
+                                     <p class="text-blue-500 font-normal pt-2 text-balance tracking-wider">
+                                        <b>Źródłem pochodzenia danych jest Instytut Meteorologii i Gospodarki Wodnej – Państwowy Instytut Badawczy. <br>
+                                        Dane IMGW-PIB zostały przetworzone na potrzeby niektórych funkcjonalności systemu.</b>
+                                    </p>
+
+                                    <b>Dane wykorzystywane przez system:</b><br>
                                     - <b>Oficjalne dane publiczne IMGW:</b> <a class="underline truncate" href="https://danepubliczne.imgw.pl/pl/introduction">https://danepubliczne.imgw.pl/pl/introduction</a>,<br>
                                     - <b>IMGW API:</b> <a class="underline truncate" href="https://danepubliczne.imgw.pl/api/data/meteo/">https://danepubliczne.imgw.pl/api/data/meteo/</a>,<br>
                                     - <b>Oficjalne dane archiwalne IMGW (CSV) – dane meteorologiczne:</b> <a class="underline truncate" href="https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/">https://danepubliczne.imgw.pl/data/dane_pomiarowo_obserwacyjne/dane_meteorologiczne/</a><br>
@@ -89,28 +111,9 @@
 
                                     <br>
 
-                                    <b>UWAGA! Dane są poprawnie archiwizowane loklanie od początku września 2025 roku, wcześniejsze dane mogą zawierać błędy lub luki.</b>
+                                    <b>UWAGA! Dane są poprawnie archiwizowane lokalnie od początku września 2025 roku, wcześniejsze dane mogą zawierać błędy lub luki.</b>
 
-                                    <br><br>
-
-                                    <b>Autor aplikacji internetowej systemu:</b><br>
-                                    But Dominik,<br>
-                                    Uniwersytet Przyrodniczy w Poznaniu,<br>
-                                    <a href="https://wisim.up.poznan.pl/" class="underline">
-                                        Wydział Inżynierii Środowiska i Inżynierii Mechanicznej
-                                    </a><br>
-                                    Informatyka i Inżynieria Danych, II stopień.<br>
-                                    Kontakt:
-                                    <a href="mailto:butdominik.biz@gmail.com" class="text-blue-500 hover:underline">
-                                        butdominik.biz@gmail.com
-                                    </a>
-                                </p>
-
-                                <br>
-
-                                <b>System wykonany na potrzeby pracy dyplomowej magisterskiej pod kierunkiem dr inż. Sebastiana Kujawy.</b><br>
-                                Data wydania: czerwiec 2026.
-
+                                </div>
                             </div>
                         </div>
                     </div>
