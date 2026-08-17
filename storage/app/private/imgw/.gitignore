@@ -1,12 +1,22 @@
 !.gitignore
 # Dane generowane przez system
 /api-data/*
+!/api-data/.gitkeep
 
 /archived/dobowe/*
+!/archived/dobowe/.gitkeep
+
 /archived/miesieczne/*
+!/archived/miesieczne/.gitkeep
+
 /archived/terminowe/*
+!/archived/terminowe/.gitkeep
 
 /collected/dobowe/*
-/collected/miesieczne/*
-/collected/terminowe/*
+!/collected/dobowe/.gitkeep
 
+/collected/miesieczne/*
+!/collected/miesieczne/.gitkeep
+
+/collected/terminowe/*
+!/collected/terminowe/.gitkeep
