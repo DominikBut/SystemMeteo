@@ -20,3 +20,5 @@
 
 /collected/terminowe/*
 !/collected/terminowe/.gitkeep
+
+wykaz_stacji.csv
